@@ -146,11 +146,11 @@
           stripe
           :data="gridData">
           <el-table-column 
-            v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
-            :width="headerWidth[headerName]?headerWidth[headerName]:''"
+            v-for="(headerName, index) in dynamicHeaders" 
+            :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
-            :label="enMap[headerName]"
-            v-if="dynamicHeaders[headerName]">
+            :label="headerName"
+            v-if="dynamicHeaders.includes(headerName)">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               {{scope.row[headerName]}}
             </template>
@@ -177,7 +177,7 @@ import api from '../../utils/api'
 import { Message } from 'element-ui'
 import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
-import {PERIOD_OPTIONS} from '../../utils/enum'
+import {PERIOD_OPTIONS, HEADER_WIDTH} from '../../utils/enum'
 import searchBar from '@/components/search-bar/search-bar'
 
 export default {
@@ -202,15 +202,9 @@ export default {
         buyerId: '',
         ordeId: ''
       },
-      mockData: [
-        {date: '', orderId: '', status: '', asin: '', productName: '', buyerName: '', buyerId: '', quantity: '', price: '', country: '', shopId: ''}
-        // {date: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '2'},
-        // {date: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '3'},
-        // {date: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '4'},
-        // {date: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '5'}
-      ],
+      mockData: [],
       stars: '',
-      dynamicHeaders: {},
+      dynamicHeaders: [],
       checkedList: [],
       periodOptions: PERIOD_OPTIONS,
       rateList: [1, 2, 3, 4, 5],
@@ -246,15 +240,7 @@ export default {
         proposer: ''
       },
       headers: [],
-      headerWidth: {
-        reviewDate: 100,
-        reviews: 70,
-        score: 60,
-        operatorId: 100,
-        orders: 60,
-        lastUpdateTime: 160,
-        'Session Percentage': 90
-      },
+      headerWidth: HEADER_WIDTH,
       enMap: {
         date: '购买时间',
         orderId: '订单号',
@@ -290,10 +276,12 @@ export default {
 
     this.getShopList()
     this.getNationList()
-
-    this.getPageProducts()
   },
   methods: {
+    createHeader () {
+      this.dynamicHeaders = ['date', 'shopId', 'country', 'orderId', 'status', 'asin', 'productName', 'buyerName', 'buyerId', 'quantity', 'price']
+      this.headers = this.dynamicHeaders
+    },
     orderStatusChange (evnet) {
       console.log(this.orderStatus)
       if (this.orderStatus === 'All') {
@@ -329,27 +317,6 @@ export default {
         }
       }
       this.dynamicHeaders = { ...this.dynamicHeaders }
-    },
-    createHeader () {
-      for (let key in this.gridData[0]) {
-        if (key !== 'review') {
-          this.dynamicHeaders[key] = true
-          this.headers = [...this.headers, key]
-        }
-      }
-      this.checkedList = this.headers
-      delete this.dynamicHeaders.reviewDate
-      // this.gridData.map(dt => {
-      //   dt.info.map((io, index) => {
-      //     if (!this.gridData[io.label]) {
-      //       this.gridData[io.label] = {}
-      //     }
-      //     if (!self.dynamicHeaders[dt.name]) {
-      //       self.dynamicHeaders[dt.name] = true
-      //     }
-      //     this.gridData[io.label][dt.name] = Object.create(io)
-      //   })
-      // })
     },
     updateLu () {
       let format = 'YYYY-MM-DD'

@@ -206,7 +206,7 @@ import api from '../../utils/api'
 import { Message } from 'element-ui'
 import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
-import {PERIOD_OPTIONS} from '../../utils/enum'
+import {PERIOD_OPTIONS, HEADER_WIDTH} from '../../utils/enum'
 import searchBar from '@/components/search-bar/search-bar'
 import { mapGetters } from 'vuex'
 
@@ -270,16 +270,7 @@ export default {
         proposer: ''
       },
       headers: [],
-      headerWidth: {
-        name: 400,
-        title: 200,
-        score: 60,
-        operatorId: 100,
-        orders: 60,
-        lastUpdateTime: 120,
-        buyerId: 140,
-        sellerId: 140
-      },
+      headerWidth: HEADER_WIDTH,
       form: {
         productId: '',
         shopId: undefined,

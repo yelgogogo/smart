@@ -92,7 +92,7 @@
 import api from '../../utils/api'
 import { Message } from 'element-ui'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
-import {PERIOD_OPTIONS} from '../../utils/enum'
+import {PERIOD_OPTIONS, HEADER_WIDTH} from '../../utils/enum'
 import searchBar from '@/components/search-bar/search-bar'
 
 export default {
@@ -196,15 +196,7 @@ export default {
         totalQuantity: 'right',
         totalAverage: 'right'
       },
-      headerWidth: {
-        sellerId: 240,
-        currentQuantity: 140,
-        asin: 120,
-        QA: 40,
-        orders: 60,
-        lastUpdateTime: 160,
-        'Session Percentage': 90
-      },
+      headerWidth: HEADER_WIDTH,
       download: [],
       form: {
         productId: '',
