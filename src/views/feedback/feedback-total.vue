@@ -2,63 +2,10 @@
   <div>
     <el-form ref="form">
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
-      <!-- <el-row>
-        <el-col :span="6" style="padding-right: 5px;">
-          <el-form-item label="店铺">
-            <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
-              <el-option
-                v-for="shop in shopList"
-                :key="shop.value"
-                :label="shop.shopName"
-                :value="shop.shopId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="4" style="padding-right: 5px;">
-          <el-form-item label="国家">
-            <el-select clearable v-model="nationId" placeholder="选择国家" class="nation-select">
-              <el-option
-                v-for="nation in nationList"
-                :key="nation.value"
-                :label="nation"
-                :value="nation">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="5" :offset="1">
-            <el-form-item label="选择时间">
-              <el-select class="period-select" v-model="periodSelect" @change="updateLu">
-                <el-option
-                v-for="item in periodOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item v-if="periodSelect===0">
-              <el-date-picker
-                v-model="dr"
-                @change="updateDateRangeValue"
-                type="daterange"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                range-separator="~"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间">
-              </el-date-picker>
-            </el-form-item>
-            <el-form-item v-else>&nbsp;</el-form-item>
-          </el-col>
-        </el-row> -->
         <el-row>
           <el-col :span="5" style="padding-right: 5px;">
             <el-form-item label="星评">
-              <el-select clearable v-model="stars" placeholder="选择星评" class="shop-select">
+              <el-select clearable v-model="star" placeholder="选择星评" class="shop-select" @change="starChange">
                 <el-option
                   v-for="rate in rateList"
                   :key="rate"
@@ -75,13 +22,13 @@
                   type="textarea"
                   class="asin-input"
                   clearable
-                  v-model="searchField.auditor">
+                  v-model="filter.productId">
                 </el-input>
               </el-form-item>
           </el-col>
           <el-col :span="5" :offset="0">
               <el-button type="primary" round icon="el-icon-search" @click="searchGrid">搜索</el-button>
-              <el-button type="" round icon="el-icon-search" @click="searchGrid">重置</el-button>
+              <el-button type="" round icon="el-icon-search" @click="resetSearch">重置</el-button>
           </el-col>
         </el-row>
         <el-row>
@@ -164,19 +111,16 @@ export default {
         },
         countryCode: '',
         productId: '',
-        buyerId: '',
-        stars: 0,
-        ordeId: ''
+        star: undefined
       },
-      stars: '',
+      star: '',
       checkedList: [],
       periodOptions: PERIOD_OPTIONS,
-      rateList: [1, 2, 3, 4, 5],
+      rateList: ['All', 1, 2, 3, 4, 5],
       pageSize: 20,
       total: 0,
       currentPage: 1,
       maxlength: 200,
-      nationId: '',
       nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
       statusId: '',
       statusList: ['All', 'Active', 'Processing Succeed', 'Failed Deleted'],
@@ -243,6 +187,7 @@ export default {
         sumupDate: '总结时间',
         comments: '备注'
       },
+      nationListBK: [],
       headers: [],
       headersArray: [],
       headerFixed: {
@@ -285,8 +230,22 @@ export default {
     // this.getPageProducts()
   },
   methods: {
+    resetSearch () {
+      this.star = null
+      this.product = null
+      this.filter = { ...this.filter, star: undefined, productId: undefined }
+      this.getPageProducts()
+    },
+    starChange (value) {
+      if (value === 'All') {
+        this.filter.star = undefined
+      } else {
+        this.filter.star = value
+      }
+      this.getPageProducts()
+    },
     createHeader (headers) {
-      this.dynamicHeaders = ['shopId', 'country', 'asin', 'currentQuantity', 'currentAverage', 'totalQuantity', 'totalAverage']
+      this.dynamicHeaders = ['shopId', 'country', 'asin', 'currentQuantity', 'currentAverage']
       let sort = []
       for (let header in headers) {
         if (!this.dynamicHeaders.includes(header)) {
@@ -298,11 +257,20 @@ export default {
       })
 
       this.dynamicHeaders = [...this.dynamicHeaders, ...sort]
+      this.headers = this.dynamicHeaders
       console.log(this.dynamicHeaders, sort)
       // this.headers = this.headersArray.map(e => this.dictCn[e.en])
       // this.checkedList = this.dynamicHeaders.map(e => this.dictCn[e])
     },
     searchBarChange (filter) {
+      if (filter.shopId) {
+        const shop = this.shopList.find(s => s.shopId === filter.shopId)
+        this.nationList = shop.countryCode.map(c => {
+          return { countryCode: c }
+        })
+      } else {
+        this.nationList = this.nationListBK
+      }
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
       this.getPageProducts()
@@ -394,6 +362,28 @@ export default {
         this.$store.dispatch('setLoadingState', false)
       }).catch(err => {
         this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
+    },
+    getDownload () {
+      let pagination = {
+        pageSize: 99999,
+        currentPage: 1
+      }
+      pagination.filter = this.filter
+
+      const period = this.filter.period
+      api.post('/api/review/statistics', {pagination, period}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.download = res.data.grid
+          this.total = res.data.pagination.total
+          this.createHeader(this.gridData[0])
+        }
+      }).catch(err => {
         Message({
           showClose: true,
           message: err.response.statusText,

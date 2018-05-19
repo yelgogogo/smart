@@ -69,7 +69,7 @@ export default {
     return {
       filter: {
         shopId: null,
-        nationId: null,
+        countryCode: null,
         period: {}
       },
       periodCustomize: [],
