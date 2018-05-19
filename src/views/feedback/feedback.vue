@@ -2,59 +2,6 @@
   <div>
     <el-form ref="form">
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
-      <!-- <el-row>
-        <el-col :span="6" style="padding-right: 5px;">
-          <el-form-item label="店铺">
-            <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
-              <el-option
-                v-for="shop in shopList"
-                :key="shop.value"
-                :label="shop.shopName"
-                :value="shop.shopId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="4" style="padding-right: 5px;">
-          <el-form-item label="国家">
-            <el-select clearable v-model="nationId" placeholder="选择国家" class="nation-select">
-              <el-option
-                v-for="nation in nationList"
-                :key="nation.value"
-                :label="nation"
-                :value="nation">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="5" :offset="1">
-            <el-form-item label="选择时间">
-              <el-select class="period-select" v-model="periodSelect" @change="updateLu">
-                <el-option
-                v-for="item in periodOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item v-if="periodSelect===0">
-              <el-date-picker
-                v-model="dr"
-                @change="updateDateRangeValue"
-                type="daterange"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                range-separator="~"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间">
-              </el-date-picker>
-            </el-form-item>
-            <el-form-item v-else>&nbsp;</el-form-item>
-          </el-col>
-        </el-row> -->
         <el-row>
           <el-col :span="6" style="padding-right: 5px;">
             <el-form-item label="状态">
@@ -231,7 +178,7 @@
               </el-select>
           </el-form-item>
           <el-form-item label="Stars" :label-width="formLabelWidth">
-              {{form.stars}}
+              {{form.star}}
           </el-form-item>
           <el-form-item label="Name" :label-width="formLabelWidth">
             {{form.name}}
@@ -305,6 +252,7 @@ export default {
       userId: '',
       userList: [],
       gridData: [],
+      download: [],
       productTotal: 0,
       pageProducts: [],
       search_val: undefined,
@@ -360,6 +308,13 @@ export default {
     this.getPageProducts()
   },
   methods: {
+    statusChange (e) {
+      if (e === 'All') {
+        this.filter.status = undefined
+      } else {
+        this.filter.status = [e]
+      }
+    },
     getNationList () {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
@@ -481,6 +436,7 @@ export default {
       api.post('/api/review', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
+          this.download = this.gridData
           this.total = res.data.pagination.total
           this.createHeader()
         }

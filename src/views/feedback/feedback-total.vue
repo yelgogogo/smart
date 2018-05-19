@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-form ref="form">
-      <el-row>
+      <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
+      <!-- <el-row>
         <el-col :span="6" style="padding-right: 5px;">
           <el-form-item label="店铺">
             <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
@@ -53,7 +54,7 @@
             </el-form-item>
             <el-form-item v-else>&nbsp;</el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
         <el-row>
           <el-col :span="5" style="padding-right: 5px;">
             <el-form-item label="星评">
@@ -91,7 +92,7 @@
               <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;"></el-checkbox>
             </el-checkbox-group>
           </el-popover>
-          <el-col :span="8">
+          <el-col :span="16">
             <el-pagination
             @size-change="sizeChange"
             @current-change="currentChange"
@@ -102,8 +103,8 @@
             :total="total">
           </el-pagination>
         </el-col>
-        <el-col :span="16" class="text-right">
-          <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
+        <el-col :span="8" class="text-right">
+          <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
           <vue-csv-download
             :data="download"
             :fields="fieldsCn"
@@ -122,11 +123,12 @@
           height="500"
           :data="gridData">
           <el-table-column 
-            v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
-            :width="headerWidth[headerName]?headerWidth[headerName]:''"
+            v-for="(headerName, index) in dynamicHeaders" 
+            :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
+            :fixed="headerFixed[headerName]"
             :label="headerName"
-            v-if="dynamicHeaders[headerName]">
+            v-if="dynamicHeaders.includes(headerName)">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               {{scope.row[headerName]}}
             </template>
@@ -140,26 +142,33 @@
 <script>
 import api from '../../utils/api'
 import { Message } from 'element-ui'
-import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import {PERIOD_OPTIONS} from '../../utils/enum'
+import searchBar from '@/components/search-bar/search-bar'
 
 export default {
   components: {
-    VueCsvDownload
+    VueCsvDownload,
+    searchBar
   },
   data () {
     return {
-      mockData: [
-        {sellerId: '11111-111', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
-        {sellerId: '11111-211', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
-        {sellerId: '11111-311', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
-        {sellerId: '11111-411', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
-        {sellerId: '11111-511', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
-        {sellerId: '11111-611', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'}
-      ],
+      dynamicHeaders: [],
+      mockData: [],
+      filter: {
+        shopId: null,
+        // asinOrName: '',
+        period: {
+          start: '',
+          end: ''
+        },
+        countryCode: '',
+        productId: '',
+        buyerId: '',
+        stars: 0,
+        ordeId: ''
+      },
       stars: '',
-      dynamicHeaders: {},
       checkedList: [],
       periodOptions: PERIOD_OPTIONS,
       rateList: [1, 2, 3, 4, 5],
@@ -194,7 +203,52 @@ export default {
         auditor: '',
         proposer: ''
       },
+      dictEn: {
+        '提议编号': 'suggestionId',
+        '标题': 'title',
+        '店铺': 'shopName',
+        '国家': 'countryCode',
+        '提议状态': 'status',
+        '提议时间': 'createDate',
+        '产品名称': 'name',
+        'ASIN': 'productId',
+        '提议人': ' proposer',
+        '优化类型': 'suggestType',
+        '提议内容': 'suggestion',
+        '审批人': 'auditor',
+        '审批建议': 'reply',
+        '审批时间': 'auditDate',
+        '完成时间': 'finishDate',
+        '总结内容': 'sumup',
+        '总结时间': 'sumupDate',
+        '备注': 'comments'
+      },
+      dictCn: {
+        suggestionId: '提议编号',
+        title: '标题',
+        shopName: '店铺',
+        countryCode: '国家',
+        status: '提议状态',
+        createDate: '提议时间',
+        name: '产品名称',
+        productId: 'ASIN',
+        proposer: '提议人',
+        suggestType: '优化类型',
+        suggestion: '提议内容',
+        auditor: '审批人',
+        reply: '审批建议',
+        auditDate: '审批时间',
+        finishDate: '完成时间',
+        sumup: '总结内容',
+        sumupDate: '总结时间',
+        comments: '备注'
+      },
       headers: [],
+      headersArray: [],
+      headerFixed: {
+        totalQuantity: 'right',
+        totalAverage: 'right'
+      },
       headerWidth: {
         sellerId: 240,
         currentQuantity: 140,
@@ -204,6 +258,7 @@ export default {
         lastUpdateTime: 160,
         'Session Percentage': 90
       },
+      download: [],
       form: {
         productId: '',
         shopId: undefined,
@@ -225,22 +280,43 @@ export default {
     this.shopId = this.$route.query.shopId
 
     this.getShopList()
+    this.getNationList()
 
-    if (this.search_val && this.shopId) {
-      this.searchProduct()
-    } else {
-      this.getPageProducts()
-    }
+    // this.getPageProducts()
   },
   methods: {
+    createHeader (headers) {
+      this.dynamicHeaders = ['shopId', 'country', 'asin', 'currentQuantity', 'currentAverage', 'totalQuantity', 'totalAverage']
+      let sort = []
+      for (let header in headers) {
+        if (!this.dynamicHeaders.includes(header)) {
+          sort.push(header)
+        }
+      }
+      sort = sort.sort((a, b) => {
+        return a > b ? 1 : -1
+      })
+
+      this.dynamicHeaders = [...this.dynamicHeaders, ...sort]
+      console.log(this.dynamicHeaders, sort)
+      // this.headers = this.headersArray.map(e => this.dictCn[e.en])
+      // this.checkedList = this.dynamicHeaders.map(e => this.dictCn[e])
+    },
+    searchBarChange (filter) {
+      console.log('searchBarChange', filter)
+      this.filter = {...this.filter, ...filter}
+      this.getPageProducts()
+    },
     searchGrid () {
-
+      this.getPageProducts()
     },
-    sizeChange () {
-
+    sizeChange (e) {
+      this.pageSize = e
+      this.getPageProducts()
     },
-    currentChange () {
-
+    currentChange (e) {
+      this.currentPage = e
+      this.getPageProducts()
     },
     updateVisibleColumns () {
       this.showHideColumns(this.checkedList)
@@ -258,39 +334,6 @@ export default {
         }
       }
       this.dynamicHeaders = { ...this.dynamicHeaders }
-    },
-    createHeader () {
-      for (let key in this.gridData[0]) {
-        this.dynamicHeaders[key] = true
-        this.headers = [...this.headers, key]
-      }
-      this.checkedList = this.headers
-      delete this.dynamicHeaders.reviewDate
-      // this.gridData.map(dt => {
-      //   dt.info.map((io, index) => {
-      //     if (!this.gridData[io.label]) {
-      //       this.gridData[io.label] = {}
-      //     }
-      //     if (!self.dynamicHeaders[dt.name]) {
-      //       self.dynamicHeaders[dt.name] = true
-      //     }
-      //     this.gridData[io.label][dt.name] = Object.create(io)
-      //   })
-      // })
-    },
-    updateLu () {
-      let format = 'YYYY-MM-DD'
-      let start = moment().subtract(this.periodSelect, 'days').format(format)
-      let end = moment().format(format)
-      const status = this.getStatus
-
-      console.log('updateLu', status, start, end)
-      // this.searchField.period = {
-      //   dateType: status.join(','),
-      //   start: start,
-      //   end: end
-      // }
-      // this.getPageWorkflows()
     },
     updateDateRangeValue () {
       console.log(this.dr)
@@ -327,29 +370,26 @@ export default {
       }
       this.getPageProducts(filter)
     },
-    getPageProducts (filter) {
+    getPageProducts () {
       let pagination = {
         pageSize: this.pageSize,
         currentPage: this.currentPage
       }
-      if (filter) {
-        pagination.filter = filter
-      }
-      const period = {
-        start: '2016-04-01',
-        end: '2018-05-30'
-      }
+
+      pagination.filter = this.filter
+
+      const period = this.filter.period
       this.$store.dispatch('setLoadingState', true)
       // this.gridData = this.mockData
-      // this.download = this.gridData
       // this.total = this.mockData.length
       // this.createHeader()
       // this.$store.dispatch('setLoadingState', false)
       api.post('/api/review/statistics', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
+          this.download = this.gridData
           this.total = res.data.pagination.total
-          this.createHeader()
+          this.createHeader(this.gridData[0])
         }
         this.$store.dispatch('setLoadingState', false)
       }).catch(err => {
@@ -359,6 +399,12 @@ export default {
           message: err.response.statusText,
           type: 'error'
         })
+      })
+    },
+    getNationList () {
+      api.get('/api/country').then(res => {
+        this.nationList = res.data.grid
+        this.nationListBK = this.nationList
       })
     },
     getShopList () {
