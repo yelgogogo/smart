@@ -2,59 +2,6 @@
   <div>
     <el-form ref="form">
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
-      <!-- <el-row class="first-search">
-        <el-col :span="6" style="padding-right: 5px;">
-          <el-form-item label="店铺">
-            <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
-              <el-option
-              v-for="shop in shopList"
-              :key="shop.value"
-              :label="shop.shopName"
-              :value="shop.shopId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col :span="4" style="padding-right: 5px;">
-        <el-form-item label="国家">
-          <el-select clearable v-model="nationId" placeholder="选择国家" class="nation-select">
-            <el-option
-            v-for="nation in nationList"
-            :key="nation.marketplace"
-            :label="nation.marketplace"
-            :value="nation.marketplaceId">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      </el-col>
-      <el-col :span="5" :offset="1">
-        <el-form-item label="选择时间">
-          <el-select class="period-select" v-model="periodSelect" @change="periodChange">
-            <el-option
-            v-for="item in periodOptions"
-            :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item v-if="periodSelect===0">
-            <el-date-picker
-            v-model="dr"
-            @change="periodCustomizeChange"
-            type="daterange"
-            format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
-            range-separator="~"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-else>&nbsp;</el-form-item>
-      </el-col>   
-    </el-row> -->
   <el-row>
         <el-col :span="8">
           <el-form-item>
@@ -95,7 +42,9 @@
         </el-pagination>
       </el-col>
       <el-col :span="8" class="text-right">
+        <el-button v-if="download.length===0" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
         <vue-csv-download
+          v-else
           :data="download"
           :fields="fieldsCn"
           class="download"
@@ -322,11 +271,23 @@ export default {
   },
   computed: {
     fieldsCn () {
-      let headers = []
+      let headers = ['shopName', 'countryCode', 'productASIN', 'productName']
       if (this.gridData.length > 0) {
+        let sort = []
         for (let key in this.gridData[0]) {
-          headers.push(key)
+          sort.push(key)
         }
+        sort = sort.sort((a, b) => a > b ? 1 : -1)
+        console.log('sort', sort)
+        sort.forEach(key => {
+          if (key !== 'orderList' && key !== 'url' && key !== 'shopId' && key !== 'marketplaceId' &&
+            key !== 'marketplaceName' && key !== 'productCASIN' && key !== 'productKeyword') {
+            if (!headers.includes(key)) {
+              headers.push(key)
+            }
+          }
+        }
+        )
       } else {
         headers = []
       }
@@ -484,13 +445,30 @@ export default {
       api.post('/api/product/pagination', {pagination}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
-          this.download = this.gridData
           this.total = res.data.pagination.total
           this.listLikedProducts()
         }
         this.$store.dispatch('setLoadingState', false)
       }).catch(err => {
         this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
+    },
+    getDownload () {
+      let pagination = {
+        pageSize: 99999,
+        currentPage: 1
+      }
+      pagination.filter = this.filter
+      api.post('/api/product/pagination', {pagination}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.download = res.data.grid
+        }
+      }).catch(err => {
         Message({
           showClose: true,
           message: err.response.statusText,
