@@ -27,8 +27,11 @@ export const PERIOD_OPTIONS = [
 ]
 
 export const HEADER_WIDTH = {
+  date: 200,
+  price: 140,
+  productName: 200,
   reviewDate: 100,
-  orderId: 120,
+  orderId: 160,
   operatorId: 100,
   orders: 60,
   'Session Percentage': 90,

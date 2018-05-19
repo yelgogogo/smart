@@ -2,60 +2,6 @@
   <div>
     <el-form ref="form">
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
-      <!-- <el-row>
-        <el-col :span="6" style="padding-right: 5px;">
-          <el-form-item label="店铺">
-            <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
-              <el-option
-                v-for="shop in shopList"
-                :key="shop.value"
-                :label="shop.shopName"
-                :value="shop.shopId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="4" style="padding-right: 5px;">
-          <el-form-item label="国家">
-            <el-select clearable v-model="nationId" placeholder="选择国家" class="nation-select">
-              <el-option
-                v-for="nation in nationList"
-                :key="nation.value"
-                :label="nation"
-                :value="nation">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="5" :offset="1">
-            <el-form-item label="选择时间">
-              <el-select class="period-select" v-model="periodSelect" @change="updateLu">
-                <el-option
-                v-for="item in periodOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item v-if="periodSelect===0">
-              <el-date-picker
-                v-model="dr"
-                @change="updateDateRangeValue"
-                type="daterange"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                range-separator="~"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间">
-              </el-date-picker>
-            </el-form-item>
-            <el-form-item v-else>&nbsp;</el-form-item>
-          </el-col>
-        </el-row> -->
-
         <el-row>
           <el-col :span="6" style="padding-right: 5px;">
             <el-form-item label="订单">
@@ -128,8 +74,10 @@
           <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
           <!-- </el-col> -->
           <el-col :span="8" class="text-right">
-            <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
+            <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
+            <el-button v-if="download.length===0" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
             <vue-csv-download
+              v-else
               :data="download"
               :fields="fieldsCn"
               class="download"
@@ -149,7 +97,7 @@
             v-for="(headerName, index) in dynamicHeaders" 
             :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
-            :label="headerName"
+            :label="dictEn[headerName]"
             v-if="dynamicHeaders.includes(headerName)">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               {{scope.row[headerName]}}
@@ -241,7 +189,7 @@ export default {
       },
       headers: [],
       headerWidth: HEADER_WIDTH,
-      enMap: {
+      dictEn: {
         date: '购买时间',
         orderId: '订单号',
         status: '订单状态',
@@ -278,6 +226,10 @@ export default {
     this.getNationList()
   },
   methods: {
+    resetSearch () {
+      this.filter = {...this.filter, ordeId: undefined, buyerId: undefined, productId: undefined}
+      this.getPageProducts()
+    },
     createHeader () {
       this.dynamicHeaders = ['date', 'shopId', 'country', 'orderId', 'status', 'asin', 'productName', 'buyerName', 'buyerId', 'quantity', 'price']
       this.headers = this.dynamicHeaders
@@ -289,6 +241,7 @@ export default {
       } else {
         this.filter.status = [this.orderStatus]
       }
+      this.getPageProducts()
     },
     searchGrid () {
       this.getPageProducts()
@@ -368,29 +321,37 @@ export default {
         pageSize: this.pageSize,
         currentPage: this.currentPage
       }
-      // if (filter) {
-      //   pagination.filter = filter
-      // }
       pagination.filter = this.filter
       const period = this.filter.period
-      // delete this.filter.period
-      // request.filter = {}
       this.$store.dispatch('setLoadingState', true)
-      // this.gridData = this.mockData
-      // this.download = this.gridData
-      // this.total = this.mockData.length
-
-      // this.$store.dispatch('setLoadingState', false)
       api.post('/api/product/orders', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
-          this.download = this.gridData
           this.total = res.data.pagination.total
           this.createHeader()
         }
         this.$store.dispatch('setLoadingState', false)
       }).catch(err => {
         this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
+    },
+    getDownload () {
+      let pagination = {
+        pageSize: 99999,
+        currentPage: 1
+      }
+      pagination.filter = this.filter
+      const period = this.filter.period
+      api.post('/api/product/orders', {pagination, period}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.download = res.data.grid
+        }
+      }).catch(err => {
         Message({
           showClose: true,
           message: err.response.statusText,
