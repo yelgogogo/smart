@@ -52,7 +52,9 @@
         </el-col>
         <el-col :span="8" class="text-right">
           <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
+          <el-button v-if="download.length===0" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
           <vue-csv-download
+            v-else
             :data="download"
             :fields="fieldsCn"
             class="download"
@@ -306,31 +308,6 @@ export default {
     updateDateRangeValue () {
       console.log(this.dr)
     },
-    saveWork () {
-      let self = this
-      self.form.sn = undefined
-      api.post(`/api/suggestion`, self.form).then(res => {
-        Message({
-          showClose: true,
-          message: '更新成功!',
-          type: 'success'
-        })
-        self.dialogFormVisible = false
-        self.getPageWorkflows(true)
-      }).catch(err => {
-        self.errorHandler(err, {code: 404, message: '产品未找到'})
-      })
-    },
-    edit (row) {
-      console.log(row)
-      this.form = row
-      this.dialogFormVisible = true
-    },
-    isNotLike (product) {
-      return !this.likedProducts.find(p => {
-        return product.asin === p.productId
-      })
-    },
     searchProduct () {
       let filter = {
         productId: this.search_val,
@@ -348,14 +325,10 @@ export default {
 
       const period = this.filter.period
       this.$store.dispatch('setLoadingState', true)
-      // this.gridData = this.mockData
-      // this.total = this.mockData.length
-      // this.createHeader()
-      // this.$store.dispatch('setLoadingState', false)
+
       api.post('/api/review/statistics', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
-          this.download = this.gridData
           this.total = res.data.pagination.total
           this.createHeader(this.gridData[0])
         }
@@ -380,8 +353,6 @@ export default {
       api.post('/api/review/statistics', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
           this.download = res.data.grid
-          this.total = res.data.pagination.total
-          this.createHeader(this.gridData[0])
         }
       }).catch(err => {
         Message({

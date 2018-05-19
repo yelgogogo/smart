@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="4" style="padding-right: 5px;">
             <el-form-item label="星评">
-              <el-select clearable v-model="filter.stars" placeholder="选择星评" class="rate-select">
+              <el-select clearable v-model="star" placeholder="选择星评" class="rate-select" @change="starChange">
                 <el-option
                   v-for="rate in rateList"
                   :key="rate"
@@ -76,7 +76,7 @@
           </el-col>
           <el-col :span="5" :offset="0">
               <el-button type="primary" round icon="el-icon-search" @click="searchGrid">搜索</el-button>
-              <el-button type="" round icon="el-icon-search" @click="searchGrid">重置</el-button>
+              <el-button type="" round icon="el-icon-search" @click="resetSearch">重置</el-button>
           </el-col>
         </el-row>
         <el-row>
@@ -102,8 +102,10 @@
           <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
           <!-- </el-col> -->
           <el-col :span="8" class="text-right">
-            <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
+            <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
+            <el-button v-if="download.length===0" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
             <vue-csv-download
+              v-else
               :data="download"
               :fields="fieldsCn"
               class="download"
@@ -118,21 +120,14 @@
         <el-table 
           border
           stripe
-          height="500"
+          height="2000"
           :data="gridData">
-          <el-table-column
-            fixed
-            sortable
-            prop="reviewDate"
-            width="110"
-            label="reviewDate">
-          </el-table-column>
           <el-table-column 
-            v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
-            :width="headerWidth[headerName]?headerWidth[headerName]:''"
+            v-for="(headerName, index) in dynamicHeaders" 
+            :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
             :label="headerName"
-            v-if="dynamicHeaders[headerName]">
+            v-if="dynamicHeaders.includes(headerName)">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               {{scope.row[headerName]}}
             </template>
@@ -195,12 +190,12 @@
           <el-form-item label="操作" :label-width="formLabelWidth">
             <div>2018-04-12 这个反馈处理 admin</div>
             <div>2018-04-13 这个反馈不要处理 Michael</div>
-            <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.suggestion"></el-input>
+            <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.message"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>        
-          <el-button type="primary" @click="saveWork">保  存</el-button>
+          <el-button type="primary" @click="saveFeedback">保  存</el-button>
         </div>
       </el-dialog>
   </div>
@@ -213,6 +208,7 @@ import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import {PERIOD_OPTIONS} from '../../utils/enum'
 import searchBar from '@/components/search-bar/search-bar'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -234,13 +230,13 @@ export default {
         productId: '',
         buyerId: '',
         stars: 0,
-        ordeId: ''
+        orderId: ''
       },
-      stars: '',
+      star: '',
       dynamicHeaders: {},
       checkedList: [],
       periodOptions: PERIOD_OPTIONS,
-      rateList: [1, 2, 3, 4, 5],
+      rateList: ['All', 1, 2, 3, 4, 5],
       pageSize: 20,
       total: 0,
       currentPage: 1,
@@ -248,7 +244,7 @@ export default {
       nationId: '',
       nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
       statusId: '',
-      statusList: ['All', 'Active', 'Processing Succeed', 'Failed Deleted'],
+      statusList: ['All', 'Active', 'Processing', 'Succeed', 'Failed', 'Deleted'],
       userId: '',
       userList: [],
       gridData: [],
@@ -275,13 +271,14 @@ export default {
       },
       headers: [],
       headerWidth: {
-        reviewDate: 100,
-        reviews: 70,
+        name: 400,
+        title: 200,
         score: 60,
         operatorId: 100,
         orders: 60,
-        lastUpdateTime: 160,
-        'Session Percentage': 90
+        lastUpdateTime: 120,
+        buyerId: 140,
+        sellerId: 140
       },
       form: {
         productId: '',
@@ -295,25 +292,40 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     fieldsCn () {
       return this.headers
     }
   },
   created () {
-    this.search_val = this.$route.query.productId
-    this.shopId = this.$route.query.shopId
-
     this.getShopList()
     this.getNationList()
     this.getPageProducts()
   },
   methods: {
+    resetSearch () {
+      this.filter = { ...this.filter, buyerId: undefined, orderId: undefined, productId: undefined }
+      this.getPageProducts()
+    },
+    starChange (value) {
+      if (value === 'All') {
+        this.filter.star = undefined
+      } else {
+        this.filter.star = value
+      }
+      this.getPageProducts()
+    },
+    createHeader () {
+      this.dynamicHeaders = ['sellerId', 'asin', 'country', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorId', 'lastUpdateTime']
+      this.headers = this.dynamicHeaders
+    },
     statusChange (e) {
       if (e === 'All') {
         this.filter.status = undefined
       } else {
-        this.filter.status = [e]
+        this.filter.status = e
       }
+      this.getPageProducts()
     },
     getNationList () {
       api.get('/api/country').then(res => {
@@ -354,27 +366,6 @@ export default {
       }
       this.dynamicHeaders = { ...this.dynamicHeaders }
     },
-    createHeader () {
-      for (let key in this.gridData[0]) {
-        if (key !== 'review') {
-          this.dynamicHeaders[key] = true
-          this.headers = [...this.headers, key]
-        }
-      }
-      this.checkedList = this.headers
-      delete this.dynamicHeaders.reviewDate
-      // this.gridData.map(dt => {
-      //   dt.info.map((io, index) => {
-      //     if (!this.gridData[io.label]) {
-      //       this.gridData[io.label] = {}
-      //     }
-      //     if (!self.dynamicHeaders[dt.name]) {
-      //       self.dynamicHeaders[dt.name] = true
-      //     }
-      //     this.gridData[io.label][dt.name] = Object.create(io)
-      //   })
-      // })
-    },
     updateLu () {
       let format = 'YYYY-MM-DD'
       let start = moment().subtract(this.periodSelect, 'days').format(format)
@@ -392,10 +383,10 @@ export default {
     updateDateRangeValue () {
       console.log(this.dr)
     },
-    saveWork () {
+    saveFeedback () {
       let self = this
-      self.form.sn = undefined
-      api.post(`/api/suggestion`, self.form).then(res => {
+      self.form.reviewId = this.userInfo.userId
+      api.post(`/api/review/status`, self.form).then(res => {
         Message({
           showClose: true,
           message: '更新成功!',
@@ -428,21 +419,35 @@ export default {
       pagination.filter = this.filter
       const period = this.filter.period
       this.$store.dispatch('setLoadingState', true)
-      // this.gridData = this.mockData
-      // this.download = this.gridData
-      // this.total = this.mockData.length
-      // this.createHeader()
-      // this.$store.dispatch('setLoadingState', false)
+
       api.post('/api/review', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
-          this.download = this.gridData
           this.total = res.data.pagination.total
           this.createHeader()
         }
         this.$store.dispatch('setLoadingState', false)
       }).catch(err => {
         this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
+    },
+    getDownload () {
+      let pagination = {
+        pageSize: 99999,
+        currentPage: 1
+      }
+      pagination.filter = this.filter
+      const period = this.filter.period
+      api.post('/api/review', {pagination, period}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.download = res.data.grid
+        }
+      }).catch(err => {
         Message({
           showClose: true,
           message: err.response.statusText,
