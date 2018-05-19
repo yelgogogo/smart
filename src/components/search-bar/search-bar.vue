@@ -95,7 +95,7 @@ export default {
       console.log('shopChange', this.filter)
     },
     updateNation () {
-      this.filter.nationId = this.nationIdIn
+      this.filter.countryCode = this.nationIdIn
       this.$emit('onChange', this.filter)
       console.log('nationChange', this.filter)
     },
