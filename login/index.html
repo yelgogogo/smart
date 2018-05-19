@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>smart login</title>
+    <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
+    <div id="app">
+        <h1 class="project-title text-center"><span class="header-logo">$</span><span class="logo-txt">mart</span></h1>
+        <h3> &nbsp;</h3>
+        <h3>{{message}}</h3>
+        <h3> &nbsp;</h3>
+        <button class="confirm" v-on:click="reverseMessage">确认登陆</button>
+        <button v-on:click="close">取消</button>
+    </div>
+
+  </head>
+  <body>
+
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: '你正在登陆Smart系统',
+    code: '',
+    uid: '',
+    shopID: '',
+    login: false,
+    state: ''
+  },
+  methods: {
+    close: function () {
+      WeixinJSBridge.call('closeWindow')
+    },
+    redirectToUrl: function () {
+      var url = 'http://nstart.cc:8688/wepay/login?force=y&uid=' + this.uid + '&code=' + this.code
+      var ajax = new XMLHttpRequest()
+      // 步骤二:设置请求的url参数,参数一是请求的类型,参数二是请求的url,可以带参数,动态的传递参数starName到服务端
+
+      ajax.open('get', url)
+      // 步骤三:发送请求
+      //   alert(url)
+      ajax.send()
+      // 步骤四:注册事件 onreadystatechange 状态改变就会调用
+      var self = this
+      ajax.onreadystatechange = function () {
+        // alert(ajax.responseText)
+        self.message = '微信登陆成功, 网页即将关闭'
+        setTimeout(function () {
+          WeixinJSBridge.call('closeWindow')
+        }, 1000)
+        self.login = true
+        if (ajax.readyState === 4 && ajax.status === 200) {
+          // 步骤五 如果能够进到这个判断 说明 数据 完美的回来了,并且请求的页面是存在的
+        }
+      }
+    },
+    reverseMessage: function () {
+      function getQueryString (name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+        var r = window.location.search.substr(1).match(reg)
+        if (r != null) {
+          return unescape(r[2])
+        }
+        return null
+      }
+      // 这样调用：
+      this.code = getQueryString('code')
+      this.shopID = getQueryString('shopID')
+      this.state = getQueryString('state')
+      this.uid = this.shopID.split('_')[1]
+      // alert(this.code);
+      // alert(this.uid);
+      this.redirectToUrl()
+    }
+  }
+})
+</script>
+<style>
+#app {
+    margin-top: 30%;
+}
+
+button.confirm {
+    color:  #ffffff;
+    background: #FF6600;
+
+    
+}
+button {
+    width: 80%;
+    margin: 10%;
+    height: 50px;
+    background: #ffffff;
+    height: 50px;
+    font-size: 24px;
+    border-color:  #FF6600;
+    color:  #FF6600;
+}
+h1 {
+    text-align: center;
+}
+h3 {
+    text-align: center;
+}
+.header-logo {
+	display: inline-block;
+	vertical-align: middle;
+	color: #fff;
+	height: 80px;
+	width: 80px;
+	font-weight: 800;
+	line-height: 80px;
+	text-align: center;
+	font-size: 60px;
+	border-radius: 50%;
+	background: #FF6600;
+}
+.logo-txt {
+	color: #FF6600;
+  position: relative;
+  top: 16px;
+  left: -8px;
+	font-size: 50px;
+	font-style: italic;
+	font-weight: 600;
+}
+</style>
+  </body>
+</html>

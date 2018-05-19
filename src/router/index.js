@@ -7,6 +7,12 @@ import Analysis from '@/views/Analysis/Analysis'
 import Products from '@/views/Products/Products'
 import AddProduct from '@/views/Products/Add'
 import Setting from '@/views/Setting/Setting'
+import config from '@/views/config/config'
+import feedback from '@/views/feedback/feedback'
+import competitorFeedback from '@/views/competitors/competitor-feedback'
+import orders from '@/views/Products/orders'
+import feedbackTotal from '@/views/feedback/feedback-total'
+import WorkFlow from '@/views/workflow/workflow'
 
 Vue.use(Router)
 
@@ -24,8 +30,8 @@ export default new Router({
       children: [
         {
           path: '',
-          name: 'expand',
-          component: Expand
+          name: 'workflow',
+          component: WorkFlow
         },
         {
           path: 'test',
@@ -43,14 +49,49 @@ export default new Router({
           component: Products
         },
         {
+          path: 'orders',
+          name: 'orders',
+          component: orders
+        },
+        {
           path: 'add-product',
           name: 'add-product',
           component: AddProduct
         },
         {
+          path: 'edit-product',
+          name: 'edit-product',
+          component: AddProduct
+        },
+        {
+          path: 'workflow',
+          name: 'workflow',
+          component: WorkFlow
+        },
+        {
           path: 'setting',
           name: 'setting',
           component: Setting
+        },
+        {
+          path: 'competitor-feedback',
+          name: 'competitor-feedback',
+          component: competitorFeedback
+        },
+        {
+          path: 'feedback',
+          name: 'feedback',
+          component: feedback
+        },
+        {
+          path: 'feedback-total',
+          name: 'feedback-total',
+          component: feedbackTotal
+        },
+        {
+          path: 'config',
+          name: 'config',
+          component: config
         }
       ]
     }

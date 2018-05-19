@@ -1,14 +1,26 @@
 <template>
   <div id="app">
     <main>
+      <v-loading v-show="loading"></v-loading>
       <router-view></router-view>
     </main>
   </div>
 </template>
 
 <script>
+import loading from '@/components/loading/loading'
+import { mapGetters } from 'vuex'
+
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    'v-loading': loading
+  },
+  computed: {
+    ...mapGetters([
+      'loading'
+    ])
+  }
 }
 </script>
 
@@ -65,8 +77,21 @@ body > .el-container {
   padding: 15px 15px;
 }
 
+.el-table th>.cell {
+  font-size: 10px;
+}
+
+.el-table .cell {
+  font-size: 10px;
+}
+
 .el-row {
-  margin-bottom: 20px;
+  margin-bottom: 0px;
+}
+
+.download {
+  color: #FF6600;
+  font-size: 24px;
 }
 
 .el-row:last-child {
@@ -89,5 +114,40 @@ a {
 }
 .text-right {
   text-align: right;
+}
+.el-popover {
+  max-width: 450px;
+  min-width: 300px;
+}
+
+.header-logo {
+	display: inline-block;
+	vertical-align: middle;
+	color: #fff;
+	height: 40px;
+	width: 40px;
+	font-weight: 800;
+	line-height: 40px;
+	text-align: center;
+	font-size: 30px;
+	border-radius: 50%;
+	background: #89b846;
+}
+.logo-txt {
+	color: #fff;
+  position: relative;
+  top: 6px;
+  left: -8px;
+	font-size: 24px;
+	font-style: italic;
+	font-weight: 600;
+}
+.split-line {
+  border: none;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.large-icon {
+  font-size: 18px;
 }
 </style>
