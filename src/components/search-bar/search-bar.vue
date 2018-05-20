@@ -24,40 +24,19 @@
         </el-select>
       </el-form-item>
     </el-col>
-    <el-col :span="5" :offset="1">
-        <el-form-item label="选择时间">
-          <el-select class="period-select" v-model="periodSelectIn" @change="updatePerid">
-            <el-option
-            v-for="item in periodOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item v-if="periodSelectIn===0">
-          <el-date-picker
-            v-model="periodCustomize"
-            @change="updatePeriodCustomize"
-            type="daterange"
-            format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
-            range-separator="~"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-else>&nbsp;</el-form-item>
+    <el-col :span="13" :offset="1">
+      <period :periodSelect="periodSelect" @onChange="periodChange($event)"></period>
       </el-col>   
   </el-row>
 </template>
 
 <script>
 import { PERIOD_OPTIONS } from '../../utils/enum'
-import moment from 'moment'
+import period from '@/components/period/period'
 export default {
+  components: {
+    period
+  },
   props: [
     'shopList',
     'nationList',
@@ -86,7 +65,6 @@ export default {
   },
   mounted () {
     this.periodSelectIn = this.periodSelect
-    this.updatePerid()
   },
   methods: {
     updateShop () {
@@ -99,21 +77,16 @@ export default {
       this.$emit('onChange', this.filter)
       console.log('nationChange', this.filter)
     },
-    updatePerid () {
-      if (this.periodSelectIn === 0) {
-        return
-      }
-      let format = 'YYYY-MM-DD'
-      this.filter.period.start = moment().subtract(this.periodSelectIn, 'days').format(format)
-      this.filter.period.end = moment().format(format)
+    periodChange (period) {
+      // if (this.periodSelectIn === 0) {
+      //   return
+      // }
+      // let format = 'YYYY-MM-DD'
+      // this.filter.period.start = moment().subtract(this.periodSelectIn, 'days').format(format)
+      // this.filter.period.end = moment().format(format)
+      this.filter.period = period
       this.$emit('onChange', this.filter)
-      console.log('onChange', this.filter)
-    },
-    updatePeriodCustomize () {
-      this.filter.period.start = this.periodCustomize[0]
-      this.filter.period.end = this.periodCustomize[1]
-      this.$emit('onChange', this.filter)
-      console.log('onChange', this.filter)
+      console.log('periodChange', this.filter)
     }
   }
 }
