@@ -6,6 +6,12 @@ export const ROLE = {
   GUEST: 0
 }
 
+export const PERIOD_UNIT = {
+  MONTH: 7,
+  WEEK: 6,
+  DAY: 5
+}
+
 export const PERIOD_OPTIONS = [
   {
     label: '自定义',
