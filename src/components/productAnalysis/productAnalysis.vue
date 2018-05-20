@@ -72,33 +72,30 @@
     </el-tabs>
 
     <el-row class="analysis-table-header">
-      <el-col :span="23">
-      <product-search 
-        v-if="Object.keys(dynamicHeaders).length > 0"
-        v-on:showHideColumns="showHideColumns"
-        v-on:processUnitChange="processUnitChange"
-        v-on:processDateRangeChange="processDateRangeChange"
-        :columns="dynamicHeaders"
-        :salesUnit="salesUnit" 
-        :dateRange="dateRange"
-      />
-      <span v-else>&nbsp;</span>
+      <el-col :span="20">
+        <el-form>
+          <product-search 
+            @onChange="onSearchChange"
+          ></product-search>
+        </el-form>
       </el-col>
-      <el-col :span="1">
-        <vue-csv-downloader
-        :data="productsData"
-        :fields="fields"
-        class="download"
-        >
-        <i class="el-icon-document" ></i>
-        </vue-csv-downloader>
-      </el-col>
+      <el-col :span="4" class="text-right">
+          <el-button v-if="download.length===0" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
+          <vue-csv-download
+            v-else
+            :data="download"
+            :fields="fieldsCn"
+            class="download"
+            >
+            <el-button size="mini" icon="el-icon-document">下载</el-button>
+          </vue-csv-download>
+        </el-col>
     </el-row>
     <el-table 
       border
       stripe
       height="500"
-      :data="productsData">
+      :data="gridData">
       <el-table-column
         sortable
         prop="date"
@@ -106,11 +103,11 @@
         label="日期">
       </el-table-column>
       <el-table-column 
-        v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
-        :width="headerWidth[headerName]?headerWidth[headerName]:'100%'"
+        v-for="(headerName, index) in dynamicHeaders" 
+        :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
         :key="headerName + '_' + index" 
         :label="headerName"
-        v-if="dynamicHeaders[headerName]">
+        v-if="dynamicHeaders.includes(headerName)">
         <template slot-scope="scope" v-if="scope.row[headerName]">
           {{scope.row[headerName]}}
         </template>
@@ -120,7 +117,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import 'echarts/lib/component/markPoint'
 import 'echarts/lib/component/markLine'
 import 'echarts/lib/component/markArea'
@@ -128,6 +124,7 @@ import api from '@/utils/api'
 import productSearch from '@/components/productSearch/productSearch'
 import { Message } from 'element-ui'
 import VueCsvDownloader from 'vue-csv-downloader'
+import {PERIOD_UNIT} from '@/utils/enum'
 
 export default {
   components: {
@@ -136,7 +133,20 @@ export default {
   },
   data () {
     return {
+      download: [],
+      fieldsCn: [],
       activeName: 'sales',
+      filter: {
+        period: {
+          start: '',
+          end: ''
+        },
+        productId: this.$route.query.productId,
+        shopId: this.$route.query.shopId,
+        countryCode: this.$route.query.countryCode,
+        marketplaceId: this.$route.query.marketplaceId,
+        unit: PERIOD_UNIT.DAY
+      },
       salesUnit: 5,
       showChartCategory: false,
       showChartKeyword: false,
@@ -147,7 +157,7 @@ export default {
       keywords: [],
       dateRange: [],
       legends: [],
-      dynamicHeaders: {},
+      dynamicHeaders: [],
       fields: [
       ],
       headerWidth: {
@@ -159,7 +169,7 @@ export default {
         Sessions: 80,
         'Session Percentage': 90
       },
-      productsData: [],
+      gridData: [],
       currentStatistics: [],
       competitionStatistics: [],
       chartTitle: '',
@@ -185,8 +195,7 @@ export default {
   created () {
     this.statisticsQuery = this.$route.query
     this.statisticsQuery.shopId = parseInt(this.statisticsQuery.shopId)
-    this.getStatistics()
-    this.getSuggestion()
+    // this.getSuggestion()
   },
   methods: {
     onClick (evnet, e) {
@@ -194,17 +203,6 @@ export default {
       console.log(event.componentType)
     },
     showHideColumns (newHeaders) {
-      for (let dh in this.dynamicHeaders) {
-        let found = newHeaders.find(nh => {
-          return dh === nh
-        })
-        if (found) {
-          this.dynamicHeaders[dh] = true
-        } else {
-          this.dynamicHeaders[dh] = false
-        }
-      }
-      this.dynamicHeaders = Object.assign({}, this.dynamicHeaders)
     },
     handleClick (tab, event) {
       this.showChartCategory = false
@@ -243,59 +241,21 @@ export default {
         })
       })
     },
-    udpateSalesChart (unit, period) {
-      let params
-
-      if (period.length === 2) {
-        params = {
-          period: {
-            start: period[0],
-            end: period[1]
-          },
-          unit: unit,
-          productId: this.productId,
-          shopId: this.shopId
-        }
-      }
-      this.productsData = []
-      // this.dynamicHeaders = {}
-      this.getStatistics(params)
+    onSearchChange (filter) {
+      console.log('onSearchChange', filter, this.filter)
+      this.filter = {...this.filter, ...filter}
+      this.getGridData()
     },
-    processUnitChange (unit) {
-      this.salesUnit = unit
-      this.udpateSalesChart(unit, this.dateRange)
-    },
-    processDateRangeChange (range) {
-      this.dateRange = range
-      this.udpateSalesChart(this.salesUnit, range)
-    },
-    getStatistics (params) {
+    getGridData () {
       let self = this
-
-      if (!params) {
-        let yesterday = moment().subtract(30, 'days')
-        let format = 'YYYY-MM-DD'
-
-        params = {
-          period: {
-            start: yesterday.format(format),
-            end: moment().format(format)
-          },
-          unit: parseInt(this.salesUnit),
-          ...this.statisticsQuery
-        }
-      }
-
       this.$store.dispatch('setLoadingState', true)
-      api.post('/api/product/statistics', params).then(res => {
+      api.post('/api/product/statistics', this.filter).then(res => {
         if (res.status === 200 && res.data) {
-          self.currentStatistics = res.data
-          self.fields = res.data.map(r => r.name)
-          self.fields = ['date'].concat(self.fields)
-          self.parseCategories(self.currentStatistics)
+          this.currentStatistics = res.data
+
           // console.log(self.currentStatistics)
 
-          api.post('/api/product/competition', params).then(res1 => {
+          api.post('/api/product/competition', this.filter).then(res1 => {
             this.$store.dispatch('setLoadingState', false)
             if (res1.status === 200 && res1.data) {
               self.competitionStatistics = res1.data
@@ -318,6 +278,9 @@ export default {
         })
         this.$store.dispatch('setLoadingState', false)
       })
+    },
+    getDownload () {
+
     },
     parseCategories (statistics) {
       let self = this
