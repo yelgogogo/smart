@@ -98,11 +98,7 @@
             :total="total">
           </el-pagination>
         </el-col>
-        <!-- <el-col :span="5" :offset="0" class="text-right"> -->
-          <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
-          <!-- </el-col> -->
           <el-col :span="8" class="text-right">
-            <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
             <el-button v-if="download.length===0" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
             <vue-csv-download
               v-else
