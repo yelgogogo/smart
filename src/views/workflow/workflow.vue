@@ -125,25 +125,24 @@
                   </template>
                 </el-table-column>
             <el-table-column 
-            v-for="(headerName, index) in dynamicHeaders" 
-            :width="headerWidth[headerName]?headerWidth[headerName]:''"
-            :key="headerName + '_' + index" 
-            :label="dictCn[headerName]"
-            v-if="dynamicHeaders.includes(headerName)">
+              v-for="(headerName, index) in dynamicHeaders" 
+              :width="headerWidth[headerName.en]?headerWidth[headerName.en]:''"
+              :key="headerName.en + '_' + index" 
+              :label="headerName.cn" >
                 <template slot-scope="scope" >
                   
-                  <span v-if="headerName==='productId'">
+                  <span v-if="headerName.en==='productId'">
                     <router-link :to="{path: '/main/products', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
                       {{scope.row.productId}}
                     </router-link>
                   </span>
-                  <span v-else-if="headerName==='suggestionId'">
+                  <span v-else-if="headerName.en==='suggestionId'">
                       <i v-if="scope.row.specialStatus ==='high'" class="el-icon-warning"></i>&nbsp;&nbsp;{{scope.row.suggestionId}}
                   </span>
-                  <span v-else-if="headerName==='status'">
+                  <span v-else-if="headerName.en==='status'">
                       <el-tag :type="getTagType(scope.row.status)">{{typeReverseMapping[scope.row.status]}}</el-tag>
                   </span>
-                  <span v-else-if="scope.row[headerName]">{{scope.row[headerName]}}</span>
+                  <span v-else-if="scope.row[headerName.en]">{{scope.row[headerName.en]}}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -160,151 +159,6 @@
               </template>
             </el-table-column>
             </el-table>
-        <!-- <el-table
-          ref="table"
-          toggleRowExpansion
-          clearSort
-          @expand-change="getSugHistory"
-          :data="gridData">
-            <el-table-column type="expand">
-              <template slot-scope="scope">
-                <el-form label-position="right">
-                  <el-row>
-                    <el-col  :md="16" :lg="12">
-                      <el-form-item label="备注" :label-width="formLabelWidth">                    
-                        <el-input
-                          type="textarea"
-                          :maxlength="maxlength"
-                          :autosize="{ minRows: 3, maxRows: 5}"
-                          :placeholder="'添加注释..., 最大字数' + maxlength"
-                          v-model="scope.row.comments">
-                        </el-input>
-                        <el-button icon="el-icon-edit" round size="mini" @click="addComment(scope.row.suggestionId, scope.row.comments, scope.row.sn)">保存注释</el-button>
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                  <el-form-item label="附件" :label-width="formLabelWidth">
-                    <el-upload
-                      name="attachment"
-                      :file-list="scope.row.attachment"
-                      :on-preview="downloadFile"
-                      :before-remove="beforeRemove"
-                      :on-remove="removeFile"
-                      :on-change="handlerUploader"
-                      :headers="getAuthHeaders()"
-                      :action="getUploadUrl(scope.row.suggestionId)">
-                      <i class="el-icon-upload"></i>
-                      点击上传
-                    </el-upload>
-                  </el-form-item>
-                  <el-form-item label="历史" :label-width="formLabelWidth">
-                      <div v-if="scope.row.history" v-for="(his, index) in scope.row.history" :key="'his_' + index">
-                        <span><i class="el-icon-time"></i>{{ his.date }}</span>
-                        <span>{{ his.operator }}</span>
-                        <i class="el-icon-arrow-right"></i>
-                        <el-tag>{{ typeReverseMapping[his.operation] }}</el-tag>
-                        <span>{{ his.message }}</span>   
-                      </div>
-                      <div v-else>
-                        Loading...
-                      </div>
-                  </el-form-item>
-                </el-form>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="编号"
-              width="70"
-              sortable
-              prop="suggestionId">
-            </el-table-column>
-            <el-table-column
-              label="提议时间"
-              width="100"
-              sortable
-              prop="createDate">
-            </el-table-column>
-            <el-table-column
-              width="80"
-              label="状态">
-                <template slot-scope="scope">                  
-                  <el-tag :type="getTagType(scope.row.status)">{{typeReverseMapping[scope.row.status]}}</el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column
-              label="优化类型"
-              width="100"
-              prop="suggestType">
-            </el-table-column>
-            <el-table-column
-              label="店铺"
-              width="100">
-              <template slot-scope="scope">                  
-                {{ getShopName(scope.row.shopName)}}
-              </template>
-            </el-table-column> 
-            <el-table-column
-              label="国家"
-              width="60"
-              prop="nationId">
-            </el-table-column>
-            <el-table-column
-              label="ASIN"
-              width="120">
-              <template slot-scope="scope">
-                <router-link :to="{path: '/main/products', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
-                  {{scope.row.productId}}
-                </router-link>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="产品名称"
-              width="100"
-              prop="name">
-            </el-table-column>
-            <el-table-column
-              label="优化类型"
-              width="100"
-              prop="suggestType">
-            </el-table-column> 
-            <el-table-column
-              width="100"
-              label="建议主题"
-              prop="title">
-              <template slot-scope="scope">
-                <div class="suggestion" :title="scope.row.title">{{scope.row.title}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="提出人"
-              sortable
-              width="100"
-              prop="proposer">
-            </el-table-column>
-            <el-table-column
-              label="审批人"
-              width="100"
-              prop="auditor">
-            </el-table-column>
-            <el-table-column
-              label="执行时间"
-              width="100"
-              prop="finishDate">
-            </el-table-column>
-            <el-table-column
-              width="200"
-              label="操作">
-              <template slot-scope="scope">
-                <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
-                  <el-button size="mini" round>
-                    分析
-                  </el-button>
-                </router-link>
-                <el-button v-if="scope.row.status === 'issued' || scope.row.status === 'reissued'" size="mini" @click="edit(scope.row)" round>编辑</el-button>
-                <el-button v-if="scope.row.status !== 'closed'" size="mini" icon="el-icon-edit" @click="doWorkflowUpdate(scope.row)" round>工作流</el-button>
-              </template>
-            </el-table-column>
-          </el-table> -->
       </el-col>
       <el-col :span="24" class="text-left">
         <el-pagination
@@ -471,18 +325,18 @@
         productType: '',
         shopList: [],
         headersArray: [
-          {en: 'suggestionId', show: true},
-          {en: 'createDate', show: true},
-          {en: 'productId', show: true},
-          {en: 'status', show: true},
-          {en: 'suggestType', show: true},
-          {en: 'shopName', show: false},
-          {en: 'countryCode', show: false},
-          {en: 'name', show: true},
-          {en: 'title', show: true},
-          {en: 'proposer', show: false},
-          {en: 'auditor', show: false},
-          {en: 'finishDate', show: false}
+          {en: 'suggestionId', cn: '提议编号', show: true},
+          {en: 'createDate', cn: '提议时间', show: true},
+          {en: 'productId', cn: 'ASIN', show: true},
+          {en: 'status', cn: '提议状态', show: true},
+          {en: 'suggestType', cn: '优化类型', show: true},
+          {en: 'shopName', cn: '店铺', show: false},
+          {en: 'countryCode', cn: '国家', show: false},
+          {en: 'name', cn: '产品名称', show: true},
+          {en: 'title', cn: '标题', show: true},
+          {en: 'proposer', cn: '提议人', show: false},
+          {en: 'auditor', cn: '审批人', show: false},
+          {en: 'finishDate', cn: '完成时间', show: false}
         ],
         dynamicHeaders: [],
         headers: [],
@@ -499,7 +353,7 @@
           '提议时间': 'createDate',
           '产品名称': 'name',
           'ASIN': 'productId',
-          '提议人': ' proposer',
+          '提议人': 'proposer',
           '优化类型': 'suggestType',
           '提议内容': 'suggestion',
           '审批人': 'auditor',
@@ -691,18 +545,11 @@
     },
     methods: {
       createHeader () {
-        // for (let key in this.gridData[0]) {
-        //   if (key !== 'review') {
-        //     this.dynamicHeaders[key] = true
-        //     this.headers = [...this.headers, key]
-        //   }
-        // }
-        this.dynamicHeaders = this.headersArray.filter(h => h.show).map(e => e.en)
-        this.headers = this.headersArray.map(e => this.dictCn[e.en])
-        this.checkedList = this.dynamicHeaders.map(e => this.dictCn[e])
+        this.dynamicHeaders = this.headersArray.filter(h => h.show)
+        this.headers = this.headersArray.map(e => e.cn)
+        this.checkedList = this.dynamicHeaders.map(e => e.cn)
       },
       searchBarChange (filter) {
-        console.log('searchBarChange', filter)
         this.filter = {...this.filter, ...filter}
         this.getPageWorkflows()
         this.getAllWorkflows()
@@ -712,19 +559,11 @@
         this.headersArray.forEach(h => {
           if (checkList.includes(h.en)) {
             h.show = true
+          } else {
+            h.show = false
           }
         })
-        this.dynamicHeaders = this.headersArray.filter(h => h.show).map(e => e.en)
-      // this.gridData = this.gridDataBackup.map(bk => {
-      //   const newData = {}
-      //   this.checkedList.forEach(c => {
-      //     newData[c] = bk[c]
-      //   })
-      //   newData.history = bk.history
-      //   newData.attachment = bk.attachment
-      //   return newData
-      // })
-        // this.headers = this.checkedList
+        this.dynamicHeaders = this.headersArray.filter(h => h.show)
       },
       getShopName (shopId) {
         const finder = this.shopList.find(s => s.shopId === shopId)
@@ -733,7 +572,6 @@
       beforeRemove (file, fileList) {
         const reg = new RegExp(/ment\/.*/)
         const path = reg.exec(file.url)[0]
-        console.log('beforeRemove', file, fileList)
         if (this.userInfo.roles.findIndex(r => r.roleId === 6) >= 0) {
           return this.$confirm(`确定移除 ${file.name}？`).then(() => {
             api.delete(`/api/suggestion/attach${path}`).then(res => {
