@@ -142,7 +142,7 @@ export default {
           end: ''
         },
         productId: this.$route.query.productId,
-        shopId: this.$route.query.shopId,
+        shopId: parseInt(this.$route.query.shopId),
         countryCode: this.$route.query.countryCode,
         marketplaceId: this.$route.query.marketplaceId,
         unit: PERIOD_UNIT.DAY
