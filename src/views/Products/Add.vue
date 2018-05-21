@@ -60,11 +60,13 @@ export default {
       showAddCpButton: true,
       showAddKwButton: true,
       competitor: {
+        marketplaceId: '',
         productId: '',
         competitorId: '',
         shopId: ''
       },
       gKeyword: {
+        marketplaceId: '',
         productId: '',
         keyword: '',
         shopId: ''
@@ -96,11 +98,13 @@ export default {
       return isJPG && isLt2M
     },
     addCompetitor () {
+      this.competitor.marketplaceId = this.product.marketplaceId
       this.competitor.shopId = this.product.shopId
       this.competitor.productId = this.product.productASIN
       this.showAddCpButton = false
     },
     addKeyword () {
+      this.gKeyword.marketplaceId = this.product.marketplaceId
       this.gKeyword.shopId = this.product.shopId
       this.gKeyword.productId = this.product.productASIN
       this.showAddKwButton = false
@@ -139,7 +143,7 @@ export default {
     },
     listCompetitor () {
       let self = this
-      api.get(`/api/product/competitor/${self.product.shopId}/${self.product.productASIN}`).then(res => {
+      api.get(`/api/product/competitor/${self.product.marketplaceId}/${self.product.shopId}/${self.product.productASIN}`).then(res => {
         self.competitors = res.data
         self.listKeywords()
         self.clearCompetitor()
@@ -147,7 +151,7 @@ export default {
     },
     listKeywords () {
       let self = this
-      api.get(`/api/product/keyword/${self.product.shopId}/${self.product.productASIN}`).then(res => {
+      api.get(`/api/product/keyword/${self.product.marketplaceId}/${self.product.shopId}/${self.product.productASIN}`).then(res => {
         self.assignKeywords(res.data)
         self.clearGKeywork()
       })
@@ -159,7 +163,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.delete(`/api/product/competitor/${self.product.shopId}/${self.product.productASIN}/${id}`).then(res => {
+        api.delete(`/api/product/competitor/${self.product.marketplaceId}/${self.product.shopId}/${self.product.productASIN}/${id}`).then(res => {
           self.listCompetitor()
           Message({
             type: 'success',
@@ -186,7 +190,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.delete(`/api/product/keyword/${self.product.shopId}/${kw.keywordId}`).then(res => {
+        api.delete(`/api/product/keyword/${kw.keywordId}`).then(res => {
           self.listKeywords()
           Message({
             type: 'success',
