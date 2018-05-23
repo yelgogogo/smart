@@ -116,7 +116,6 @@
         <el-table 
           border
           stripe
-          height="2000"
           :data="gridData">
           <el-table-column 
             v-for="(headerName, index) in dynamicHeaders" 
@@ -372,7 +371,7 @@ export default {
     },
     saveFeedback () {
       let self = this
-      self.form.reviewId = this.userInfo.userId
+      // self.form.reviewId = this.userInfo.userId
       api.post(`/api/review/status`, self.form).then(res => {
         Message({
           showClose: true,

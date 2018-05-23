@@ -239,7 +239,7 @@ export default {
       this.getPageProducts()
     },
     createHeader (headers) {
-      this.dynamicHeaders = ['shopId', 'country', 'asin', 'currentQuantity', 'currentAverage']
+      this.dynamicHeaders = ['shopName', 'country', 'asin', 'currentQuantity', 'currentAverage']
       let sort = []
       for (let header in headers) {
         if (!this.dynamicHeaders.includes(header)) {
