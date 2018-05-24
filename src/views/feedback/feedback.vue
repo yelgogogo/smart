@@ -254,6 +254,7 @@ export default {
       formLabelWidth: '120px',
       options: [],
       productType: '',
+      reviewHistory: [],
       dialogFormVisible: false,
       optimizationTypes: [
       ],
@@ -316,6 +317,11 @@ export default {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
         this.nationListBK = this.nationList
+      })
+    },
+    getReviewHistory (reviewId) {
+      api.get(`/api/reviews/messages/${reviewId}`).then(res => {
+        this.reviewHistory = res.data
       })
     },
     searchBarChange (filter) {
@@ -385,6 +391,7 @@ export default {
     },
     edit (row) {
       console.log(row)
+      this.getReviewHistory(row.reviewId)
       this.form = row
       this.dialogFormVisible = true
     },
