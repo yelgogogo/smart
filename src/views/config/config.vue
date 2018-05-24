@@ -10,6 +10,20 @@
         <el-button size="mini" icon="el-icon-plus" v-if="showAddKwButton === true" @click="addSuggestType" round>增加优化类型</el-button>
         <el-button size="mini" v-if="showAddKwButton === false" @click="saveSuggestType" round>保存优化类型</el-button>
       </el-form-item>
+      <el-form-item label="广告上传">
+        <el-upload
+          name="advertise"
+          :file-list="adList"
+          :on-preview="downloadFile"
+          :before-remove="beforeRemove"
+          :on-remove="removeFile"
+          :on-change="handlerUploader"
+          :headers="getAuthHeaders()"
+          :action="getUploadUrl()">
+          <i class="el-icon-upload"></i>
+          点击上传
+        </el-upload>
+      </el-form-item>
     </el-form>
   </template>
   
@@ -20,6 +34,7 @@
   export default {
     data () {
       return {
+        adList: [],
         product: {},
         competitors: [],
         suggestTypes: [],
@@ -43,6 +58,54 @@
       this.listSuggestTypes()
     },
     methods: {
+      getUploadUrl () {
+        return api.baseURL + '/api/advertisement_data'
+      },
+      handlerUploader (file, fileList) {
+        console.log(api, file, fileList)
+      },
+      getAuthHeaders () {
+        let headers = {}
+        headers[api.tokenKey] = api.getToken()
+        return headers
+      },
+      removeFile (suggestionId, file, fileList) {
+        console.log(suggestionId, file, fileList)
+        // api.delete('/suggestion/attachment/' + suggestionId)
+      },
+      downloadFile (file) {
+        let eleLink = document.createElement('a')
+        eleLink.download = file.name
+        eleLink.style.display = 'none'
+        eleLink.href = file.url
+        // 触发点击
+        document.body.appendChild(eleLink)
+        eleLink.click()
+        // 然后移除
+        document.body.removeChild(eleLink)
+      },
+      beforeRemove (file, fileList) {
+        const reg = new RegExp(/ment\/.*/)
+        const path = reg.exec(file.url)[0]
+        if (this.userInfo.roles.findIndex(r => r.roleId === 6) >= 0) {
+          return this.$confirm(`确定移除 ${file.name}？`).then(() => {
+            api.delete(`/api/suggestion/attach${path}`).then(res => {
+              this.$message({
+                type: 'success',
+                message: '更新成功'
+              })
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '更新失败'
+            })
+          })
+        } else {
+          this.$alert('无权限删除附件', '注意', {confirmButtonText: '确定'})
+          return false
+        }
+      },
       handleAvatarSuccess (res, file) {
         this.product.imgUrl = URL.createObjectURL(file.raw)
       },
