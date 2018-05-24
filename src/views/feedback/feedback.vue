@@ -115,7 +115,7 @@
       <el-col :span="24">
         <el-table 
           border
-          stripe
+          stripe 
           :data="gridData">
           <el-table-column 
             v-for="(headerName, index) in dynamicHeaders" 
@@ -286,7 +286,6 @@ export default {
   created () {
     this.getShopList()
     this.getNationList()
-    this.getPageProducts()
   },
   methods: {
     resetSearch () {
