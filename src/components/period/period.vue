@@ -55,7 +55,7 @@ export default {
         return
       }
       let format = 'YYYY-MM-DD'
-      this.period.start = moment().subtract(this.periodSelectIn, 'days').format(format)
+      this.period.start = moment().subtract(this.periodSelectIn - 1, 'days').format(format)
       this.period.end = moment().format(format)
       console.log('onChange', this.period)
       this.$emit('onChange', this.period)
