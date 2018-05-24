@@ -200,7 +200,7 @@ export default {
         quantity: '订单数量',
         price: '订单价格',
         country: '国家',
-        shopId: '店铺'
+        shopName: '店铺'
       },
       form: {
         productId: '',
@@ -231,7 +231,7 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['date', 'shopId', 'country', 'orderId', 'status', 'asin', 'productName', 'buyerName', 'buyerId', 'quantity', 'price']
+      this.dynamicHeaders = ['date', 'shopName', 'country', 'orderId', 'status', 'asin', 'productName', 'buyerName', 'buyerId', 'quantity', 'price']
       this.headers = this.dynamicHeaders
     },
     orderStatusChange (evnet) {
