@@ -91,17 +91,20 @@
           </vue-csv-download>
         </el-col>
     </el-row>
+
+    <el-pagination
+      @size-change="sizeChange"
+      @current-change="currentChange"
+      :current-page="currentPage"
+      :page-sizes="[20, 50, 100]"
+      :page-size="pageSize"
+      layout="sizes, total, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
     <el-table 
       border
       stripe
-      height="500"
       :data="gridData">
-      <el-table-column
-        sortable
-        prop="date"
-        width="100%"
-        label="日期">
-      </el-table-column>
       <el-table-column 
         v-for="(headerName, index) in dynamicHeaders" 
         :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
@@ -113,6 +116,15 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      @size-change="sizeChange"
+      @current-change="currentChange"
+      :current-page="currentPage"
+      :page-sizes="[20, 50, 100]"
+      :page-size="pageSize"
+      layout="sizes, total, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
   </div>
 </template>
 
@@ -200,6 +212,14 @@ export default {
     // this.getSuggestion()
   },
   methods: {
+    sizeChange (pageSize) {
+      this.pageSize = pageSize
+      this.getPageData()
+    },
+    currentChange (currentPage) {
+      this.currentPage = currentPage
+      this.getPageData()
+    },
     onClick (evnet, e) {
       console.log(event, e, window.VueECharts)
       console.log(event.componentType)
@@ -250,8 +270,8 @@ export default {
       this.getPageData()
     },
     createHeader () {
-      this.dynamicHeaders = ['orders', 'Ad_SalesByAd_Div_Sales', 'Ad_Spend', 'Ad_Spend_Div_Sales', 'Ad_Spend_Div_SalesByAd', 'Ad_TotalQuantity', 'Ad_TotalSales',
-        'Ad_TotalSalesByAd', 'Page Views', 'Page Views Percentage', 'QA', 'Session Percentage', 'Sessions', 'Unit Session Percentage', 'label', 'score', 'price', 'quantity_ordered', 'reviews']
+      this.dynamicHeaders = ['label', 'orders', 'Ad_SalesByAd_Div_Sales', 'Ad_Spend', 'Ad_Spend_Div_Sales', 'Ad_Spend_Div_SalesByAd', 'Ad_TotalQuantity', 'Ad_TotalSales',
+        'Ad_TotalSalesByAd', 'Page Views', 'Page Views Percentage', 'QA', 'Session Percentage', 'Sessions', 'Unit Session Percentage', 'score', 'price', 'quantity_ordered', 'reviews']
       // this.headers = this.dynamicHeaders
     },
     getPageData () {
