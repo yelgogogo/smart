@@ -136,6 +136,8 @@ export default {
       download: [],
       fieldsCn: [],
       activeName: 'sales',
+      currentPage: 1,
+      pageSize: 20,
       filter: {
         period: {
           start: '',
@@ -245,6 +247,36 @@ export default {
       console.log('onSearchChange', filter, this.filter)
       this.filter = {...this.filter, ...filter}
       this.getGridData()
+      this.getPageData()
+    },
+    createHeader () {
+      this.dynamicHeaders = ['orders', 'Ad_SalesByAd_Div_Sales', 'Ad_Spend', 'Ad_Spend_Div_Sales', 'Ad_Spend_Div_SalesByAd', 'Ad_TotalQuantity', 'Ad_TotalSales',
+        'Ad_TotalSalesByAd', 'Page Views', 'Page Views Percentage', 'QA', 'Session Percentage', 'Sessions', 'Unit Session Percentage', 'label', 'score', 'price', 'quantity_ordered', 'reviews']
+      // this.headers = this.dynamicHeaders
+    },
+    getPageData () {
+      let pagination = {
+        pageSize: this.pageSize,
+        currentPage: this.currentPage
+      }
+      const period = this.filter.period
+      this.$store.dispatch('setLoadingState', true)
+
+      api.post('/api/product/chart', {pagination, ...this.filter, period}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.gridData = res.data.grid
+          this.total = res.data.pagination.total
+          this.createHeader()
+        }
+        this.$store.dispatch('setLoadingState', false)
+      }).catch(err => {
+        this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
     },
     getGridData () {
       let self = this
