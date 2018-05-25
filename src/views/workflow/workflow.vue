@@ -150,7 +150,7 @@
               width="240"
               label="操作">
               <template slot-scope="scope">
-                <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
+                <router-link :to="{path: '/main/analysis', query: {countryCode: scope.row.countryCode,marketplaceId: getMarketplaceId(scope.row.countryCode),shopId: scope.row.shopId, productId: scope.row.productId}}">
                   <el-button size="mini" round>
                     分析
                   </el-button>
@@ -737,6 +737,10 @@
           this.nationList = res.data.grid
           this.nationListBK = this.nationList
         })
+      },
+      getMarketplaceId (countryCode) {
+        const finder = this.nationList.find(s => s.countryCode === countryCode)
+        return finder ? finder.marketplaceId : ''
       },
       getShopList () {
         api.get('/api/shop').then(res => {
