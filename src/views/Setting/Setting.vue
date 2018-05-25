@@ -451,6 +451,15 @@
   line-height: 40px;
 }
 
+.el-checkbox {
+  margin-right: 30px;
+}
+
+.el-checkbox+.el-checkbox{
+  margin-left: 0px;
+  margin-right: 30px;
+
+}
 </style>
   
   
