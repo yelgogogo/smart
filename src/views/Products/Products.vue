@@ -119,7 +119,7 @@
                     编辑
                   </el-button>
                 </router-link>
-                <router-link :to="{path: '/main/analysis', query: {countryCode:scope.row.countryCode,marketplaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.productASIN}}">
+                <router-link :to="{path: '/main/analysis', query: {productName:scope.row.productName,countryCode:scope.row.countryCode,marketplaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.productASIN}}">
                   <el-button size="mini" round>
                     分析
                   </el-button>
@@ -447,7 +447,6 @@ export default {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
           this.dateList = this.gridData[0].orderList
-          this.dateList = this.dateList.sort((a, b) => a.label < b.label ? 1 : -1)
           this.total = res.data.pagination.total
           this.listLikedProducts()
         }

@@ -177,6 +177,7 @@ export default {
       showChartCategory: false,
       showChartKeyword: false,
       statisticsQuery: null,
+      productName: this.$route.query.productName,
       productId: this.$route.query.productId,
       shopId: this.$route.query.shopId,
       categories: [],
@@ -264,8 +265,7 @@ export default {
           },
           // dataView: {readOnly: false},
           magicType: {type: ['line', 'bar']},
-          restore: {},
-          saveAsImage: {}
+          restore: {}
         }
       }
     }
@@ -668,6 +668,9 @@ export default {
           }
         })
         return {
+          title: {
+            text: this.productName
+          },
           tooltip: {
             trigger: 'axis',
             formatter: (params) => {
