@@ -29,7 +29,7 @@
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
               <chart 
-                :options="categoryBar(categories[0])"
+                :options="optionCreate(dailyQa)"
                 :init-options="initOptions"
                 auto-resize
                 />
@@ -40,7 +40,7 @@
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
               <chart 
-                :options="categoryBar(categories[0])"
+                :options="optionCreate(dailyFeedback)"
                 :init-options="initOptions"
                 auto-resize
                 />
@@ -147,9 +147,12 @@ export default {
     return {
       download: [],
       fieldsCn: [],
+      dailyQa: [],
+      dailyFeedback: [],
       activeName: 'sales',
       currentPage: 1,
       pageSize: 20,
+      total: 0,
       filter: {
         period: {
           start: '',
@@ -238,6 +241,7 @@ export default {
       console.log(tab, event)
     },
     getTabName (name) {
+      console.log('getTabName', name)
       const arr = name.split(' > ')
       let txt1 = ''
       if (name.substring(0, 8) === 'category') {
@@ -293,7 +297,7 @@ export default {
         this.$store.dispatch('setLoadingState', false)
         Message({
           showClose: true,
-          message: err.response.statusText,
+          message: err.response,
           type: 'error'
         })
       })
@@ -304,20 +308,33 @@ export default {
       api.post('/api/product/statistics', this.filter).then(res => {
         if (res.status === 200 && res.data) {
           this.currentStatistics = res.data
-
-          // console.log(self.currentStatistics)
-
           api.post('/api/product/competition', this.filter).then(res1 => {
             this.$store.dispatch('setLoadingState', false)
             if (res1.status === 200 && res1.data) {
               self.competitionStatistics = res1.data
+              this.dailyQa = []
+              this.dailyFeedback = []
+              self.competitionStatistics.forEach(c => {
+                c.name = c.id
+                const finderQa = c.info.find(i => i.name === 'QA')
+                this.dailyQa.push({
+                  name: c.name,
+                  info: finderQa.info
+                })
+                const finderFeedback = c.info.find(i => i.name === 'QA')
+                this.dailyFeedback.push({
+                  name: c.name,
+                  info: finderFeedback.info
+                })
+              })
+              self.parseCategories()
               self.parseStatisticsTableData()
             }
           }).catch(err => {
             this.$store.dispatch('setLoadingState', false)
             Message({
               showClose: true,
-              message: err.response.statusText,
+              message: err.response,
               type: 'error'
             })
           })
@@ -325,7 +342,7 @@ export default {
       }).catch(err => {
         Message({
           showClose: true,
-          message: err.response.statusText,
+          message: err.response,
           type: 'error'
         })
         this.$store.dispatch('setLoadingState', false)
@@ -334,12 +351,17 @@ export default {
     getDownload () {
 
     },
-    parseCategories (statistics) {
+    parseCategories () {
+      console.log('parseCategories')
+      const statistics = this.competitionStatistics[0].info
+      console.log(this.competitionStatistics, Array.isArray(statistics), statistics.length)
       let self = this
       if (Array.isArray(statistics) && statistics.length > 0) {
         self.categories = []
         self.keywords = []
+        console.log('parseCategories', statistics)
         statistics.map((dt, index) => {
+          console.log(dt.name)
           if (dt.name &&
             typeof dt.name === 'string') {
             self.legends.push(dt.name)
@@ -372,7 +394,6 @@ export default {
             productsData[io.label][dt.name] = Object.create(io)
           })
         })
-        // console.log(self.dynamicHeaders)
 
         // transform object to array
         self.productsData = []
@@ -383,7 +404,6 @@ export default {
             // console.log(prop, item[prop])
             item[prop] = item[prop].value
           }
-          console.log(item)
           self.productsData.push({
             date: x,
             ...item
@@ -394,7 +414,6 @@ export default {
           if (a.date < b.date) return 1
           return 0
         })
-        console.log(self.productsData)
         return productsData
       }
     },
@@ -457,6 +476,55 @@ export default {
         }
       }
       return {}
+    },
+    optionCreate (inArray) {
+      var self = this
+      if (Array.isArray(inArray) && inArray.length > 0) {
+        console.log(inArray.map(dt => dt.name))
+        return {
+          tooltip: {
+            trigger: 'axis',
+            formatter: (params) => {
+              let res = '' + params[0].name + '</br>'
+              params.forEach(param => {
+                res = res + param.seriesName + ': ' + inArray[param.seriesIndex].info[param.dataIndex].value + '</br>'
+              })
+              return res
+            }
+          },
+          legend: {
+            data: inArray.map(dt => dt.name),
+            top: 30
+          },
+          grid: {
+            top: 150
+          },
+          toolbox: self.toolBoxOptions,
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            minInterval: 1,
+            data: inArray[0].info.map(dt => dt.label)
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: inArray.map(dt => {
+            let name = dt.name
+            let type = 'line'
+            let markPoint = {
+              clickable: true,
+              data: this.workFlow.map(m => {
+                return {
+                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
+                }
+              })
+            }
+            let data = dt.info.map(i => i.value)
+            return {name, type, markPoint, data}
+          })
+        }
+      }
     }
   },
   computed: {
