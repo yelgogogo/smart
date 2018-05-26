@@ -17,7 +17,7 @@
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
               <chart 
-                :options="statisticsBar"
+                :options="adBar"
                 :init-options="initOptions"
                 @legendselectchanged="onClick($event)"
                 auto-resize
@@ -72,6 +72,13 @@
     </el-tabs>
 
     <el-row class="analysis-table-header">
+      <el-popover
+        ref="showHideColumns"
+        trigger="hover">
+        <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
+          <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;" name="123"></el-checkbox>
+        </el-checkbox-group>
+      </el-popover>
       <el-col :span="20">
         <el-form>
           <product-search 
@@ -80,6 +87,7 @@
         </el-form>
       </el-col>
       <el-col :span="4" class="text-right">
+          <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
           <el-button v-if="download.length===0" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
           <vue-csv-download
             v-else
@@ -107,12 +115,11 @@
       :data="gridData">
       <el-table-column 
         v-for="(headerName, index) in dynamicHeaders" 
-        :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
-        :key="headerName + '_' + index" 
-        :label="headerName"
-        v-if="dynamicHeaders.includes(headerName)">
-        <template slot-scope="scope" v-if="scope.row[headerName]">
-          {{scope.row[headerName]}}
+        :width="headerWidth[headerName.en]?headerWidth[headerName.en]:'100'"
+        :key="headerName.en + '_' + index" 
+        :label="headerName.cn">
+        <template slot-scope="scope" v-if="scope.row[headerName.en]">
+          {{scope.row[headerName.en]}}
         </template>
       </el-table-column>
     </el-table>
@@ -135,6 +142,7 @@ import 'echarts/lib/component/markArea'
 import api from '@/utils/api'
 import productSearch from '@/components/productSearch/productSearch'
 import { Message } from 'element-ui'
+import {HEADER_WIDTH} from '../../utils/enum'
 import VueCsvDownloader from 'vue-csv-downloader'
 import {PERIOD_UNIT} from '@/utils/enum'
 
@@ -147,6 +155,7 @@ export default {
     return {
       download: [],
       fieldsCn: [],
+      checkedList: [],
       dailyQa: [],
       dailyFeedback: [],
       activeName: 'sales',
@@ -172,20 +181,72 @@ export default {
       shopId: this.$route.query.shopId,
       categories: [],
       keywords: [],
+      headers: [],
       dateRange: [],
       legends: [],
       dynamicHeaders: [],
-      fields: [
-      ],
-      headerWidth: {
-        price: 50,
-        reviews: 70,
-        score: 60,
-        QA: 40,
-        orders: 60,
-        Sessions: 80,
-        'Session Percentage': 90
+      fields: [ ],
+      dictEn: {
+        '日期': 'label',
+        '订单': 'orders',
+        'adSalsesByAdDivSale': 'Ad_SalesByAd_Div_Sales',
+        'adSpend': 'Ad_Spend',
+        'adSpendDivSales': 'Ad_Spend_Div_Sales',
+        '广告总数量': 'Ad_TotalQuantity',
+        '广告总销量': 'Ad_TotalSales',
+        '广告总带动销量': 'Ad_TotalSalesByAd',
+        '浏览量': 'Page Views',
+        '浏览率': 'Page Views Percentage',
+        'QA': 'QA',
+        'session率': 'Session Percentage',
+        'Sessions': 'Sessions',
+        'unitSessionPercentage': 'Unit Session Percentage',
+        '评分': 'score',
+        '价格': 'price',
+        '订单量': 'quantity_ordered',
+        '反馈': 'reviews'
       },
+      dictCn: {
+        'label': '日期',
+        'orders': '订单',
+        'Ad_SalesByAd_Div_Sales': 'adSalsesByAdDivSale',
+        'Ad_Spend': 'adSpend',
+        'Ad_Spend_Div_Sales': 'adSpendDivSales',
+        'Ad_TotalQuantity': '广告总数量',
+        'Ad_TotalSales': '广告总销量',
+        'Ad_TotalSalesByAd': '广告总带动销量',
+        'Page Views': '浏览量',
+        'Page Views Percentage': '浏览率',
+        'QA': 'QA',
+        'Session Percentage': 'session率',
+        'Sessions': 'Sessions',
+        'Unit Session Percentage': 'unitSessionPercentage',
+        'score': '评分',
+        'price': '价格',
+        'quantity_ordered': '订单量',
+        'reviews': '反馈'
+      },
+      headersArray: [
+        {en: 'label', cn: '日期', show: true},
+        {en: 'orders', cn: '订单', show: true},
+        {en: 'Ad_SalesByAd_Div_Sales', cn: 'adSalsesByAdDivSale', show: false},
+        {en: 'Ad_Spend', cn: 'adSpend', show: false},
+        {en: 'Ad_Spend_Div_Sales', cn: 'adSpendDivSales', show: false},
+        {en: 'Ad_TotalQuantity', cn: '广告总数量', show: false},
+        {en: 'Ad_TotalSales', cn: '广告总销量', show: false},
+        {en: 'Ad_TotalSalesByAd', cn: '广告总带动销量', show: false},
+        {en: 'Page Views', cn: '浏览量', show: true},
+        {en: 'Page Views Percentage', cn: '浏览率', show: true},
+        {en: 'QA', cn: 'QA', show: true},
+        {en: 'Session Percentage', cn: 'session率', show: true},
+        {en: 'Sessions', cn: 'Sessions', show: true},
+        {en: 'Unit Session Percentage', cn: 'unitSessionPercentage', show: true},
+        {en: 'score', cn: '评分', show: true},
+        {en: 'price', cn: '价格', show: true},
+        {en: 'quantity_ordered', cn: '订单量', show: true},
+        {en: 'reviews', cn: '反馈', show: true}
+      ],
+      headerWidth: HEADER_WIDTH,
       gridData: [],
       currentStatistics: [],
       competitionStatistics: [],
@@ -215,6 +276,22 @@ export default {
     // this.getSuggestion()
   },
   methods: {
+    updateVisibleColumns () {
+      const checkList = this.checkedList.map(c => this.dictEn[c])
+      this.headersArray.forEach(h => {
+        if (checkList.includes(h.en)) {
+          h.show = true
+        } else {
+          h.show = false
+        }
+      })
+      this.dynamicHeaders = this.headersArray.filter(h => h.show)
+    },
+    createHeader () {
+      this.dynamicHeaders = this.headersArray.filter(h => h.show)
+      this.headers = this.headersArray.map(e => e.cn)
+      this.checkedList = this.dynamicHeaders.map(e => e.cn)
+    },
     sizeChange (pageSize) {
       this.pageSize = pageSize
       this.getPageData()
@@ -272,11 +349,6 @@ export default {
       this.filter = {...this.filter, ...filter}
       this.getGridData()
       this.getPageData()
-    },
-    createHeader () {
-      this.dynamicHeaders = ['label', 'orders', 'Ad_SalesByAd_Div_Sales', 'Ad_Spend', 'Ad_Spend_Div_Sales', 'Ad_Spend_Div_SalesByAd', 'Ad_TotalQuantity', 'Ad_TotalSales',
-        'Ad_TotalSalesByAd', 'Page Views', 'Page Views Percentage', 'QA', 'Session Percentage', 'Sessions', 'Unit Session Percentage', 'score', 'price', 'quantity_ordered', 'reviews']
-      // this.headers = this.dynamicHeaders
     },
     getPageData () {
       let pagination = {
@@ -527,6 +599,63 @@ export default {
     }
   },
   computed: {
+    adBar () {
+      var self = this
+      if (Array.isArray(self.currentStatistics) && self.currentStatistics.length > 0) {
+        var selected = {}
+        self.currentStatistics.filter(f => f.name.startsWith('Ad')).map((dt, index) => {
+          if (index < 3) {
+            selected[dt.name] = true
+          } else {
+            selected[dt.name] = false
+          }
+        })
+        return {
+          tooltip: {
+            trigger: 'axis',
+            formatter: (params) => {
+              let res = '' + params[0].name + '</br>'
+              params.forEach(param => {
+                res = res + param.seriesName + ': ' + self.currentStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
+              })
+              return res
+            }
+          },
+          legend: {
+            data: self.currentStatistics.map(dt => dt.name).filter(f => f.startsWith('Ad')),
+            top: 30,
+            selected: selected
+          },
+          grid: {
+            top: 150
+          },
+          toolbox: self.toolBoxOptions,
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            minInterval: 1,
+            data: self.currentStatistics[0].info.map(dt => dt.label)
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: self.currentStatistics.map(dt => {
+            let name = dt.name
+            let type = 'line'
+            let markPoint = {
+              clickable: true,
+              data: this.workFlow.map(m => {
+                return {
+                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
+                }
+              })
+            }
+            let data = dt.info.map(i => i.rate)
+            return {name, type, markPoint, data}
+          })
+        }
+      }
+    },
     statisticsBar () {
       var self = this
       if (Array.isArray(self.currentStatistics) && self.currentStatistics.length > 0) {
