@@ -526,11 +526,6 @@
           return this.$route.query.status.split('_')
         }
         return []
-        //  this.checkedList.map(ck => {
-        //   if (ck && this.typeMapping[ck]) {
-        //     return this.typeMapping[ck]
-        //   }
-        // })
       },
       getShops () {
         if (Array.isArray(this.shopList) && this.shopList.length > 0) {

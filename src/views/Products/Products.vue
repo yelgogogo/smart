@@ -448,7 +448,6 @@ export default {
           this.gridData = res.data.grid
           this.dateList = this.gridData[0].orderList
           this.dateList = this.dateList.sort((a, b) => a.label < b.label ? 1 : -1)
-          console.log('this.dateList', this.dateList)
           this.total = res.data.pagination.total
           this.listLikedProducts()
         }
