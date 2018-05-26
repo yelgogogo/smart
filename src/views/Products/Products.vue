@@ -90,7 +90,7 @@
               </template>
             </el-table-column>
  
-            <el-table-column v-for="orderData in gridData[0].orderList"
+            <el-table-column v-for="orderData in dateList"
               :key="orderData.label"
               :label="orderData.label"
               width="100"
@@ -216,6 +216,7 @@ export default {
   data () {
     return {
       useOrderQuantity: 'quantity',
+      dateList: [],
       useShop: null,
       status: 'normal',
       radio: 0,
@@ -445,6 +446,9 @@ export default {
       api.post('/api/product/pagination', {pagination}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
+          this.dateList = this.gridData[0].orderList
+          this.dateList = this.dateList.sort((a, b) => a.label < b.label ? 1 : -1)
+          console.log('this.dateList', this.dateList)
           this.total = res.data.pagination.total
           this.listLikedProducts()
         }

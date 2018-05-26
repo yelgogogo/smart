@@ -480,7 +480,6 @@ export default {
     optionCreate (inArray) {
       var self = this
       if (Array.isArray(inArray) && inArray.length > 0) {
-        console.log(inArray.map(dt => dt.name))
         return {
           tooltip: {
             trigger: 'axis',
