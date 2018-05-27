@@ -49,7 +49,7 @@
         <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;" name="123"></el-checkbox>
       </el-checkbox-group>
     </el-popover>
-    <el-col :span="8">
+    <el-col :span="16">
       <el-pagination
         @size-change="sizeChange"
         @current-change="currentChange"
@@ -60,7 +60,7 @@
         :total="total">
       </el-pagination>
     </el-col>
-    <el-col :span="16" class="text-right">
+    <el-col :span="8" class="text-right">
       <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
       <vue-csv-download
         :data="download"
