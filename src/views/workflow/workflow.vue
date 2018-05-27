@@ -179,7 +179,7 @@
           <el-steps direction="vertical" :active="getActiveStep(wf.status)" align-center :space="120" finish-status="success">
             <el-step v-for="(step, index) in getAllSteps(wf.status)" :key="'wf_step_' + index" :description="getDescription(wf, step)" :title="typeReverseMapping[step]"></el-step>
           </el-steps>
-          <el-form size="mini" :model="wf" style="margin-top: 15px;" v-if="wf.status !== 'summed' && wf.status !== 'closed'">
+          <el-form size="mini" :model="wf" style="margin-top: 15px;" v-if="wf.status !== 'summed' && wf.status !== 'closed' && isSalesManager(userInfo.roles)">
             <el-form-item label="意见" :label-width="formLabelWidth">
               <el-row>
                 <el-col :span="10" v-if="wf.status !== 'closed'">
@@ -540,6 +540,10 @@
       }
     },
     methods: {
+      isSalesManager (roles) {
+        const finder = roles.findIndex(r => r.roleId === 6)
+        return finder !== -1
+      },
       createHeader () {
         this.dynamicHeaders = this.headersArray.filter(h => h.show)
         this.headers = this.headersArray.map(e => e.cn)
@@ -831,12 +835,12 @@
       },
       getActiveStep (name) {
         switch (name) {
-          case 'issued': return 1
-          case 'permitted': return 2
-          case 'finished': return 3
+          case 'issued': return 0
+          case 'permitted': return 1
+          case 'finished': return 2
           case 'summed': return 4
-          case 'rejected': return 5
-          case 'closed': return 6
+          case 'rejected': return 4
+          case 'closed': return 4
         }
         return 1
       },
