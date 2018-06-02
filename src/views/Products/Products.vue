@@ -57,7 +57,9 @@
       <el-col :span="24">
         <el-table
           v-if="gridData.length > 0"
-            :data="gridData">
+          :summary-method="getSummaries"
+          show-summary
+          :data="gridData">
             <el-table-column
               label="店铺"
               width="150"
@@ -138,6 +140,7 @@
           </el-table>
       </el-col>
       <el-col :span="24" class="text-left">
+
         <el-pagination
           @size-change="sizeChange"
           @current-change="currentChange"
@@ -204,7 +207,7 @@
 <script>
 import api from '../../utils/api'
 import { Message } from 'element-ui'
-import {PERIOD_OPTIONS} from '../../utils/enum'
+import {PERIOD_OPTIONS, PERIOD_UNIT} from '../../utils/enum'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import moment from 'moment'
 import searchBar from '@/components/search-bar/search-bar'
@@ -313,6 +316,10 @@ export default {
     this.listSuggestTypes()
   },
   methods: {
+    getSummaries (param) {
+      const sums = ['合计', '', '', '', '测试', '测试', '测试', '测试', '测试', '测试', '测试']
+      return sums
+    },
     useOrderQuantityChange () {
       console.log(this.useOrderQuantity, this.filter)
       this.filter.dimension.order = false
@@ -329,6 +336,13 @@ export default {
     searchBarChange (filter) {
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
+      if (this.filter.period.select === 120) {
+        this.filter.period.unit = PERIOD_UNIT.WEEK
+      } else if (this.filter.period.select === 183) {
+        this.filter.period.unit = PERIOD_UNIT.MONTH
+      } else {
+        this.filter.period.unit = PERIOD_UNIT.DAY
+      }
       this.getPageProducts()
     },
     changeName (row) {
