@@ -253,6 +253,7 @@ export default {
       headerWidth: HEADER_WIDTH,
       gridData: [],
       currentStatistics: [],
+      adStatistics: [],
       competitionStatistics: [],
       chartTitle: '',
       initOptions: {
@@ -383,6 +384,7 @@ export default {
       api.post('/api/product/statistics', this.filter).then(res => {
         if (res.status === 200 && res.data) {
           this.currentStatistics = res.data
+          this.adStatistics = self.currentStatistics.filter(f => f.name.startsWith('Ad'))
           api.post('/api/product/competition', this.filter).then(res1 => {
             this.$store.dispatch('setLoadingState', false)
             if (res1.status === 200 && res1.data) {
@@ -604,9 +606,9 @@ export default {
   computed: {
     adBar () {
       var self = this
-      if (Array.isArray(self.currentStatistics) && self.currentStatistics.length > 0) {
+      if (Array.isArray(self.adStatistics) && self.adStatistics.length > 0) {
         var selected = {}
-        self.currentStatistics.filter(f => f.name.startsWith('Ad')).map((dt, index) => {
+        this.adStatistics.forEach((dt, index) => {
           if (index < 3) {
             selected[dt.name] = true
           } else {
@@ -622,13 +624,15 @@ export default {
             formatter: (params) => {
               let res = '' + params[0].name + '</br>'
               params.forEach(param => {
-                res = res + param.seriesName + ': ' + self.currentStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
+                if (param.seriesName.startsWith('Ad')) {
+                  res = res + param.seriesName + ': ' + self.adStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
+                }
               })
               return res
             }
           },
           legend: {
-            data: self.currentStatistics.map(dt => dt.name).filter(f => f.startsWith('Ad')),
+            data: self.adStatistics.map(dt => dt.name).filter(f => f.startsWith('Ad')),
             top: 30,
             selected: selected
           },
@@ -640,12 +644,12 @@ export default {
             type: 'category',
             boundaryGap: false,
             minInterval: 1,
-            data: self.currentStatistics[0].info.map(dt => dt.label)
+            data: self.adStatistics[0].info.map(dt => dt.label)
           },
           yAxis: {
             type: 'value'
           },
-          series: self.currentStatistics.map(dt => {
+          series: self.adStatistics.map(dt => {
             let name = dt.name
             let type = 'line'
             let markPoint = {
@@ -744,5 +748,8 @@ export default {
 .download {
   color: #FF6600;
   font-size: 24px
+}
+.el-checkbox+.el-checkbox {
+  margin-left: 0!important;
 }
 </style>
