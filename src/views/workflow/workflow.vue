@@ -944,6 +944,7 @@
             type: 'success'
           })
           this.sugComment = ''
+          this.getPageWorkflows()
         }).catch(err => {
           this.sugComment = ''
           this.errorHandler(err)
