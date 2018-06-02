@@ -57,12 +57,14 @@ export default {
       let format = 'YYYY-MM-DD'
       this.period.start = moment().subtract(this.periodSelectIn - 1, 'days').format(format)
       this.period.end = moment().format(format)
+      this.period.select = this.periodSelectIn
       console.log('onChange', this.period)
       this.$emit('onChange', this.period)
     },
     updatePeriodCustomize () {
       this.period.start = this.periodCustomize[0]
       this.period.end = this.periodCustomize[1]
+      this.period.select = this.periodSelectIn
       this.$emit('onChange', this.period)
     }
   }
