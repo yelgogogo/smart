@@ -225,6 +225,7 @@ export default {
       radio: 0,
       maxlength: 200,
       gridData: [],
+      summaryData: [],
       periodSelect: 7,
       filter: {
         shopId: null,
@@ -317,7 +318,12 @@ export default {
   },
   methods: {
     getSummaries (param) {
-      const sums = ['合计', '', '', '', '测试', '测试', '测试', '测试', '测试', '测试', '测试']
+      const sums = ['合计', '', '', '']
+      if (this.summaryData.length > 0) {
+        for (let index = 0; index < this.summaryData.length; index++) {
+          sums.push(this.summaryData[index].sum)
+        }
+      }
       return sums
     },
     useOrderQuantityChange () {
@@ -462,6 +468,7 @@ export default {
           this.gridData = res.data.grid
           this.dateList = this.gridData[0].orderList
           this.total = res.data.pagination.total
+          this.summaryData = res.data.summary
           this.listLikedProducts()
         }
         this.$store.dispatch('setLoadingState', false)
