@@ -309,11 +309,11 @@ export default {
     this.filter.period.end = end
     this.getShopList()
     this.getNationList()
-    if (this.search_val && this.shopId) {
-      this.searchProduct()
-    } else {
-      this.getPageProducts()
-    }
+    // if (this.search_val && this.shopId) {
+    //   this.searchProduct()
+    // } else {
+    //   this.getPageProducts()
+    // }
     this.listSuggestTypes()
   },
   methods: {
@@ -487,6 +487,7 @@ export default {
         currentPage: 1
       }
       pagination.filter = this.filter
+      this.sendDownloadRecord('销量报表')
       api.post('/api/product/pagination', {pagination}).then(res => {
         if (res.status === 200 && res.data) {
           this.download = res.data.grid
@@ -497,6 +498,13 @@ export default {
           message: err.response.statusText,
           type: 'error'
         })
+      })
+    },
+    sendDownloadRecord (filename) {
+      const userId = JSON.parse(localStorage.getItem('userInfo')).userId
+      const time = moment().format('YYYY-MM-DD HH:mm')
+      const file = filename
+      api.post('/api/download_history', {userId, time, file}).then(res => {
       })
     },
     getShopList () {
