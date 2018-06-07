@@ -446,6 +446,7 @@ export default {
           type: 'error'
         })
       })
+      this.$sendDownloadHistory('反馈详情')
     },
     getShopList () {
       api.get('/api/shop').then(res => {

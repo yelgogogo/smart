@@ -832,6 +832,7 @@
             type: 'error'
           })
         })
+        this.$sendDownloadHistory('工作流')
       },
       getActiveStep (name) {
         switch (name) {

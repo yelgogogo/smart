@@ -358,6 +358,7 @@ export default {
           type: 'error'
         })
       })
+      this.$sendDownloadHistory('订单查询')
     },
     getShopList () {
       api.get('/api/shop').then(res => {

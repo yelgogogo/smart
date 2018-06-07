@@ -487,7 +487,6 @@ export default {
         currentPage: 1
       }
       pagination.filter = this.filter
-      this.sendDownloadRecord('销量报表')
       api.post('/api/product/pagination', {pagination}).then(res => {
         if (res.status === 200 && res.data) {
           this.download = res.data.grid
@@ -499,13 +498,7 @@ export default {
           type: 'error'
         })
       })
-    },
-    sendDownloadRecord (filename) {
-      const userId = JSON.parse(localStorage.getItem('userInfo')).userId
-      const time = moment().format('YYYY-MM-DD HH:mm')
-      const file = filename
-      api.post('/api/download_history', {userId, time, file}).then(res => {
-      })
+      this.$sendDownloadHistory('销量报表')
     },
     getShopList () {
       api.get('/api/shop').then(res => {

@@ -9,11 +9,11 @@ import router from './router'
 import store from './store'
 import { role } from './filter/role'
 import '../static/style/element-variables.scss'
+import commonPlugin from './utils/util'
 
 Vue.config.productionTip = false
-
 Vue.use(ElementUI)
-
+Vue.use(commonPlugin)
 Vue.component('chart', ECharts)
 
 Vue.filter('role', role)

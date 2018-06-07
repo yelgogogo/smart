@@ -353,6 +353,7 @@ export default {
           type: 'error'
         })
       })
+      this.$sendDownloadHistory('反馈统计')
     },
     getNationList () {
       api.get('/api/country').then(res => {
