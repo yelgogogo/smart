@@ -113,16 +113,16 @@
               fixed="right"
               label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" round @click="add(scope.row)">
+                <el-button size="mini" round @click="add(scope.row)"  v-show="operationShow">
                   建议
                 </el-button>
                 <router-link :to="{path: '/main/edit-product', query: scope.row}">
-                  <el-button size="mini" round>
+                  <el-button size="mini" round  v-show="operationShow">
                     编辑
                   </el-button>
                 </router-link>
                 <router-link :to="{path: '/main/analysis', query: {productName:scope.row.productName,countryCode:scope.row.countryCode,marketplaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.productASIN}}">
-                  <el-button size="mini" round>
+                  <el-button size="mini" round  v-show="operationShow">
                     分析
                   </el-button>
                 </router-link>
@@ -271,7 +271,8 @@ export default {
         suggestion: '',
         title: '',
         sn: 1
-      }
+      },
+      operationShow: true
     }
   },
   computed: {
@@ -337,6 +338,11 @@ export default {
     useShopChange (event) {
       // this.filter.dimension = {shop: this.useShop}
       this.getPageProducts()
+      if (event === true) {
+        this.operationShow = false
+      } else {
+        this.operationShow = true
+      }
       console.log(event)
     },
     searchBarChange (filter) {
