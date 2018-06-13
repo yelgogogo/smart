@@ -144,7 +144,7 @@ export default {
           start: '',
           end: ''
         },
-        status: ['Pendding', 'Unshipped', 'Shipped', 'Canceled'],
+        status: ['Pending', 'Unshipped', 'Shipped', 'Canceled'],
         countryCode: '',
         productId: '',
         buyerId: '',
@@ -163,7 +163,7 @@ export default {
       nationId: '',
       nationList: [],
       statusId: '',
-      statusList: ['All', 'Pendding', 'Unshipped', 'Shipped', 'Canceled'],
+      statusList: ['All', 'Pending', 'Unshipped', 'Shipped', 'Canceled'],
       userId: '',
       userList: [],
       gridData: [],
@@ -237,7 +237,7 @@ export default {
     orderStatusChange (evnet) {
       console.log(this.orderStatus)
       if (this.orderStatus === 'All') {
-        this.filter.status = ['Pendding', 'Unshipped', 'Shipped', 'Canceled']
+        this.filter.status = ['Pending', 'Unshipped', 'Shipped', 'Canceled']
       } else {
         this.filter.status = [this.orderStatus]
       }
