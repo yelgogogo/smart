@@ -124,7 +124,9 @@
             :label="headerName"
             v-if="dynamicHeaders.includes(headerName)">
             <template slot-scope="scope" v-if="scope.row[headerName]">
-              {{scope.row[headerName]}}
+              <div v-if="headerName === 'title'"><a :href="scope.row.reviewURL">{{scope.row[headerName]}}</a></div>
+              <div v-else-if="headerName === 'name'"><a :href="scope.row.profileURL">{{scope.row[headerName]}}</a></div>
+              <div v-else>{{scope.row[headerName]}}</div>
             </template>
           </el-table-column>
           <el-table-column
