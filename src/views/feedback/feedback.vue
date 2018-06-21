@@ -185,8 +185,11 @@
               {{form.review}}
             </el-form-item>
           <el-form-item label="操作" :label-width="formLabelWidth">
-            <div>2018-04-12 这个反馈处理 admin</div>
-            <div>2018-04-13 这个反馈不要处理 Michael</div>
+            <div v-for="(msg, index) in reviewHistory" :key="index">
+              {{ msg.date }} {{ msg.message }}
+            </div>
+            <!-- <div>2018-04-12 这个反馈处理 admin</div> -->
+            <!-- <div>2018-04-13 这个反馈不要处理 Michael</div> -->
             <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.message"></el-input>
           </el-form-item>
         </el-form>
@@ -322,8 +325,8 @@ export default {
       })
     },
     getReviewHistory (reviewId) {
-      api.get(`/api/reviews/messages/${reviewId}`).then(res => {
-        this.reviewHistory = res.data
+      api.get(`/api/review/message/${reviewId}`).then(res => {
+        this.reviewHistory = res.data.messages
       })
     },
     searchBarChange (filter) {
@@ -379,14 +382,19 @@ export default {
     saveFeedback () {
       let self = this
       // self.form.reviewId = this.userInfo.userId
-      api.post(`/api/review/status`, self.form).then(res => {
+      const params = {
+        reviewId: self.form.reviewId,
+        status: self.form.status,
+        message: self.form.message
+      }
+      api.post(`/api/review/status`, params).then(res => {
         Message({
           showClose: true,
           message: '更新成功!',
           type: 'success'
         })
         self.dialogFormVisible = false
-        self.getPageWorkflows(true)
+        // self.getPageWorkflows(true)
       }).catch(err => {
         self.errorHandler(err, {code: 404, message: '产品未找到'})
       })
