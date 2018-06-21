@@ -116,13 +116,17 @@
         <el-table 
           border
           stripe 
-          :data="gridData">
+          :data="gridData"
+          @sort-change="changeSortItem">
           <el-table-column 
             v-for="(headerName, index) in dynamicHeaders" 
             :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
             :label="headerName"
-            v-if="dynamicHeaders.includes(headerName)">
+            v-if="dynamicHeaders.includes(headerName)"
+            :prop="headerName"
+            :sortable="headerName==='country' || headerName==='score'? false:'custom'"
+            ref="sortTable">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               <div v-if="headerName === 'title'"><a :href="scope.row.reviewURL">{{scope.row[headerName]}}</a></div>
               <div v-else-if="headerName === 'name'"><a :href="scope.row.profileURL">{{scope.row[headerName]}}</a></div>
@@ -230,7 +234,8 @@ export default {
         productId: '',
         buyerId: '',
         stars: 0,
-        orderId: ''
+        orderId: '',
+        sortParam: ''
       },
       star: '',
       dynamicHeaders: {},
@@ -294,6 +299,12 @@ export default {
     this.getNationList()
   },
   methods: {
+    changeSortItem (val) {
+      console.log(val.prop)
+      // console.log(val)
+      this.filter.sortParam = val.prop
+      this.getPageProducts()
+    },
     resetSearch () {
       this.filter = { ...this.filter, buyerId: undefined, orderId: undefined, productId: undefined }
       this.getPageProducts()
