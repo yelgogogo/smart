@@ -324,7 +324,7 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['sellerId', 'asin', 'country', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateTime']
+      this.dynamicHeaders = ['sellerId', 'asin', 'country', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
     },
     statusChange (e) {
