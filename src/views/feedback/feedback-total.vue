@@ -267,6 +267,7 @@ export default {
       }
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
+      this.currentPage = 1
       this.getPageProducts()
     },
     searchGrid () {

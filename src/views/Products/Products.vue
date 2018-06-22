@@ -355,6 +355,7 @@ export default {
       } else {
         this.filter.period.unit = PERIOD_UNIT.DAY
       }
+      this.currentPage = 1
       this.getPageProducts()
     },
     changeName (row) {

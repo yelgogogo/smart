@@ -125,7 +125,7 @@
             :label="headerName"
             v-if="dynamicHeaders.includes(headerName)"
             :prop="headerName"
-            :sortable="headerName==='country' || headerName==='score'? false:'custom'"
+            :sortable="headerName==='country' || headerName==='score' || headerName==='status'? false:'custom'"
             ref="sortTable">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               <div v-if="headerName === 'title'"><a :href="scope.row.reviewURL">{{scope.row[headerName]}}</a></div>
@@ -235,7 +235,8 @@ export default {
         buyerId: '',
         stars: 0,
         orderId: '',
-        sortParam: ''
+        sortParam: '',
+        high2low: ''
       },
       star: '',
       dynamicHeaders: {},
@@ -300,9 +301,14 @@ export default {
   },
   methods: {
     changeSortItem (val) {
-      console.log(val.prop)
+      // console.log(val.prop + ' ' + val.order)
       // console.log(val)
       this.filter.sortParam = val.prop
+      if (val.order === 'descending') {
+        this.filter.high2low = true
+      } else {
+        this.filter.high2low = false
+      }
       this.getPageProducts()
     },
     resetSearch () {
@@ -318,7 +324,7 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['sellerId', 'asin', 'country', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorId', 'lastUpdateTime']
+      this.dynamicHeaders = ['sellerId', 'asin', 'country', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateTime']
       this.headers = this.dynamicHeaders
     },
     statusChange (e) {
@@ -343,6 +349,7 @@ export default {
     searchBarChange (filter) {
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
+      this.currentPage = 1
       this.getPageProducts()
     },
     searchGrid () {
