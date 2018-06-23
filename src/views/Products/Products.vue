@@ -473,7 +473,9 @@ export default {
       api.post('/api/product/pagination', {pagination}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
-          this.dateList = this.gridData[0].orderList
+          if (this.gridData.length > 0) {
+            this.dateList = this.gridData[0].orderList
+          }
           this.total = res.data.pagination.total
           this.summaryData = res.data.summary
           this.listLikedProducts()
