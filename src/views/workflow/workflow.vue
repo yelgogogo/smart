@@ -135,7 +135,7 @@
                     <!-- <router-link :to="{path: '/main/products', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
                       {{scope.row.productId}}
                     </router-link> -->
-                    <a :href="scope.row.ProductURL">{{ scope.row.productId }}</a>
+                    <a :href="scope.row.ProductURL" target="_blank">{{ scope.row.productId }}</a>
                   </span>
                   <span v-else-if="headerName.en==='suggestionId'">
                       <i v-if="scope.row.specialStatus ==='high'" class="el-icon-warning"></i>&nbsp;&nbsp;{{scope.row.suggestionId}}

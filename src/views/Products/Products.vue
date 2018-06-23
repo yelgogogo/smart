@@ -76,7 +76,7 @@
               label="ASIN"
               width="120">
               <template slot-scope="scope">
-                <a :href="scope.row.url">{{scope.row.productASIN}}</a>
+                <a :href="scope.row.url" target="_blank">{{scope.row.productASIN}}</a>
                 <div v-for="cp in scope.row.competitors" :key="cp">
                   {{cp}}&nbsp;<el-tag type="success" size="mini">竞</el-tag> 
                 </div>
