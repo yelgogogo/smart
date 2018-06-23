@@ -15,7 +15,8 @@
       </el-upload>
     </el-form-item> -->
     <el-form-item label="产品名称">
-      {{product.productName}}
+      {{ pageProductName }}
+      <i class="el-icon-edit" @click="changeName(product, pageProductName)"></i>
     </el-form-item>
     <el-form-item label="关键字">
       <div v-for="(kw, index) in keywords" :key="kw + '_' + index">
@@ -53,6 +54,7 @@ export default {
   data () {
     return {
       product: {},
+      pageProductName: '',
       competitors: [],
       keywords: [],
       closable: false,
@@ -77,6 +79,7 @@ export default {
     let self = this
     if (self.$route.query && self.$route.query.productName) {
       self.product = self.$route.query
+      self.pageProductName = self.$route.query.productName
       console.log(self.product)
       self.listCompetitor()
     }
@@ -209,6 +212,32 @@ export default {
       //     self.listKeywords()
       //   })
       // }
+    },
+    changeName (row, pageProductName) {
+      console.log(row)
+      this.$prompt('请输入产品名称', '提示', {
+        confirmButtonText: '确定',
+        inputValue: pageProductName,
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        const shopId = row.shopId
+        const name = value
+        api.post(`/api/product/name/${row.productASIN}`, {shopId, name}).then(res => {
+          this.$message({
+            showClose: true,
+            message: '更新成功!',
+            type: 'success'
+          })
+          this.pageProductName = value
+        }).catch(err => {
+          this.errorHandler(err, {code: 404, message: '产品未找到'})
+        })
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: '取消输入'
+        // })
+      })
     }
   }
 }

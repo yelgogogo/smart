@@ -88,7 +88,7 @@
               sortable>
               <template slot-scope="scope">
                 {{scope.row.productName}}
-                <i class="el-icon-edit" @click="changeName(scope.row)"></i>
+                <!-- <i class="el-icon-edit" @click="changeName(scope.row)"></i> -->
               </template>
             </el-table-column>
  
