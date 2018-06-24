@@ -281,6 +281,7 @@ export default {
         shopName: 'Shop Name',
         asin: 'ASIN',
         productName: '产品名称',
+        quantity: 'Quantity',
         country: 'Country',
         score: 'Score',
         reviewDate: 'Review Date',
@@ -349,7 +350,7 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
+      this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
     },
     statusChange (e) {
