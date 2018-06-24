@@ -103,7 +103,7 @@
             <vue-csv-download
               v-else
               :data="download"
-              :fields="fieldsCn"
+              :fields="headersDownload"
               class="download"
               >
               <el-button size="mini" icon="el-icon-document">下载</el-button>
@@ -256,6 +256,7 @@ export default {
       userList: [],
       gridData: [],
       download: [],
+      headersDownload: [],
       productTotal: 0,
       pageProducts: [],
       search_val: undefined,
@@ -291,6 +292,9 @@ export default {
         orderId: 'Order ID',
         name: 'Name',
         title: 'Title',
+        profileURL: 'Buyer Profile',
+        reviewURL: 'Review Link',
+        review: 'Review Content',
         operatorName: 'Operator',
         lastUpdateDate: 'Last Update Time'
       },
@@ -321,9 +325,6 @@ export default {
         dictEn[this.dictCn[prop]] = prop
       }
       return dictEn
-    },
-    fieldsCn () {
-      return this.headers
     }
   },
   created () {
@@ -358,6 +359,7 @@ export default {
     createHeader () {
       this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
+      this.headersDownload = ['shopName', 'asin', 'country', 'quantity', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'profileURL', 'title', 'review', 'reviewURL', 'operatorName', 'lastUpdateDate'].map(d => this.dictCn[d])
     },
     statusChange (e) {
       if (e === 'All') {
@@ -497,7 +499,14 @@ export default {
       const period = this.filter.period
       api.post('/api/review', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
-          this.download = res.data.grid
+          this.download = res.data.grid.map(d => {
+            let download = {}
+            for (let prop in d) {
+              download[this.dictCn[prop]] = d[prop]
+            }
+            return download
+          })
+          console.log('this.download', this.download)
         }
       }).catch(err => {
         Message({
