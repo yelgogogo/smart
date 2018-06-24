@@ -35,8 +35,9 @@ export const PERIOD_OPTIONS = [
 export const HEADER_WIDTH = {
   date: 200,
   price: 140,
+  shopName: 120,
   productName: 200,
-  reviewDate: 100,
+  reviewDate: 120,
   orderId: 160,
   operatorId: 100,
   orders: 60,

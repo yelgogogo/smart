@@ -123,7 +123,7 @@
             v-for="(headerName, index) in dynamicHeaders" 
             :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
-            :label="headerName"
+            :label="dictCn[headerName]"
             v-if="dynamicHeaders.includes(headerName)"
             :prop="headerName"
             :sortable="headerName==='country' || headerName==='score' || headerName==='status'? false:'custom'"
@@ -277,6 +277,22 @@ export default {
         auditor: '',
         proposer: ''
       },
+      dictCn: {
+        shopName: 'Shop Name',
+        asin: 'ASIN',
+        productName: '产品名称',
+        country: 'Country',
+        score: 'Score',
+        reviewDate: 'Review Date',
+        status: 'Status',
+        star: 'Stars',
+        buyerId: 'Buyer ID',
+        orderId: 'Order ID',
+        name: 'Name',
+        title: 'Title',
+        operatorName: 'Operator',
+        lastUpdateDate: 'Last Update Time'
+      },
       headers: [],
       headerWidth: HEADER_WIDTH,
       form: {
@@ -292,6 +308,13 @@ export default {
   },
   computed: {
     ...mapGetters(['userInfo']),
+    dictEn () {
+      let dictEn = {}
+      for (let prop in this.dictCn) {
+        dictEn[this.dictCn[prop]] = prop
+      }
+      return dictEn
+    },
     fieldsCn () {
       return this.headers
     }
@@ -299,6 +322,7 @@ export default {
   created () {
     this.getShopList()
     this.getNationList()
+    console.log('this.dictEn', this.dictEn)
   },
   methods: {
     changeSortItem (val) {
@@ -325,7 +349,7 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['shopName', 'asin', 'productName', 'country', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
+      this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
     },
     statusChange (e) {
