@@ -36,7 +36,7 @@
           </el-col>
           <el-col :span="6" style="padding-right: 5px;">
               <el-form-item label="订单状态">
-                <el-select clearable v-model="orderStatus" placeholder="选择状态" @change="orderStatusChange" class="shop-select">
+                <el-select v-model="orderStatus" placeholder="选择状态" @change="orderStatusChange" class="shop-select">
                   <el-option
                     v-for="status in statusList"
                     :key="status"
@@ -92,6 +92,7 @@
         <el-table v-if="gridData.length>0"
           border
           stripe
+          height="500"
           :data="gridData">
           <el-table-column 
             v-for="(headerName, index) in dynamicHeaders" 
@@ -163,7 +164,7 @@ export default {
       nationId: '',
       nationList: [],
       statusId: '',
-      statusList: ['All', 'Pending', 'Unshipped', 'Shipped', 'Canceled'],
+      statusList: ['Not Canceled', 'All', 'Pending', 'Unshipped', 'Shipped', 'Canceled'],
       userId: '',
       userList: [],
       gridData: [],
@@ -221,9 +222,12 @@ export default {
   created () {
     // this.search_val = this.$route.query.productId
     // this.shopId = this.$route.query.shopId
-
+    this.orderStatus = 'Not Canceled'
+    this.filter.status = ['Pending', 'Unshipped', 'Shipped']
     this.getShopList()
     this.getNationList()
+  },
+  mounted () {
   },
   methods: {
     resetSearch () {
@@ -238,6 +242,8 @@ export default {
       console.log(this.orderStatus)
       if (this.orderStatus === 'All') {
         this.filter.status = ['Pending', 'Unshipped', 'Shipped', 'Canceled']
+      } else if (this.orderStatus === 'Not Canceled') {
+        this.filter.status = ['Pending', 'Unshipped', 'Shipped']
       } else {
         this.filter.status = [this.orderStatus]
       }
