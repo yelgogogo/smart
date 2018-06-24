@@ -76,7 +76,7 @@
             :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
             :fixed="headerFixed[headerName]"
-            :label="headerName"
+            :label="dictCn[headerName]?dictCn[headerName]:headerName"
             v-if="dynamicHeaders.includes(headerName)">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               {{scope.row[headerName]}}
@@ -149,45 +149,15 @@ export default {
         auditor: '',
         proposer: ''
       },
-      dictEn: {
-        '提议编号': 'suggestionId',
-        '标题': 'title',
-        '店铺': 'shopName',
-        '国家': 'countryCode',
-        '提议状态': 'status',
-        '提议时间': 'createDate',
-        '产品名称': 'name',
-        'ASIN': 'productId',
-        '提议人': ' proposer',
-        '优化类型': 'suggestType',
-        '提议内容': 'suggestion',
-        '审批人': 'auditor',
-        '审批建议': 'reply',
-        '审批时间': 'auditDate',
-        '完成时间': 'finishDate',
-        '总结内容': 'sumup',
-        '总结时间': 'sumupDate',
-        '备注': 'comments'
-      },
       dictCn: {
-        suggestionId: '提议编号',
-        title: '标题',
-        shopName: '店铺',
-        countryCode: '国家',
-        status: '提议状态',
-        createDate: '提议时间',
-        name: '产品名称',
-        productId: 'ASIN',
-        proposer: '提议人',
-        suggestType: '优化类型',
-        suggestion: '提议内容',
-        auditor: '审批人',
-        reply: '审批建议',
-        auditDate: '审批时间',
-        finishDate: '完成时间',
-        sumup: '总结内容',
-        sumupDate: '总结时间',
-        comments: '备注'
+        shopName: 'Shop Name',
+        asin: 'ASIN',
+        productName: '产品名称',
+        country: 'Country',
+        currentQuantity: 'Current Quantity',
+        currentAverage: 'Current Stars',
+        totalQuantity: 'Total Quantity',
+        totalAverage: 'Average Stars'
       },
       nationListBK: [],
       headers: [],
@@ -210,6 +180,13 @@ export default {
     }
   },
   computed: {
+    dictEn () {
+      let dictEn = {}
+      for (let prop in this.dictCn) {
+        dictEn[this.dictCn[prop]] = prop
+      }
+      return dictEn
+    },
     fieldsCn () {
       return this.headers
     }

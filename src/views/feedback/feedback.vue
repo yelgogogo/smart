@@ -211,7 +211,7 @@ import api from '../../utils/api'
 import { Message } from 'element-ui'
 import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
-import {PERIOD_OPTIONS, HEADER_WIDTH} from '../../utils/enum'
+import {PERIOD_OPTIONS, HEADER_WIDTH} from '../../utils/enum.js'
 import searchBar from '@/components/search-bar/search-bar'
 import { mapGetters } from 'vuex'
 
