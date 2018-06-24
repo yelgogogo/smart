@@ -16,7 +16,7 @@
       <el-form-item label="国家">
         <el-select clearable v-model="nationIdIn" placeholder="选择国家" class="nation-select" @change="updateNation">
           <el-option
-            v-for="nation in nationList"
+            v-for="nation in nationListIn"
             :key="nation.countryCode"
             :label="nation.countryCode"
             :value="nation.countryCode">
@@ -51,6 +51,7 @@ export default {
         countryCode: null,
         period: {}
       },
+      nationListIn: [],
       periodCustomize: [],
       shopIdIn: this.shopId,
       nationIdIn: this.nationId,
@@ -64,10 +65,19 @@ export default {
     }
   },
   mounted () {
+    this.nationListIn = this.nationList
     this.periodSelectIn = this.periodSelect
   },
   methods: {
     updateShop () {
+      const shopFinder = this.shopList.find(s => s.shopId === this.shopIdIn)
+      let shopList
+      if (shopFinder) {
+        shopList = shopFinder.countryCode.map(f => this.nationList.find(n => n.countryCode === f))
+        this.nationListIn = shopList
+      } else {
+        this.nationListIn = this.nationList
+      }
       this.filter.shopId = this.shopIdIn
       this.$emit('onChange', this.filter)
       console.log('shopChange', this.filter)
