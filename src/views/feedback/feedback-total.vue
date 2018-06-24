@@ -56,7 +56,7 @@
           <vue-csv-download
             v-else
             :data="download"
-            :fields="fieldsCn"
+            :fields="headersDownload"
             class="download"
             >
             <el-button size="mini" icon="el-icon-document">下载</el-button>
@@ -161,6 +161,7 @@ export default {
       },
       nationListBK: [],
       headers: [],
+      headersDownload: [],
       headersArray: [],
       headerFixed: {
         shopName: 'left',
@@ -188,9 +189,6 @@ export default {
         dictEn[this.dictCn[prop]] = prop
       }
       return dictEn
-    },
-    fieldsCn () {
-      return this.headers
     }
   },
   created () {
@@ -231,9 +229,9 @@ export default {
 
       this.dynamicHeaders = [...this.dynamicHeaders, ...sort]
       this.headers = this.dynamicHeaders
-      console.log(this.dynamicHeaders, sort)
-      // this.headers = this.headersArray.map(e => this.dictCn[e.en])
-      // this.checkedList = this.dynamicHeaders.map(e => this.dictCn[e])
+      const headersFixed = ['shopName', 'asin', 'country', 'currentQuantity', 'currentAverage']
+      const headersDownload = [...headersFixed, ...sort]
+      this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
     searchBarChange (filter) {
       if (filter.shopId) {
@@ -324,7 +322,13 @@ export default {
       const period = this.filter.period
       api.post('/api/review/statistics', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
-          this.download = res.data.grid
+          this.download = res.data.grid.map(d => {
+            let download = {}
+            for (let prop in d) {
+              download[this.dictCn[prop]] = d[prop]
+            }
+            return download
+          })
         }
       }).catch(err => {
         Message({

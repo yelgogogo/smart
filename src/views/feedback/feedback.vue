@@ -359,7 +359,8 @@ export default {
     createHeader () {
       this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
-      this.headersDownload = ['shopName', 'asin', 'country', 'quantity', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'profileURL', 'title', 'review', 'reviewURL', 'operatorName', 'lastUpdateDate'].map(d => this.dictCn[d])
+      const headersDownload = ['shopName', 'asin', 'country', 'quantity', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'profileURL', 'title', 'review', 'reviewURL', 'operatorName', 'lastUpdateDate']
+      this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
     statusChange (e) {
       if (e === 'All') {
