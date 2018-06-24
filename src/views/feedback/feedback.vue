@@ -115,7 +115,8 @@
       <el-col :span="24">
         <el-table 
           border
-          stripe 
+          stripe
+          height="500" 
           :data="gridData"
           @sort-change="changeSortItem">
           <el-table-column 
@@ -324,7 +325,7 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['sellerId', 'asin', 'country', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
+      this.dynamicHeaders = ['shopName', 'asin', 'productName', 'country', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
     },
     statusChange (e) {
