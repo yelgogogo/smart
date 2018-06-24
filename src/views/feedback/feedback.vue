@@ -122,6 +122,7 @@
           <el-table-column 
             v-for="(headerName, index) in dynamicHeaders" 
             :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
+            :fixed="headerFixed[headerName]"
             :key="headerName + '_' + index" 
             :label="dictCn[headerName]"
             v-if="dynamicHeaders.includes(headerName)"
@@ -135,7 +136,6 @@
             </template>
           </el-table-column>
           <el-table-column
-            fixed="right"
             header-align="center"
             align="center"
             label="操作">
@@ -296,6 +296,12 @@ export default {
       },
       headers: [],
       headerWidth: HEADER_WIDTH,
+      headerFixed: {
+        shopName: 'left',
+        productName: 'left',
+        country: 'left',
+        asin: 'left'
+      },
       form: {
         productId: '',
         shopId: undefined,

@@ -163,8 +163,10 @@ export default {
       headers: [],
       headersArray: [],
       headerFixed: {
-        totalQuantity: 'right',
-        totalAverage: 'right'
+        shopName: 'left',
+        productName: 'left',
+        country: 'left',
+        asin: 'left'
       },
       headerWidth: HEADER_WIDTH,
       download: [],
@@ -219,7 +221,7 @@ export default {
       this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'currentQuantity', 'currentAverage']
       let sort = []
       for (let header in headers) {
-        if (!this.dynamicHeaders.includes(header)) {
+        if (!this.dynamicHeaders.includes(header) && header !== 'shopId') {
           sort.push(header)
         }
       }
