@@ -70,14 +70,17 @@
           border
           stripe
           height="500"
-          :data="gridData">
+          :data="gridData"
+          @sort-change="changeSortItem">
           <el-table-column 
             v-for="(headerName, index) in dynamicHeaders" 
             :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
             :fixed="headerFixed[headerName]"
             :label="dictCn[headerName]?dictCn[headerName]:headerName"
-            v-if="dynamicHeaders.includes(headerName)">
+            v-if="dynamicHeaders.includes(headerName)"
+            :prop="headerName"
+            :sortable="headerName==='asin' || headerName==='currentQuantity' || headerName==='currentAverage' || headerName==='totalQuantity' || headerName==='totalAverage'? 'custom':false">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               {{scope.row[headerName]}}
             </template>
@@ -113,7 +116,9 @@ export default {
         },
         countryCode: '',
         productId: '',
-        star: undefined
+        star: undefined,
+        sortParam: '',
+        high2low: ''
       },
       star: '',
       checkedList: [],
@@ -201,6 +206,15 @@ export default {
     // this.getPageProducts()
   },
   methods: {
+    changeSortItem (val) {
+      this.filter.sortParam = val.prop
+      if (val.order === 'descending') {
+        this.filter.high2low = true
+      } else {
+        this.filter.high2low = false
+      }
+      this.getPageProducts()
+    },
     resetSearch () {
       this.star = null
       this.product = null
