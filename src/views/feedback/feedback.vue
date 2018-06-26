@@ -127,7 +127,7 @@
             :label="dictCn[headerName]"
             v-if="dynamicHeaders.includes(headerName)"
             :prop="headerName"
-            :sortable="headerName==='country' || headerName==='score' || headerName==='status'? false:'custom'"
+            :sortable="headerName==='country' || headerName==='score' || headerName==='status' || headerName==='deleteDate'? false:'custom'"
             ref="sortTable">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               <div v-if="headerName === 'title'"><a :href="scope.row.reviewURL" target="_blank">{{scope.row[headerName]}}</a></div>
@@ -287,6 +287,7 @@ export default {
         score: 'Score',
         reviewDate: 'Review Date',
         status: 'Status',
+        deleteDate: 'Delete Date',
         star: 'Stars',
         buyerId: 'Buyer ID',
         orderId: 'Order ID',
@@ -357,9 +358,9 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
+      this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
-      const headersDownload = ['shopName', 'asin', 'country', 'quantity', 'score', 'reviewDate', 'status', 'star', 'buyerId', 'orderId', 'name', 'profileURL', 'title', 'review', 'reviewURL', 'operatorName', 'lastUpdateDate']
+      const headersDownload = ['shopName', 'asin', 'country', 'quantity', 'score', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'orderId', 'name', 'profileURL', 'title', 'review', 'reviewURL', 'operatorName', 'lastUpdateDate']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
     statusChange (e) {
