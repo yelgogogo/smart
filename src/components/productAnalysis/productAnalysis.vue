@@ -443,16 +443,12 @@ export default {
 
     },
     parseCategories () {
-      console.log('parseCategories')
       const statistics = this.competitionStatistics[0].info
-      console.log(this.competitionStatistics, Array.isArray(statistics), statistics.length)
       let self = this
       if (Array.isArray(statistics) && statistics.length > 0) {
         self.categories = []
         self.keywords = []
-        console.log('parseCategories', statistics)
         statistics.map((dt, index) => {
-          console.log(dt.name)
           if (dt.name &&
             typeof dt.name === 'string') {
             self.legends.push(dt.name)
