@@ -93,13 +93,16 @@
           border
           stripe
           height="500"
-          :data="gridData">
+          :data="gridData"
+          @sort-change="changeSortItem">
           <el-table-column 
             v-for="(headerName, index) in dynamicHeaders" 
             :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
             :label="dictEn[headerName]"
-            v-if="dynamicHeaders.includes(headerName)">
+            v-if="dynamicHeaders.includes(headerName)"
+            :prop="headerName"
+            :sortable="headerName==='country' || headerName==='orderStatus' || headerName==='productName' || headerName==='price' || headerName==='name'? false:'custom'">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               {{scope.row[headerName]}}
             </template>
@@ -149,7 +152,9 @@ export default {
         countryCode: '',
         productId: '',
         buyerId: '',
-        ordeId: ''
+        ordeId: '',
+        sortParam: '',
+        high2low: ''
       },
       mockData: [],
       stars: '',
@@ -191,17 +196,17 @@ export default {
       headers: [],
       headerWidth: HEADER_WIDTH,
       dictEn: {
-        date: '购买时间',
-        orderId: '订单号',
-        status: '订单状态',
+        purchaseDate: '购买时间',
+        amazonOrderId: '订单号',
+        orderStatus: '订单状态',
         asin: 'ASIN',
         productName: '产品名字',
         buyerName: '买家名字',
         buyerId: '买家ID',
-        quantity: '订单数量',
+        quantityOrdered: '订单数量',
         price: '订单价格',
         country: '国家',
-        shopName: '店铺'
+        name: '店铺'
       },
       form: {
         productId: '',
@@ -230,12 +235,21 @@ export default {
   mounted () {
   },
   methods: {
+    changeSortItem (val) {
+      this.filter.sortParam = val.prop
+      if (val.order === 'descending') {
+        this.filter.high2low = true
+      } else {
+        this.filter.high2low = false
+      }
+      this.getPageProducts()
+    },
     resetSearch () {
       this.filter = {...this.filter, ordeId: undefined, buyerId: undefined, productId: undefined}
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['date', 'shopName', 'country', 'orderId', 'status', 'asin', 'productName', 'buyerName', 'buyerId', 'quantity', 'price']
+      this.dynamicHeaders = ['purchaseDate', 'name', 'country', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'quantityOrdered', 'price']
       this.headers = this.dynamicHeaders
     },
     orderStatusChange (evnet) {
