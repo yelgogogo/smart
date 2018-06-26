@@ -59,7 +59,8 @@
           v-if="gridData.length > 0"
           :summary-method="getSummaries"
           show-summary
-          :data="gridData">
+          :data="gridData"
+          @sort-change="changeSortItem">
             <el-table-column
               label="店铺"
               width="150"
@@ -74,7 +75,9 @@
             </el-table-column>  
             <el-table-column
               label="ASIN"
-              width="120">
+              width="120"
+              prop="ASIN"
+              sortable>
               <template slot-scope="scope">
                 <a :href="scope.row.url" target="_blank">{{scope.row.productASIN}}</a>
                 <div v-for="cp in scope.row.competitors" :key="cp">
@@ -97,14 +100,14 @@
               :label="orderData.label"
               width="100"
               :prop="orderData.label"
-              >
+              sortable>
             </el-table-column>
             <el-table-column
               label="合计"
               width="100"
               prop="totalCount"
               fixed="right"
-              >
+              sortable>
             </el-table-column>
             <el-table-column
               header-align="center"
@@ -238,7 +241,9 @@ export default {
           shop: false,
           order: false,
           quantity: true
-        }
+        },
+        sortParam: '',
+        high2low: ''
       },
       dr: null,
       nationId: '',
@@ -318,6 +323,15 @@ export default {
     this.listSuggestTypes()
   },
   methods: {
+    changeSortItem (val) {
+      this.filter.sortParam = val.prop
+      if (val.order === 'descending') {
+        this.filter.high2low = true
+      } else {
+        this.filter.high2low = false
+      }
+      this.getPageProducts()
+    },
     getSummaries (param) {
       const sums = ['合计', '', '', '']
       if (this.summaryData.length > 0) {
