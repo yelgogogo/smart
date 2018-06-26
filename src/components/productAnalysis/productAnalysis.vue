@@ -115,12 +115,15 @@
     <el-table 
       border
       stripe
-      :data="gridData">
+      :data="gridData"
+      @sort-change="changeSortItem">
       <el-table-column 
         v-for="(headerName, index) in dynamicHeaders" 
         :width="headerWidth[headerName.en]?headerWidth[headerName.en]:'100'"
         :key="headerName.en + '_' + index" 
-        :label="headerName.cn">
+        :label="headerName.cn"
+        :prop="headerName.en"
+        sortable>
         <template slot-scope="scope" v-if="scope.row[headerName.en]">
           {{scope.row[headerName.en]}}
         </template>
@@ -174,7 +177,9 @@ export default {
         shopId: parseInt(this.$route.query.shopId),
         countryCode: this.$route.query.countryCode,
         marketplaceId: this.$route.query.marketplaceId,
-        unit: PERIOD_UNIT.DAY
+        unit: PERIOD_UNIT.DAY,
+        sortParam: '',
+        high2low: ''
       },
       salesUnit: 5,
       showChartCategory: false,
@@ -280,6 +285,15 @@ export default {
     // this.getSuggestion()
   },
   methods: {
+    changeSortItem (val) {
+      this.filter.sortParam = val.prop
+      if (val.order === 'descending') {
+        this.filter.high2low = true
+      } else {
+        this.filter.high2low = false
+      }
+      this.getPageData()
+    },
     updateVisibleColumns () {
       const checkList = this.checkedList.map(c => this.dictEn[c])
       this.headersArray.forEach(h => {
