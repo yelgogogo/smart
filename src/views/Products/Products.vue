@@ -87,8 +87,7 @@
             </el-table-column>
             <el-table-column
               label="产品名称"
-              width="200"
-              sortable>
+              width="200">
               <template slot-scope="scope">
                 {{scope.row.productName}}
                 <!-- <i class="el-icon-edit" @click="changeName(scope.row)"></i> -->
