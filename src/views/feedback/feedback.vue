@@ -127,11 +127,12 @@
             :label="dictCn[headerName]"
             v-if="dynamicHeaders.includes(headerName)"
             :prop="headerName"
-            :sortable="headerName==='country' || headerName==='score' || headerName==='status' || headerName==='deleteDate'? false:'custom'"
+            :sortable="headerName==='reviewDate' || headerName==='sellerId' || headerName==='asin' || headerName==='buyerId' || headerName==='text' || headerName==='star'
+             || headerName==='amazonOrderId' || headerName==='author' || headerName==='title' || headerName==='lastUpdateDate'? 'custom':false"
             ref="sortTable">
             <template slot-scope="scope" v-if="scope.row[headerName]">
-              <div v-if="headerName === 'title'"><a :href="scope.row.reviewURL" target="_blank">{{scope.row[headerName]}}</a></div>
-              <div v-else-if="headerName === 'name'"><a :href="scope.row.profileURL" target="_blank">{{scope.row[headerName]}}</a></div>
+              <div v-if="headerName === 'title'"><a :href="scope.row.detailURL" target="_blank">{{scope.row[headerName]}}</a></div>
+              <div v-else-if="headerName === 'author'"><a :href="scope.row.profileURL" target="_blank">{{scope.row[headerName]}}</a></div>
               <div v-else>{{scope.row[headerName]}}</div>
             </template>
           </el-table-column>
@@ -178,7 +179,7 @@
               {{form.star}}
           </el-form-item>
           <el-form-item label="Name" :label-width="formLabelWidth">
-            {{form.name}}
+            {{form.author}}
           </el-form-item>
           <el-form-item label="Buyer Id" :label-width="formLabelWidth">
             {{form.buyerId}}
@@ -187,7 +188,7 @@
             {{form.title}}
           </el-form-item>
           <el-form-item label="Review" :label-width="formLabelWidth">
-              {{form.review}}
+              {{form.text}}
             </el-form-item>
           <el-form-item label="操作" :label-width="formLabelWidth">
             <div v-for="(msg, index) in reviewHistory" :key="index">
@@ -283,19 +284,20 @@ export default {
         asin: 'ASIN',
         productName: '产品名称',
         quantity: 'Quantity',
-        country: 'Country',
+        countryCode: 'Country',
         score: 'Score',
         reviewDate: 'Review Date',
+        sellerId: 'Seller Id',
         status: 'Status',
         deleteDate: 'Delete Date',
         star: 'Stars',
         buyerId: 'Buyer ID',
-        orderId: 'Order ID',
-        name: 'Name',
+        amazonOrderId: 'Order ID',
+        author: 'Name',
         title: 'Title',
         profileURL: 'Buyer Profile',
-        reviewURL: 'Review Link',
-        review: 'Review Content',
+        detailURL: 'Review Link',
+        text: 'Review Content',
         operatorName: 'Operator',
         lastUpdateDate: 'Last Update Time'
       },
@@ -304,7 +306,7 @@ export default {
       headerFixed: {
         shopName: 'left',
         productName: 'left',
-        country: 'left',
+        countryCode: 'left',
         asin: 'left'
       },
       form: {
@@ -358,9 +360,9 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'orderId', 'name', 'title', 'operatorName', 'lastUpdateDate']
+      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'sellerId', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
-      const headersDownload = ['shopName', 'asin', 'country', 'quantity', 'score', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'orderId', 'name', 'profileURL', 'title', 'review', 'reviewURL', 'operatorName', 'lastUpdateDate']
+      const headersDownload = ['shopName', 'asin', 'countryCode', 'quantity', 'score', 'reviewDate', 'sellerId', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'profileURL', 'title', 'text', 'detailURL', 'operatorName', 'lastUpdateDate']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
     statusChange (e) {

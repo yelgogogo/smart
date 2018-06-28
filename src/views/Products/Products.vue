@@ -79,7 +79,7 @@
               prop="ASIN"
               sortable>
               <template slot-scope="scope">
-                <a :href="scope.row.url" target="_blank">{{scope.row.productASIN}}</a>
+                <a :href="scope.row.url" target="_blank">{{scope.row.ASIN}}</a>
                 <div v-for="cp in scope.row.competitors" :key="cp">
                   {{cp}}&nbsp;<el-tag type="success" size="mini">竞</el-tag> 
                 </div>
@@ -123,7 +123,7 @@
                     编辑
                   </el-button>
                 </router-link>
-                <router-link :to="{path: '/main/analysis', query: {productName:scope.row.productName,countryCode:scope.row.countryCode,marketplaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.productASIN}}">
+                <router-link :to="{path: '/main/analysis', query: {productName:scope.row.productName,countryCode:scope.row.countryCode,marketplaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.ASIN}}">
                   <el-button size="mini" round  v-show="operationShow">
                     分析
                   </el-button>
@@ -157,7 +157,7 @@
     <el-dialog title="工作流" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="ASIN" :label-width="formLabelWidth">
-              {{form.productASIN}}
+              {{form.ASIN}}
           </el-form-item>
           <!-- <el-form-item label="产品描述" :label-width="formLabelWidth">
               {{form.name}}
@@ -281,7 +281,7 @@ export default {
   },
   computed: {
     fieldsCn () {
-      let headers = ['shopName', 'countryCode', 'productASIN', 'productName']
+      let headers = ['shopName', 'countryCode', 'ASIN', 'productName']
       if (this.gridData.length > 0) {
         let sort = []
         for (let key in this.gridData[0]) {
@@ -291,7 +291,7 @@ export default {
         console.log('sort', sort)
         sort.forEach(key => {
           if (key !== 'orderList' && key !== 'url' && key !== 'shopId' && key !== 'marketplaceId' &&
-            key !== 'marketplaceName' && key !== 'productCASIN' && key !== 'productKeyword') {
+            key !== 'marketplaceName' && key !== 'ASIN' && key !== 'productKeyword') {
             if (!headers.includes(key)) {
               headers.push(key)
             }
@@ -371,31 +371,31 @@ export default {
       this.currentPage = 1
       this.getPageProducts()
     },
-    changeName (row) {
-      this.$prompt('请输入产品名称', '提示', {
-        confirmButtonText: '确定',
-        inputValue: row.productName,
-        cancelButtonText: '取消'
-      }).then(({ value }) => {
-        const shopId = row.shopId
-        const name = value
-        api.post(`/api/product/name/${row.productASIN}`, {shopId, name}).then(res => {
-          this.$message({
-            showClose: true,
-            message: '更新成功!',
-            type: 'success'
-          })
-          this.getPageProducts()
-        }).catch(err => {
-          this.errorHandler(err, {code: 404, message: '产品未找到'})
-        })
-      }).catch(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: '取消输入'
-        // })
-      })
-    },
+    // changeName (row) {
+    //   this.$prompt('请输入产品名称', '提示', {
+    //     confirmButtonText: '确定',
+    //     inputValue: row.productName,
+    //     cancelButtonText: '取消'
+    //   }).then(({ value }) => {
+    //     const shopId = row.shopId
+    //     const name = value
+    //     api.post(`/api/product/name/${row.ASIN}`, {shopId, name}).then(res => {
+    //       this.$message({
+    //         showClose: true,
+    //         message: '更新成功!',
+    //         type: 'success'
+    //       })
+    //       this.getPageProducts()
+    //     }).catch(err => {
+    //       this.errorHandler(err, {code: 404, message: '产品未找到'})
+    //     })
+    //   }).catch(() => {
+    //     // this.$message({
+    //     //   type: 'info',
+    //     //   message: '取消输入'
+    //     // })
+    //   })
+    // },
     periodCustomizeChange () {
       console.log(this.dr)
       this.filter.period.start = this.dr[0]
@@ -451,11 +451,11 @@ export default {
     },
     add (row) {
       console.log(row)
-      const {productASIN, productName, shopId, shopName, marketplaceName} = row
+      const {ASIN, productName, shopId, shopName, marketplaceName} = row
       this.modalType = 'add'
       this.dialogFormVisible = true
-      this.form.productId = productASIN
-      this.form.productASIN = productASIN
+      this.form.productId = ASIN
+      this.form.ASIN = ASIN
       this.form.productName = productName
       this.form.shopName = shopName
       this.form.shopId = shopId
@@ -466,7 +466,7 @@ export default {
     },
     isNotLike (product) {
       return !this.likedProducts.find(p => {
-        return product.productASIN === p.productId
+        return product.ASIN === p.productId
       })
     },
     searchProduct () {
@@ -554,7 +554,7 @@ export default {
     },
     likeProduct (product, like) {
       let productInfo = {
-        productId: product.productASIN,
+        productId: product.ASIN,
         marketplaceId: product.marketplaceId,
         shopId: product.shopId
       }
@@ -570,7 +570,7 @@ export default {
           }
         })
       } else {
-        let interested = this.likedProducts.find(p => p.productId === product.productASIN)
+        let interested = this.likedProducts.find(p => p.productId === product.ASIN)
         api.delete(`/api/interested/${interested.interestedId}`).then(res => {
           Message({
             showClose: true,

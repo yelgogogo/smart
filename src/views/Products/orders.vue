@@ -102,7 +102,8 @@
             :label="dictEn[headerName]"
             v-if="dynamicHeaders.includes(headerName)"
             :prop="headerName"
-            :sortable="headerName==='country' || headerName==='orderStatus' || headerName==='productName' || headerName==='price' || headerName==='name'? false:'custom'">
+            :sortable="headerName==='purchaseDate' || headerName==='amazonOrderId' || headerName==='asin' || headerName==='buyerName'
+             || headerName==='buyerId' || headerName==='quantityOrdered'? 'custom':false">
             <template slot-scope="scope" v-if="scope.row[headerName]">
               {{scope.row[headerName]}}
             </template>
@@ -205,8 +206,8 @@ export default {
         buyerId: '买家ID',
         quantityOrdered: '订单数量',
         price: '订单价格',
-        country: '国家',
-        name: '店铺'
+        countryCode: '国家',
+        shopName: '店铺'
       },
       form: {
         productId: '',
@@ -249,7 +250,7 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['purchaseDate', 'name', 'country', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'quantityOrdered', 'price']
+      this.dynamicHeaders = ['purchaseDate', 'shopName', 'countryCode', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'quantityOrdered', 'price']
       this.headers = this.dynamicHeaders
     },
     orderStatusChange (evnet) {

@@ -1,7 +1,7 @@
 <template v-if="product">
   <el-form :label-position="labelPosition" label-width="80px" class="product-form">
     <el-form-item label="产品ASIN">
-      {{product.productASIN}}
+      {{product.ASIN}}
     </el-form-item>
     <!-- <el-form-item label="图片">
       <el-upload
@@ -103,13 +103,13 @@ export default {
     addCompetitor () {
       this.competitor.marketplaceId = this.product.marketplaceId
       this.competitor.shopId = this.product.shopId
-      this.competitor.productId = this.product.productASIN
+      this.competitor.productId = this.product.ASIN
       this.showAddCpButton = false
     },
     addKeyword () {
       this.gKeyword.marketplaceId = this.product.marketplaceId
       this.gKeyword.shopId = this.product.shopId
-      this.gKeyword.productId = this.product.productASIN
+      this.gKeyword.productId = this.product.ASIN
       this.showAddKwButton = false
     },
     assignKeywords (data) {
@@ -146,7 +146,7 @@ export default {
     },
     listCompetitor () {
       let self = this
-      api.get(`/api/product/competitor/${self.product.marketplaceId}/${self.product.shopId}/${self.product.productASIN}`).then(res => {
+      api.get(`/api/product/competitor/${self.product.marketplaceId}/${self.product.shopId}/${self.product.ASIN}`).then(res => {
         self.competitors = res.data
         self.listKeywords()
         self.clearCompetitor()
@@ -154,7 +154,7 @@ export default {
     },
     listKeywords () {
       let self = this
-      api.get(`/api/product/keyword/${self.product.marketplaceId}/${self.product.shopId}/${self.product.productASIN}`).then(res => {
+      api.get(`/api/product/keyword/${self.product.marketplaceId}/${self.product.shopId}/${self.product.ASIN}`).then(res => {
         self.assignKeywords(res.data)
         self.clearGKeywork()
       })
@@ -166,7 +166,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.delete(`/api/product/competitor/${self.product.marketplaceId}/${self.product.shopId}/${self.product.productASIN}/${id}`).then(res => {
+        api.delete(`/api/product/competitor/${self.product.marketplaceId}/${self.product.shopId}/${self.product.ASIN}/${id}`).then(res => {
           self.listCompetitor()
           Message({
             type: 'success',
@@ -222,7 +222,7 @@ export default {
       }).then(({ value }) => {
         const shopId = row.shopId
         const name = value
-        api.post(`/api/product/name/${row.productASIN}`, {shopId, name}).then(res => {
+        api.post(`/api/product/name/${row.ASIN}`, {shopId, name}).then(res => {
           this.$message({
             showClose: true,
             message: '更新成功!',

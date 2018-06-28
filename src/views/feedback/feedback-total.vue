@@ -158,7 +158,7 @@ export default {
         shopName: 'Shop Name',
         asin: 'ASIN',
         productName: '产品名称',
-        country: 'Country',
+        countryCode: 'Country',
         currentQuantity: 'Current Quantity',
         currentAverage: 'Current Stars',
         totalQuantity: 'Total Quantity',
@@ -171,7 +171,7 @@ export default {
       headerFixed: {
         shopName: 'left',
         productName: 'left',
-        country: 'left',
+        countryCode: 'left',
         asin: 'left'
       },
       headerWidth: HEADER_WIDTH,
@@ -230,7 +230,7 @@ export default {
       this.getPageProducts()
     },
     createHeader (headers) {
-      this.dynamicHeaders = ['shopName', 'country', 'asin', 'productName', 'currentQuantity', 'currentAverage']
+      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'currentQuantity', 'currentAverage']
       let sort = []
       for (let header in headers) {
         if (!this.dynamicHeaders.includes(header) && header !== 'shopId') {
@@ -243,7 +243,7 @@ export default {
 
       this.dynamicHeaders = [...this.dynamicHeaders, ...sort]
       this.headers = this.dynamicHeaders
-      const headersFixed = ['shopName', 'asin', 'country', 'currentQuantity', 'currentAverage']
+      const headersFixed = ['shopName', 'asin', 'countryCode', 'currentQuantity', 'currentAverage']
       const headersDownload = [...headersFixed, ...sort]
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
