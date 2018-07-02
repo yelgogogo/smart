@@ -39,10 +39,11 @@
 						电话: {{userInfo.phone}}
 					</div>
 					<div class="text item">
-						角色: <span v-for="role in userInfo.roles">{{role.roleName}} &nbsp;</span>
+						<!-- 角色: <span v-for="role in userInfo.roles">{{role.roleName}} &nbsp;</span> -->
+						角色: {{userInfo.roles[0].roleName}}
 					</div>
 					<div class="text item">
-						店铺: <span v-for="shop in userInfo.shops">{{shop.shopName}} &nbsp;</span>
+						店铺: <span v-for="shop in userInfo.shops">{{shop.shopName}} <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 					</div>
 					<div slot="header" class="clearfix" v-if="userInfo.wechatId">
 						<span>昵称: {{userInfo.wechatName}}</span>
