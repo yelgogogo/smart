@@ -127,7 +127,7 @@
             :label="dictCn[headerName]"
             v-if="dynamicHeaders.includes(headerName)"
             :prop="headerName"
-            :sortable="headerName==='reviewDate' || headerName==='sellerId' || headerName==='asin' || headerName==='buyerId' || headerName==='text' || headerName==='star'
+            :sortable="headerName==='reviewDate' || headerName==='asin' || headerName==='buyerId' || headerName==='text' || headerName==='star'
              || headerName==='amazonOrderId' || headerName==='author' || headerName==='title' || headerName==='lastUpdateDate'? 'custom':false"
             ref="sortTable">
             <template slot-scope="scope" v-if="scope.row[headerName]">
@@ -287,7 +287,6 @@ export default {
         countryCode: 'Country',
         score: 'Score',
         reviewDate: 'Review Date',
-        sellerId: 'Seller Id',
         status: 'Status',
         deleteDate: 'Delete Date',
         star: 'Stars',
@@ -360,9 +359,9 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'sellerId', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'title', 'operatorName', 'lastUpdateDate']
+      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
-      const headersDownload = ['shopName', 'asin', 'countryCode', 'quantity', 'score', 'reviewDate', 'sellerId', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'profileURL', 'title', 'text', 'detailURL', 'operatorName', 'lastUpdateDate']
+      const headersDownload = ['shopName', 'asin', 'countryCode', 'quantity', 'score', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'profileURL', 'title', 'text', 'detailURL', 'operatorName', 'lastUpdateDate']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
     statusChange (e) {
