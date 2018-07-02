@@ -98,7 +98,7 @@
             <el-table-column v-for="orderData in dateList"
               :key="orderData.label"
               :label="orderData.label"
-              width="100"
+              width="120"
               :prop="orderData.label"
               sortable>
             </el-table-column>
@@ -141,18 +141,6 @@
               </template>              
             </el-table-column>
           </el-table>
-      </el-col>
-      <el-col :span="24" class="text-left">
-
-        <el-pagination
-          @size-change="sizeChange"
-          @current-change="currentChange"
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100]"
-          :page-size="pageSize"
-          layout="sizes, total, prev, pager, next, jumper"
-          :total="total">
-        </el-pagination>
       </el-col>
     </el-row>
     <el-dialog title="工作流" :visible.sync="dialogFormVisible">

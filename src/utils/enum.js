@@ -38,7 +38,7 @@ export const HEADER_WIDTH = {
   date: 200,
   price: 140,
   shopName: 120,
-  productName: 240,
+  productName: 300,
   reviewDate: 120,
   orderId: 160,
   operatorId: 100,
