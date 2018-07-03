@@ -105,7 +105,7 @@
         <vue-csv-download
           v-else
           :data="download"
-          :fields="fieldsCn"
+          :fields="headersDownload"
           class="download"
           >
           <el-button size="mini" icon="el-icon-document">下载</el-button>
@@ -115,6 +115,7 @@
     <el-table 
       border
       stripe
+      height="500"
       :data="gridData"
       @sort-change="changeSortItem">
       <el-table-column 
@@ -149,12 +150,12 @@ import api from '@/utils/api'
 import productSearch from '@/components/productSearch/productSearch'
 import { Message } from 'element-ui'
 import {HEADER_WIDTH} from '../../utils/enum'
-import VueCsvDownloader from 'vue-csv-downloader'
+import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import {PERIOD_UNIT} from '@/utils/enum'
 
 export default {
   components: {
-    VueCsvDownloader,
+    VueCsvDownload,
     productSearch
   },
   data () {
@@ -164,6 +165,7 @@ export default {
       checkedList: [],
       dailyQa: [],
       dailyFeedback: [],
+      headersDownload: [],
       activeName: 'sales',
       currentPage: 1,
       pageSize: 20,
@@ -195,26 +197,6 @@ export default {
       legends: [],
       dynamicHeaders: [],
       fields: [ ],
-      dictEn: {
-        '日期': 'label',
-        '订单': 'Orders',
-        '总广告销售额/总销售额': 'Ad SalesByAd Div Sales',
-        '总广告花费': 'Ad Spend',
-        '广告花费/总销售额': 'Ad Spend Div Sales',
-        '广告总数量': 'Ad TotalQuantity',
-        '广告总销量': 'Ad TotalSales',
-        '广告总带动销量': 'Ad TotalSalesByAd',
-        '浏览量': 'Page Views',
-        '浏览率': 'Page Views Percentage',
-        'QA': 'QA',
-        'session率': 'Session Percentage',
-        'Sessions': 'Sessions',
-        'unitSessionPercentage': 'Unit Session Percentage',
-        '评分': 'Score',
-        '价格': 'Price',
-        '订单量': 'Quantity Ordered',
-        '反馈': 'Reviews'
-      },
       dictCn: {
         'label': '日期',
         'Orders': '订单',
@@ -279,12 +261,149 @@ export default {
       }
     }
   },
+  computed: {
+    adBar () {
+      var self = this
+      if (Array.isArray(self.adStatistics) && self.adStatistics.length > 0) {
+        var selected = {}
+        this.adStatistics.forEach((dt, index) => {
+          if (index < 3) {
+            selected[dt.name] = true
+          } else {
+            selected[dt.name] = false
+          }
+        })
+        return {
+          title: {
+            text: this.productName
+          },
+          tooltip: {
+            trigger: 'axis',
+            formatter: (params) => {
+              let res = '' + params[0].name + '</br>'
+              params.forEach(param => {
+                if (param.seriesName.startsWith('Ad')) {
+                  res = res + param.seriesName + ': ' + self.adStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
+                }
+              })
+              return res
+            }
+          },
+          legend: {
+            data: self.adStatistics.map(dt => dt.name).filter(f => f.startsWith('Ad')),
+            top: 30,
+            selected: selected
+          },
+          grid: {
+            top: 150
+          },
+          toolbox: self.toolBoxOptions,
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            minInterval: 1,
+            data: self.adStatistics[0].info.map(dt => dt.label)
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: self.adStatistics.map(dt => {
+            let name = dt.name
+            let type = 'line'
+            let markPoint = {
+              clickable: true,
+              data: this.workFlow.map(m => {
+                return {
+                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
+                }
+              })
+            }
+            let data = dt.info.map(i => i.rate)
+            return {name, type, markPoint, data}
+          })
+        }
+      }
+    },
+    statisticsBar () {
+      var self = this
+      if (Array.isArray(self.currentStatistics) && self.currentStatistics.length > 0) {
+        var selected = {}
+        self.currentStatistics.map((dt, index) => {
+          if (index < 3) {
+            selected[dt.name] = true
+          } else {
+            selected[dt.name] = false
+          }
+        })
+        return {
+          title: {
+            text: this.productName
+          },
+          tooltip: {
+            trigger: 'axis',
+            formatter: (params) => {
+              let res = '' + params[0].name + '</br>'
+              params.forEach(param => {
+                res = res + param.seriesName + ': ' + self.currentStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
+              })
+              return res
+            }
+          },
+          legend: {
+            data: self.currentStatistics.map(dt => dt.name),
+            top: 30,
+            selected: selected
+          },
+          grid: {
+            top: 150
+          },
+          toolbox: self.toolBoxOptions,
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            minInterval: 1,
+            data: self.currentStatistics[0].info.map(dt => dt.label)
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: self.currentStatistics.map(dt => {
+            let name = dt.name
+            let type = 'line'
+            let markPoint = {
+              clickable: true,
+              data: this.workFlow.map(m => {
+                return {
+                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
+                }
+              })
+            }
+            let data = dt.info.map(i => i.rate)
+            return {name, type, markPoint, data}
+          })
+        }
+      }
+    },
+    dictEn () {
+      let dictEn = {}
+      for (let prop in this.dictCn) {
+        dictEn[this.dictCn[prop]] = prop
+      }
+      return dictEn
+    }
+  },
   created () {
     this.statisticsQuery = this.$route.query
     this.statisticsQuery.shopId = parseInt(this.statisticsQuery.shopId)
     // this.getSuggestion()
   },
   methods: {
+    createHeader () {
+      this.dynamicHeaders = this.headersArray.filter(h => h.show)
+      this.headers = this.headersArray.map(e => e.cn)
+      this.checkedList = this.dynamicHeaders.map(e => e.cn)
+      this.headersDownload = this.headersArray.map(e => e.cn)
+    },
     changeSortItem (val) {
       this.filter.sortParam = val.prop
       if (val.order === 'descending') {
@@ -304,11 +423,6 @@ export default {
         }
       })
       this.dynamicHeaders = this.headersArray.filter(h => h.show)
-    },
-    createHeader () {
-      this.dynamicHeaders = this.headersArray.filter(h => h.show)
-      this.headers = this.headersArray.map(e => e.cn)
-      this.checkedList = this.dynamicHeaders.map(e => e.cn)
     },
     sizeChange (pageSize) {
       this.pageSize = pageSize
@@ -392,6 +506,31 @@ export default {
         })
       })
     },
+    getDownload () {
+      let pagination = {
+        pageSize: 99999,
+        currentPage: 1
+      }
+      const period = this.filter.period
+      api.post('/api/product/chart', {pagination, ...this.filter, period}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.download = res.data.grid.map(d => {
+            let download = {}
+            for (let prop in d) {
+              download[this.dictCn[prop]] = d[prop]
+            }
+            return download
+          })
+        }
+      }).catch(err => {
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
+      this.$sendDownloadHistory('产品分析')
+    },
     getGridData () {
       let self = this
       this.$store.dispatch('setLoadingState', true)
@@ -438,9 +577,6 @@ export default {
         })
         this.$store.dispatch('setLoadingState', false)
       })
-    },
-    getDownload () {
-
     },
     parseCategories () {
       const statistics = this.competitionStatistics[0].info
@@ -607,130 +743,6 @@ export default {
               })
             }
             let data = dt.info.map(i => i.value)
-            return {name, type, markPoint, data}
-          })
-        }
-      }
-    }
-  },
-  computed: {
-    adBar () {
-      var self = this
-      if (Array.isArray(self.adStatistics) && self.adStatistics.length > 0) {
-        var selected = {}
-        this.adStatistics.forEach((dt, index) => {
-          if (index < 3) {
-            selected[dt.name] = true
-          } else {
-            selected[dt.name] = false
-          }
-        })
-        return {
-          title: {
-            text: this.productName
-          },
-          tooltip: {
-            trigger: 'axis',
-            formatter: (params) => {
-              let res = '' + params[0].name + '</br>'
-              params.forEach(param => {
-                if (param.seriesName.startsWith('Ad')) {
-                  res = res + param.seriesName + ': ' + self.adStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
-                }
-              })
-              return res
-            }
-          },
-          legend: {
-            data: self.adStatistics.map(dt => dt.name).filter(f => f.startsWith('Ad')),
-            top: 30,
-            selected: selected
-          },
-          grid: {
-            top: 150
-          },
-          toolbox: self.toolBoxOptions,
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            minInterval: 1,
-            data: self.adStatistics[0].info.map(dt => dt.label)
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: self.adStatistics.map(dt => {
-            let name = dt.name
-            let type = 'line'
-            let markPoint = {
-              clickable: true,
-              data: this.workFlow.map(m => {
-                return {
-                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
-                }
-              })
-            }
-            let data = dt.info.map(i => i.rate)
-            return {name, type, markPoint, data}
-          })
-        }
-      }
-    },
-    statisticsBar () {
-      var self = this
-      if (Array.isArray(self.currentStatistics) && self.currentStatistics.length > 0) {
-        var selected = {}
-        self.currentStatistics.map((dt, index) => {
-          if (index < 3) {
-            selected[dt.name] = true
-          } else {
-            selected[dt.name] = false
-          }
-        })
-        return {
-          title: {
-            text: this.productName
-          },
-          tooltip: {
-            trigger: 'axis',
-            formatter: (params) => {
-              let res = '' + params[0].name + '</br>'
-              params.forEach(param => {
-                res = res + param.seriesName + ': ' + self.currentStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
-              })
-              return res
-            }
-          },
-          legend: {
-            data: self.currentStatistics.map(dt => dt.name),
-            top: 30,
-            selected: selected
-          },
-          grid: {
-            top: 150
-          },
-          toolbox: self.toolBoxOptions,
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            minInterval: 1,
-            data: self.currentStatistics[0].info.map(dt => dt.label)
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: self.currentStatistics.map(dt => {
-            let name = dt.name
-            let type = 'line'
-            let markPoint = {
-              clickable: true,
-              data: this.workFlow.map(m => {
-                return {
-                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
-                }
-              })
-            }
-            let data = dt.info.map(i => i.rate)
             return {name, type, markPoint, data}
           })
         }
