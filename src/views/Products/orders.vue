@@ -79,7 +79,7 @@
             <vue-csv-download
               v-else
               :data="download"
-              :fields="fieldsCn"
+              :fields="headersDownload"
               class="download"
               >
               <el-button size="mini" icon="el-icon-document">下载</el-button>
@@ -99,7 +99,7 @@
             v-for="(headerName, index) in dynamicHeaders" 
             :width="headerWidth[headerName]?headerWidth[headerName]:'100'"
             :key="headerName + '_' + index" 
-            :label="dictEn[headerName]"
+            :label="dictCn[headerName]"
             v-if="dynamicHeaders.includes(headerName)"
             :prop="headerName"
             :sortable="headerName==='purchaseDate' || headerName==='amazonOrderId' || headerName==='asin' || headerName==='buyerName'
@@ -195,8 +195,9 @@ export default {
         proposer: ''
       },
       headers: [],
+      headersDownload: [],
       headerWidth: HEADER_WIDTH,
-      dictEn: {
+      dictCn: {
         purchaseDate: '购买时间',
         amazonOrderId: '订单号',
         orderStatus: '订单状态',
@@ -221,8 +222,12 @@ export default {
     }
   },
   computed: {
-    fieldsCn () {
-      return this.headers
+    dictEn () {
+      let dictEn = {}
+      for (let prop in this.dictCn) {
+        dictEn[this.dictCn[prop]] = prop
+      }
+      return dictEn
     }
   },
   created () {
@@ -252,6 +257,8 @@ export default {
     createHeader () {
       this.dynamicHeaders = ['purchaseDate', 'shopName', 'countryCode', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'quantityOrdered', 'price']
       this.headers = this.dynamicHeaders
+      const headersDownload = ['purchaseDate', 'shopName', 'countryCode', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'quantityOrdered', 'price']
+      this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
     orderStatusChange (evnet) {
       console.log(this.orderStatus)
@@ -370,7 +377,17 @@ export default {
       const period = this.filter.period
       api.post('/api/product/orders', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
-          this.download = res.data.grid
+          this.download = res.data.grid.map(d => {
+            let download = {}
+            for (let prop in d) {
+              if (this.dictCn[prop]) {
+                download[this.dictCn[prop]] = d[prop]
+              } else {
+                download[prop] = d[prop]
+              }
+            }
+            return download
+          })
         }
       }).catch(err => {
         Message({
