@@ -314,7 +314,9 @@ export default {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
           this.total = res.data.pagination.total
-          this.createHeader(this.gridData[0])
+          if (this.gridData.length > 0) {
+            this.createHeader(this.gridData[0])
+          }
         }
         this.$store.dispatch('setLoadingState', false)
       }).catch(err => {

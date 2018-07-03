@@ -46,7 +46,7 @@
         <vue-csv-download
           v-else
           :data="download"
-          :fields="fieldsCn"
+          :fields="headersDownload"
           class="download"
           >
           <el-button size="mini" icon="el-icon-document">下载</el-button>
@@ -252,8 +252,8 @@ export default {
       productType: '',
       modalType: 'add',
       dialogFormVisible: false,
-      optimizationTypes: [
-      ],
+      optimizationTypes: [],
+      headersDownload: [],
       download: [],
       form: {
         status: 'normal',
@@ -265,32 +265,24 @@ export default {
         title: '',
         sn: 1
       },
+      dynamicHeaders: [],
+      dictCn: {
+        shopName: '店铺名称',
+        ASIN: 'ASIN',
+        productName: '产品名称',
+        countryCode: '国家',
+        totalCount: '合计'
+      },
       operationShow: true
     }
   },
   computed: {
-    fieldsCn () {
-      let headers = ['shopName', 'countryCode', 'ASIN', 'productName']
-      if (this.gridData.length > 0) {
-        let sort = []
-        for (let key in this.gridData[0]) {
-          sort.push(key)
-        }
-        sort = sort.sort((a, b) => a > b ? 1 : -1)
-        console.log('sort', sort)
-        sort.forEach(key => {
-          if (key !== 'orderList' && key !== 'url' && key !== 'shopId' && key !== 'marketplaceId' &&
-            key !== 'marketplaceName' && key !== 'ASIN' && key !== 'productKeyword') {
-            if (!headers.includes(key)) {
-              headers.push(key)
-            }
-          }
-        }
-        )
-      } else {
-        headers = []
+    dictEn () {
+      let dictEn = {}
+      for (let prop in this.dictCn) {
+        dictEn[this.dictCn[prop]] = prop
       }
-      return headers
+      return dictEn
     }
   },
   created () {
@@ -311,6 +303,26 @@ export default {
     this.listSuggestTypes()
   },
   methods: {
+    createHeader (headers) {
+      this.dynamicHeaders = ['shopName', 'countryCode', 'ASIN', 'productName', 'totalCount']
+      let sort = []
+      const noShow = ['orderList', 'marketplaceId', 'marketplaceName', 'shopId', 'url']
+      for (let header in headers) {
+        if (!this.dynamicHeaders.includes(header) && !noShow.includes(header)) {
+          sort.push(header)
+        }
+      }
+      sort = sort.sort((a, b) => {
+        return a < b ? 1 : -1
+      })
+      console.log('sort', sort)
+
+      this.dynamicHeaders = [...this.dynamicHeaders, ...sort]
+      this.headers = this.dynamicHeaders
+      const headersFixed = ['shopName', 'countryCode', 'ASIN', 'productName']
+      const headersDownload = [...headersFixed, ...sort, 'totalCount']
+      this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
+    },
     changeSortItem (val) {
       this.filter.sortParam = val.prop
       if (val.order === 'descending') {
@@ -360,31 +372,6 @@ export default {
       this.currentPage = 1
       this.getPageProducts()
     },
-    // changeName (row) {
-    //   this.$prompt('请输入产品名称', '提示', {
-    //     confirmButtonText: '确定',
-    //     inputValue: row.productName,
-    //     cancelButtonText: '取消'
-    //   }).then(({ value }) => {
-    //     const shopId = row.shopId
-    //     const name = value
-    //     api.post(`/api/product/name/${row.ASIN}`, {shopId, name}).then(res => {
-    //       this.$message({
-    //         showClose: true,
-    //         message: '更新成功!',
-    //         type: 'success'
-    //       })
-    //       this.getPageProducts()
-    //     }).catch(err => {
-    //       this.errorHandler(err, {code: 404, message: '产品未找到'})
-    //     })
-    //   }).catch(() => {
-    //     // this.$message({
-    //     //   type: 'info',
-    //     //   message: '取消输入'
-    //     // })
-    //   })
-    // },
     periodCustomizeChange () {
       console.log(this.dr)
       this.filter.period.start = this.dr[0]
@@ -477,6 +464,7 @@ export default {
           this.gridData = res.data.grid
           if (this.gridData.length > 0) {
             this.dateList = this.gridData[0].orderList
+            this.createHeader(this.gridData[0])
           }
           this.total = res.data.pagination.total
           this.summaryData = res.data.summary
@@ -500,7 +488,17 @@ export default {
       pagination.filter = this.filter
       api.post('/api/product/pagination', {pagination}).then(res => {
         if (res.status === 200 && res.data) {
-          this.download = res.data.grid
+          this.download = res.data.grid.map(d => {
+            let download = {}
+            for (let prop in d) {
+              if (this.dictCn[prop]) {
+                download[this.dictCn[prop]] = d[prop]
+              } else {
+                download[prop] = d[prop]
+              }
+            }
+            return download
+          })
         }
       }).catch(err => {
         Message({
