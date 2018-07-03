@@ -155,14 +155,14 @@ export default {
         proposer: ''
       },
       dictCn: {
-        shopName: 'Shop Name',
+        shopName: '店铺名称',
         asin: 'ASIN',
         productName: '产品名称',
-        countryCode: 'Country',
-        currentQuantity: 'Current Quantity',
-        currentAverage: 'Current Stars',
-        totalQuantity: 'Total Quantity',
-        totalAverage: 'Average Stars'
+        countryCode: '国家',
+        currentQuantity: '数量',
+        currentAverage: '星评',
+        totalQuantity: '全部数量',
+        totalAverage: '平均星评'
       },
       nationListBK: [],
       headers: [],
