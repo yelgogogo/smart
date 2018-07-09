@@ -120,13 +120,13 @@
       @sort-change="changeSortItem">
       <el-table-column 
         v-for="(headerName, index) in dynamicHeaders" 
-        :width="headerWidth[headerName.en]?headerWidth[headerName.en]:'100'"
-        :key="headerName.en + '_' + index" 
-        :label="headerName.cn"
-        :prop="headerName.en"
+        :width="headerWidth[headerName.fieldName]?headerWidth[headerName.fieldName]:'100'"
+        :key="headerName.fieldName + '_' + index" 
+        :label="headerName.en"
+        :prop="headerName.fieldName"
         sortable>
-        <template slot-scope="scope" v-if="scope.row[headerName.en]">
-          {{scope.row[headerName.en]}}
+        <template slot-scope="scope" v-if="scope.row[headerName.fieldName]">
+          {{scope.row[headerName.fieldName]}}
         </template>
       </el-table-column>
     </el-table>
@@ -198,44 +198,44 @@ export default {
       dynamicHeaders: [],
       fields: [ ],
       dictCn: {
-        'label': '日期',
-        'Orders': '订单',
-        'Ad SalesByAd Div Sales': '总广告销售额/总销售额',
-        'Ad Spend': '总广告花费',
-        'Ad Spend Div Sales': '广告花费/总销售额',
-        'Ad TotalQuantity': '广告总数量',
-        'Ad TotalSales': '广告总销量',
-        'Ad TotalSalesByAd': '广告总带动销量',
-        'Page Views': '浏览量',
-        'Page Views Percentage': '浏览率',
+        'label': 'Date',
+        'Orders': 'Orders',
+        'Ad SalesByAd Div Sales': 'Ad SalesByAd Div Sales',
+        'Ad Spend': 'Ad Spend',
+        'Ad Spend Div Sales': 'Ad Spend Div Sales',
+        'Ad TotalQuantity': 'Ad TotalQuantity',
+        'Ad TotalSales': 'Ad TotalSales',
+        'Ad TotalSalesByAd': 'Ad TotalSalesByAd',
+        'Page Views': 'Page Views',
+        'Page Views Percentage': 'Page Views Percentage',
         'QA': 'QA',
-        'Session Percentage': 'session率',
+        'Session Percentage': 'Session Percentage',
         'Sessions': 'Sessions',
-        'Unit Session Percentage': 'unitSessionPercentage',
-        'Score': '评分',
-        'Price': '价格',
-        'Quantity Ordered': '订单量',
-        'Reviews': '反馈'
+        'Unit Session Percentage': 'Unit Session Percentage',
+        'Score': 'Score',
+        'Price': 'Price',
+        'Quantity Ordered': 'Quantity Ordered',
+        'Reviews': 'Reviews'
       },
       headersArray: [
-        {en: 'label', cn: '日期', show: true},
-        {en: 'Orders', cn: '订单', show: true},
-        {en: 'Ad SalesByAd Div Sales', cn: '总广告销售额/总销售额', show: false},
-        {en: 'Ad Spend', cn: '总广告花费', show: false},
-        {en: 'Ad Spend Div Sales', cn: '广告花费/总销售额', show: false},
-        {en: 'Ad TotalQuantity', cn: '广告总数量', show: false},
-        {en: 'Ad TotalSales', cn: '广告总销量', show: false},
-        {en: 'Ad TotalSalesByAd', cn: '广告总带动销量', show: false},
-        {en: 'Page Views', cn: '浏览量', show: true},
-        {en: 'Page Views Percentage', cn: '浏览率', show: true},
-        {en: 'QA', cn: 'QA', show: true},
-        {en: 'Session Percentage', cn: 'session率', show: true},
-        {en: 'Sessions', cn: 'Sessions', show: true},
-        {en: 'Unit Session Percentage', cn: 'unitSessionPercentage', show: true},
-        {en: 'Score', cn: '评分', show: true},
-        {en: 'Price', cn: '价格', show: true},
-        {en: 'Quantity Ordered', cn: '订单量', show: true},
-        {en: 'Reviews', cn: '反馈', show: true}
+        {fieldName: 'label', en: 'Date', cn: '日期', show: true},
+        {fieldName: 'Orders', en: 'Orders', cn: '订单', show: true},
+        {fieldName: 'Ad SalesByAd Div Sales', en: 'Ad SalesByAd Div Sales', cn: '总广告销售额/总销售额', show: false},
+        {fieldName: 'Ad Spend', en: 'Ad Spend', cn: '总广告花费', show: false},
+        {fieldName: 'Ad Spend Div Sales', en: 'Ad Spend Div Sales', cn: '广告花费/总销售额', show: false},
+        {fieldName: 'Ad TotalQuantity', en: 'Ad TotalQuantity', cn: '广告总数量', show: false},
+        {fieldName: 'Ad TotalSales', en: 'Ad TotalSales', cn: '广告总销量', show: false},
+        {fieldName: 'Ad TotalSalesByAd', en: 'Ad TotalSalesByAd', cn: '广告总带动销量', show: false},
+        {fieldName: 'Page Views', en: 'Page Views', cn: '浏览量', show: true},
+        {fieldName: 'Page Views Percentage', en: 'Page Views Percentage', cn: '浏览率', show: true},
+        {fieldName: 'QA', en: 'QA', cn: 'QA', show: true},
+        {fieldName: 'Session Percentage', en: 'Session Percentage', cn: 'session率', show: true},
+        {fieldName: 'Sessions', en: 'Sessions', cn: 'Sessions', show: true},
+        {fieldName: 'Unit Session Percentage', en: 'Unit Session Percentage', cn: 'unitSessionPercentage', show: true},
+        {fieldName: 'Score', en: 'Score', cn: '评分', show: true},
+        {fieldName: 'Price', en: 'Price', cn: '价格', show: true},
+        {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true},
+        {fieldName: 'Reviews', en: 'Reviews', cn: '反馈', show: true}
       ],
       headerWidth: HEADER_WIDTH,
       gridData: [],
@@ -400,9 +400,9 @@ export default {
   methods: {
     createHeader () {
       this.dynamicHeaders = this.headersArray.filter(h => h.show)
-      this.headers = this.headersArray.map(e => e.cn)
-      this.checkedList = this.dynamicHeaders.map(e => e.cn)
-      this.headersDownload = this.headersArray.map(e => e.cn)
+      this.headers = this.headersArray.map(e => e.en)
+      this.checkedList = this.dynamicHeaders.map(e => e.en)
+      this.headersDownload = this.headersArray.map(e => e.en)
     },
     changeSortItem (val) {
       this.filter.sortParam = val.prop
@@ -416,7 +416,7 @@ export default {
     updateVisibleColumns () {
       const checkList = this.checkedList.map(c => this.dictEn[c])
       this.headersArray.forEach(h => {
-        if (checkList.includes(h.en)) {
+        if (checkList.includes(h.fieldName)) {
           h.show = true
         } else {
           h.show = false
