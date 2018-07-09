@@ -283,9 +283,7 @@ export default {
         shopName: '店铺名称',
         asin: 'ASIN',
         productName: '产品名称',
-        quantity: '数量',
         countryCode: '国家',
-        score: '评分',
         reviewDate: '反馈日期',
         status: '状态',
         deleteDate: '删除日期',
@@ -359,9 +357,9 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'quantity', 'score', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'title', 'operatorName', 'lastUpdateDate']
+      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
-      const headersDownload = ['shopName', 'asin', 'countryCode', 'quantity', 'score', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'profileURL', 'title', 'text', 'detailURL', 'operatorName', 'lastUpdateDate']
+      const headersDownload = ['shopName', 'asin', 'countryCode', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'profileURL', 'title', 'text', 'detailURL', 'operatorName', 'lastUpdateDate']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
     statusChange (e) {
