@@ -56,5 +56,6 @@ export const HEADER_WIDTH = {
   sellerId: 140,
   currentQuantity: 100,
   asin: 120,
-  QA: 60
+  QA: 60,
+  author: 150
 }
