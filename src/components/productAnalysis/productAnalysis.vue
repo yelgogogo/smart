@@ -442,7 +442,7 @@ export default {
       this.showChartCategory = false
       this.showChartKeyword = false
       this.chartTitle = tab.name
-      if (tab.name.indexOf('category:') !== -1) {
+      if (tab.name.indexOf('Category:') !== -1) {
         setTimeout(() => { this.showChartCategory = true }, 0)
       } else if (tab.name.indexOf('keyword:') !== -1) {
         setTimeout(() => { this.showChartKeyword = true }, 0)
@@ -453,7 +453,7 @@ export default {
       console.log('getTabName', name)
       const arr = name.split(' > ')
       let txt1 = ''
-      if (name.substring(0, 8) === 'category') {
+      if (name.substring(0, 8) === 'Category') {
         txt1 = '类目' + arr.length
       } else {
         txt1 = '关键字'
@@ -581,6 +581,7 @@ export default {
     parseCategories () {
       const statistics = this.competitionStatistics[0].info
       let self = this
+
       if (Array.isArray(statistics) && statistics.length > 0) {
         self.categories = []
         self.keywords = []
@@ -588,7 +589,7 @@ export default {
           if (dt.name &&
             typeof dt.name === 'string') {
             self.legends.push(dt.name)
-            if (dt.name.startsWith('category:') === true) {
+            if (dt.name.startsWith('Category:') === true) {
               // dt.name.substr(10)
               self.categories.push(dt.name)
               self.categories.sort((a, b) => a.split(' > ').length > b.split(' > ').length ? 1 : -1)
