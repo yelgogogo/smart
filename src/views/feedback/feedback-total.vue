@@ -159,10 +159,10 @@ export default {
         asin: 'ASIN',
         productName: '产品名称',
         countryCode: '国家',
-        currentQuantity: '数量',
-        currentAverage: '星评',
-        totalQuantity: '全部数量',
-        totalAverage: '平均星评'
+        currentQuantity: '当选数量',
+        currentAverage: '当选分数',
+        totalQuantity: '反馈总数',
+        totalAverage: '反馈分数'
       },
       nationListBK: [],
       headers: [],
@@ -230,7 +230,7 @@ export default {
       this.getPageProducts()
     },
     createHeader (headers) {
-      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'currentQuantity', 'currentAverage']
+      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'totalQuantity', 'totalAverage', 'currentQuantity', 'currentAverage']
       let sort = []
       for (let header in headers) {
         if (!this.dynamicHeaders.includes(header) && header !== 'shopId') {
@@ -243,7 +243,7 @@ export default {
 
       this.dynamicHeaders = [...this.dynamicHeaders, ...sort]
       this.headers = this.dynamicHeaders
-      const headersFixed = ['shopName', 'asin', 'countryCode', 'currentQuantity', 'currentAverage']
+      const headersFixed = ['shopName', 'asin', 'countryCode', 'totalQuantity', 'totalAverage', 'currentQuantity', 'currentAverage']
       const headersDownload = [...headersFixed, ...sort]
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
