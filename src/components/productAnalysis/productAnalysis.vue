@@ -444,7 +444,7 @@ export default {
       this.chartTitle = tab.name
       if (tab.name.indexOf('Category:') !== -1) {
         setTimeout(() => { this.showChartCategory = true }, 0)
-      } else if (tab.name.indexOf('keyword:') !== -1) {
+      } else if (tab.name.indexOf('Keyword:') !== -1) {
         setTimeout(() => { this.showChartKeyword = true }, 0)
       }
       console.log(tab, event)
@@ -594,7 +594,7 @@ export default {
               self.categories.push(dt.name)
               self.categories.sort((a, b) => a.split(' > ').length > b.split(' > ').length ? 1 : -1)
             }
-            if (dt.name.startsWith('keyword:') === true) {
+            if (dt.name.startsWith('Keyword:') === true) {
               // dt.name.substr(9)
               self.keywords.push(dt.name)
             }
