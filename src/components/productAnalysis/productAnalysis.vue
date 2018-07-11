@@ -454,9 +454,9 @@ export default {
       const arr = name.split(' > ')
       let txt1 = ''
       if (name.substring(0, 8) === 'Category') {
-        txt1 = '类目' + arr.length
+        txt1 = '(C)' + arr[arr.length - 1]
       } else {
-        txt1 = '关键字'
+        txt1 = '(K)' + name
       }
       return txt1
     },
