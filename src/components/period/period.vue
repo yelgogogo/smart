@@ -14,7 +14,7 @@
       </el-col>
       <el-col :span="14">
         <el-form-item v-if="periodSelectIn===0">
-          <el-date-picker
+          <!-- <el-date-picker
             v-model="periodCustomize"
             @change="updatePeriodCustomize"
             type="daterange"
@@ -23,7 +23,27 @@
             range-separator="~"
             start-placeholder="开始时间"
             end-placeholder="结束时间">
-          </el-date-picker>
+          </el-date-picker> -->
+          <div class="block">
+            <el-date-picker
+              v-model="periodCustomizeStart"
+              type="date"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              placeholder="选择开始日期"
+              @change="updatePeriodStart">
+            </el-date-picker>
+          </div>
+          <div class="block">
+            <el-date-picker
+              v-model="periodCustomizeEnd"
+              type="date"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              placeholder="选择结束日期"
+              @change="updatePeriodEnd">
+            </el-date-picker>
+          </div>
         </el-form-item>
         <el-form-item v-else>&nbsp;</el-form-item>
       </el-col>   
@@ -41,6 +61,8 @@ export default {
     return {
       period: {},
       periodCustomize: [],
+      periodCustomizeStart: '',
+      periodCustomizeEnd: '',
       periodSelectIn: 0,
       periodOptions: PERIOD_OPTIONS
     }
@@ -52,6 +74,9 @@ export default {
   methods: {
     updatePerid () {
       if (this.periodSelectIn === 0) {
+        this.period = {start: '', end: '', select: this.periodSelectIn}
+        this.periodCustomizeStart = ''
+        this.periodCustomizeEnd = ''
         return
       }
       let format = 'YYYY-MM-DD'
@@ -66,6 +91,22 @@ export default {
       this.period.end = this.periodCustomize[1]
       this.period.select = this.periodSelectIn
       this.$emit('onChange', this.period)
+    },
+    updatePeriodStart () {
+      this.period.start = this.periodCustomizeStart
+      if (this.period.end !== '' && moment(this.period.start) > moment(this.period.end)) {
+        this.$message('开始日期必须小于结束日期')
+      }
+    },
+    updatePeriodEnd () {
+      this.period.end = this.periodCustomizeEnd
+      if (this.period.start === '') {
+        this.$message('请输入开始日期')
+      } else if (moment(this.period.start) > moment(this.period.end)) {
+        this.$message('开始日期必须小于结束日期')
+      } else {
+        this.$emit('onChange', this.period)
+      }
     }
   }
 }
