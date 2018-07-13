@@ -1,52 +1,45 @@
 <template>
   <el-row class="first-search">
-    <el-col :span="10">
-        <el-form-item label="选择时间">
-          <el-select class="period-select" v-model="periodSelectIn" @change="updatePerid">
-            <el-option
-            v-for="item in periodOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col :span="14">
-        <el-form-item v-if="periodSelectIn===0">
-          <!-- <el-date-picker
-            v-model="periodCustomize"
-            @change="updatePeriodCustomize"
-            type="daterange"
+    <el-col :span="8">
+      <el-form-item label="选择时间">
+        <el-select class="period-select" v-model="periodSelectIn" @change="updatePerid">
+          <el-option
+          v-for="item in periodOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-col>
+    <el-col :span="15">
+      <el-form-item v-if="periodSelectIn===0">
+        <el-col :span="7">
+          <el-date-picker
+            v-model="periodCustomizeStart"
+            type="date"
             format="yyyy-MM-dd"
             value-format="yyyy-MM-dd"
-            range-separator="~"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间">
-          </el-date-picker> -->
-          <div class="block">
-            <el-date-picker
-              v-model="periodCustomizeStart"
-              type="date"
-              format="yyyy-MM-dd"
-              value-format="yyyy-MM-dd"
-              placeholder="选择开始日期"
-              @change="updatePeriodStart">
-            </el-date-picker>
-          </div>
-          <div class="block">
-            <el-date-picker
-              v-model="periodCustomizeEnd"
-              type="date"
-              format="yyyy-MM-dd"
-              value-format="yyyy-MM-dd"
-              placeholder="选择结束日期"
-              @change="updatePeriodEnd">
-            </el-date-picker>
-          </div>
-        </el-form-item>
-        <el-form-item v-else>&nbsp;</el-form-item>
-      </el-col>   
+            placeholder="开始日期"
+            @change="updatePeriodStart"
+            style="width: 100%;">
+          </el-date-picker>
+        </el-col>
+        <el-col :span="2">&nbsp;&nbsp;&nbsp;至</el-col>
+        <el-col :span="7">
+          <el-date-picker
+            v-model="periodCustomizeEnd"
+            type="date"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            placeholder="结束日期"
+            @change="updatePeriodEnd"
+            style="width: 100%;">
+          </el-date-picker>
+        </el-col>
+      </el-form-item>
+      <!-- <el-form-item v-else>&nbsp;</el-form-item> -->
+    </el-col>   
   </el-row>
 </template>
 
