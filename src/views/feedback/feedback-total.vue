@@ -68,7 +68,6 @@
       <el-col :span="24">
         <el-table 
           border
-          stripe
           height="500"
           :data="gridData"
           @sort-change="changeSortItem">

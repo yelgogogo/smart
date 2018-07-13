@@ -169,7 +169,6 @@
       <el-col :span="24">
         <el-table 
           border
-          stripe
           height="500"
           :data="gridData">
           <el-table-column
@@ -568,7 +567,7 @@ export default {
 }
 
 .period-select {
-  width: 150px!important;
+  width: 120px!important;
 }
 
 .shop-select {

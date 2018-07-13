@@ -91,7 +91,6 @@
       <el-col :span="24">
         <el-table v-if="gridData.length>0"
           border
-          stripe
           height="500"
           :data="gridData"
           @sort-change="changeSortItem">

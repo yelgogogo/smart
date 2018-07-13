@@ -61,8 +61,7 @@
           show-summary
           :data="gridData"
           height="500"
-          @sort-change="changeSortItem"
-          stripe>
+          @sort-change="changeSortItem">
             <el-table-column
               label="店铺"
               width="150"

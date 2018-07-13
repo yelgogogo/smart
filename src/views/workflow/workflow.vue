@@ -75,7 +75,6 @@
       <el-col :span="24">
           <el-table v-if="gridData.length>0"
               ref="table"
-              stripe
               @expand-change="getSugHistory"
               :data="gridData">
               <el-table-column type="expand">

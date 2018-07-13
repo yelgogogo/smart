@@ -14,7 +14,7 @@
     </el-col>
     <el-col :span="15">
       <el-form-item v-if="periodSelectIn===0">
-        <el-col :span="7">
+        <el-col :span="10">
           <el-date-picker
             v-model="periodCustomizeStart"
             type="date"
@@ -26,7 +26,7 @@
           </el-date-picker>
         </el-col>
         <el-col :span="2">&nbsp;&nbsp;&nbsp;至</el-col>
-        <el-col :span="7">
+        <el-col :span="10">
           <el-date-picker
             v-model="periodCustomizeEnd"
             type="date"
@@ -111,7 +111,7 @@ export default {
 }
 
 .period-select {
-  width: 150px!important;
+  width: 120px!important;
 }
 </style>
 

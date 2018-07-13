@@ -114,7 +114,6 @@
     </el-row>
     <el-table 
       border
-      stripe
       height="500"
       :data="gridData"
       @sort-change="changeSortItem">

@@ -108,7 +108,7 @@ export default {
 }
 
 .period-select {
-  width: 150px!important;
+  width: 120px!important;
 }
 
 .shop-select {

@@ -53,8 +53,7 @@
         </el-col>
         <el-col :span="24">
           <el-table
-            :data="users"
-            stripe>
+            :data="users">
               <el-table-column
                 label="工号"
                 width="60"
