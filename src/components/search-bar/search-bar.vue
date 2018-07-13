@@ -2,7 +2,7 @@
   <el-row class="first-search">
     <el-col :span="6" style="padding-right: 5px;">
       <el-form-item label="店铺">
-        <el-select clearable v-model="shopIdIn" placeholder="选择店铺" class="shop-select" @change="updateShop">
+        <el-select clearable v-model="shopIdIn" placeholder="选择店铺" class="shop-select" @change="updateShop" :size="SELECT_SIZE">
           <el-option
             v-for="shop in shopList"
             :key="shop.value"
@@ -14,7 +14,7 @@
     </el-col>
     <el-col :span="4" style="padding-right: 5px;">
       <el-form-item label="国家">
-        <el-select clearable v-model="nationIdIn" placeholder="选择国家" class="nation-select" @change="updateNation">
+        <el-select clearable v-model="nationIdIn" placeholder="选择国家" class="nation-select" @change="updateNation" :size="SELECT_SIZE">
           <el-option
             v-for="nation in nationListIn"
             :key="nation.countryCode"
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { PERIOD_OPTIONS } from '../../utils/enum'
+import { PERIOD_OPTIONS, SELECT_SIZE } from '../../utils/enum'
 import period from '@/components/period/period'
 export default {
   components: {
@@ -46,6 +46,7 @@ export default {
   ],
   data () {
     return {
+      SELECT_SIZE: SELECT_SIZE,
       filter: {
         shopId: null,
         countryCode: null,

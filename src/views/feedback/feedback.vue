@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="6" style="padding-right: 5px;">
             <el-form-item label="状态">
-              <el-select clearable v-model="statusId" placeholder="选择状态" class="shop-select" @change="statusChange">
+              <el-select clearable v-model="statusId" placeholder="选择状态" class="shop-select" @change="statusChange" :size="SELECT_SIZE">
                 <el-option
                   v-for="status in statusList"
                   :key="status"
@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="4" style="padding-right: 5px;">
             <el-form-item label="星评">
-              <el-select clearable v-model="star" placeholder="选择星评" class="rate-select" @change="starChange">
+              <el-select clearable v-model="star" placeholder="选择星评" class="rate-select" @change="starChange" :size="SELECT_SIZE">
                 <el-option
                   v-for="rate in rateList"
                   :key="rate"
@@ -30,7 +30,7 @@
 
           <el-col :span="10" :offset="1" style="padding-right: 5px;">
             <el-form-item label="选择用户" >
-              <el-select clearable v-model="filter.userId" placeholder="选择用户" class="period-select">
+              <el-select clearable v-model="filter.userId" placeholder="选择用户" class="period-select" :size="SELECT_SIZE">
                 <el-option
                   v-for="user in userList"
                   :key="user.value"
@@ -49,7 +49,8 @@
                 class="shop-select"
                 placeholder="请输入买家Id"
                 clearable
-                v-model="filter.buyerId">
+                v-model="filter.buyerId"
+                :size="SELECT_SIZE">
               </el-input>
             </el-form-item>
           </el-col>  
@@ -59,7 +60,8 @@
                   class="nation-select"
                   placeholder="输入订单号"
                   clearable
-                  v-model="filter.orderId">
+                  v-model="filter.orderId"
+                  :size="SELECT_SIZE">
                 </el-input>
               </el-form-item>
             </el-col>  
@@ -67,16 +69,16 @@
             <el-form-item label="产品ASIN">
                 <el-input
                   placeholder="输入ASIN"
-                  type="textarea"
                   class="asin-input"
                   clearable
-                  v-model="filter.productId">
+                  v-model="filter.productId"
+                  :size="SELECT_SIZE">
                 </el-input>
               </el-form-item>
           </el-col>
           <el-col :span="5" :offset="0">
-              <el-button type="primary" round icon="el-icon-search" @click="searchGrid">搜索</el-button>
-              <el-button type="" round icon="el-icon-search" @click="resetSearch">重置</el-button>
+              <el-button type="primary" round icon="el-icon-search" @click="searchGrid" :size="SELECT_SIZE">搜索</el-button>
+              <el-button type="" round icon="el-icon-search" @click="resetSearch" :size="SELECT_SIZE">重置</el-button>
           </el-col>
         </el-row>
         <el-row>
@@ -115,7 +117,7 @@
       <el-col :span="24">
         <el-table 
           border
-          height="500" 
+          :height="tableHeight" 
           :data="gridData"
           @sort-change="changeSortItem">
           <el-table-column 
@@ -147,17 +149,6 @@
           </el-table-column>
         </el-table>
       </el-col>
-      <el-col :span="24">
-          <el-pagination
-          @size-change="sizeChange"
-          @current-change="currentChange"
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100]"
-          :page-size="pageSize"
-          layout="sizes, total, prev, pager, next, jumper"
-          :total="total">
-        </el-pagination>
-      </el-col>
     </el-row>
     <el-dialog title="反馈详情" :visible.sync="dialogFormVisible">
         <el-form :model="form">
@@ -165,7 +156,7 @@
               {{form.asin}}
           </el-form-item>
           <el-form-item label="Status" :label-width="formLabelWidth">
-              <el-select v-model="form.status" placeholder="选择优化类型">
+              <el-select v-model="form.status" placeholder="选择优化类型" :size="SELECT_SIZE">
                 <el-option
                   v-for="option in statusList"
                   :key="option"
@@ -211,7 +202,7 @@ import api from '../../utils/api'
 import { Message } from 'element-ui'
 import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
-import {PERIOD_OPTIONS, HEADER_WIDTH} from '../../utils/enum.js'
+import {PERIOD_OPTIONS, HEADER_WIDTH, SELECT_SIZE} from '../../utils/enum.js'
 import searchBar from '@/components/search-bar/search-bar'
 import { mapGetters } from 'vuex'
 
@@ -221,9 +212,11 @@ export default {
   },
   data () {
     return {
+      SELECT_SIZE: SELECT_SIZE,
       mockData: [
         // {sellerId: '11111-111', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
       ],
+      tableHeight: window.screen.height - 260,
       filter: {
         shopId: null,
         // asinOrName: '',

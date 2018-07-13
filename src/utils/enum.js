@@ -12,6 +12,8 @@ export const PERIOD_UNIT = {
   DAY: 5
 }
 
+export const SELECT_SIZE = 'mini'
+
 export const PERIOD_OPTIONS = [
   {
     label: '自定义',

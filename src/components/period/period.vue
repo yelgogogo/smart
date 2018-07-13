@@ -2,7 +2,7 @@
   <el-row class="first-search">
     <el-col :span="8">
       <el-form-item label="选择时间">
-        <el-select class="period-select" v-model="periodSelectIn" @change="updatePerid">
+        <el-select class="period-select" v-model="periodSelectIn" @change="updatePerid" :size="SELECT_SIZE">
           <el-option
           v-for="item in periodOptions"
           :key="item.value"
@@ -22,6 +22,7 @@
             value-format="yyyy-MM-dd"
             placeholder="开始日期"
             @change="updatePeriodStart"
+            :size="SELECT_SIZE"
             style="width: 100%;">
           </el-date-picker>
         </el-col>
@@ -34,6 +35,7 @@
             value-format="yyyy-MM-dd"
             placeholder="结束日期"
             @change="updatePeriodEnd"
+            :size="SELECT_SIZE"
             style="width: 100%;">
           </el-date-picker>
         </el-col>
@@ -44,7 +46,7 @@
 </template>
 
 <script>
-import { PERIOD_OPTIONS } from '@/utils/enum.js'
+import { PERIOD_OPTIONS, SELECT_SIZE } from '@/utils/enum.js'
 import moment from 'moment'
 export default {
   props: [
@@ -52,6 +54,7 @@ export default {
   ],
   data () {
     return {
+      SELECT_SIZE: SELECT_SIZE,
       period: {},
       periodCustomize: [],
       periodCustomizeStart: '',

@@ -138,7 +138,6 @@
 				<router-view></router-view>
       </el-main>
     </el-container>    
-    <el-footer></el-footer>
   </el-container>
 </template>
 

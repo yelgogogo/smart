@@ -150,4 +150,12 @@ a {
 .large-icon {
   font-size: 18px;
 }
+
+.el-table th, .el-table td {
+  padding: 1px 0;
+}
+
+.el-form-item {
+  margin-bottom: 0px; 
+}
 </style>
