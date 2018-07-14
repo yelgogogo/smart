@@ -48,7 +48,7 @@
             </el-col>
           <el-col :span="24" :offset="0" class="text-right">
               <el-button type="primary" round icon="el-icon-search" @click="searchGrid">搜索</el-button>
-              <el-button type="" round icon="el-icon-search" @click="searchGrid">重置</el-button>
+              <el-button type="" round icon="el-icon-search" @click="resetSearch">重置</el-button>
           </el-col>
         </el-row>
         <el-row>
@@ -250,7 +250,10 @@ export default {
       this.getPageProducts()
     },
     resetSearch () {
-      this.filter = {...this.filter, ordeId: undefined, buyerId: undefined, productId: undefined}
+      this.filter.orderId = ''
+      this.filter.buyerId = ''
+      this.filter.productId = ''
+      this.orderStatus = ['Not Canceled']
       this.getPageProducts()
     },
     createHeader () {
@@ -271,6 +274,14 @@ export default {
       this.getPageProducts()
     },
     searchGrid () {
+      if (this.filter.orderId !== '') {
+        this.filter.buyerId = ''
+        this.filter.productId = ''
+        this.filter.shopId = ''
+        this.filter.countryCode = ''
+        this.filter.status = ['Pending', 'Unshipped', 'Shipped', 'Canceled']
+        this.orderStatus = ['Not Canceled']
+      }
       this.getPageProducts()
     },
     sizeChange (e) {
