@@ -3,7 +3,7 @@
     <el-form ref="form" class="mini-class">
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
         <el-row>
-          <el-col :span="5" style="padding-right: 5px;">
+          <el-col :span="6" style="padding-right: 5px;">
             <el-form-item label="星评">
               <el-select clearable v-model="star" placeholder="选择星评" class="shop-select" @change="starChange" :size="SELECT_SIZE">
                 <el-option
@@ -15,11 +15,10 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="产品ASIN">
+          <el-col :span="5">
+            <el-form-item label="ASIN">
                 <el-input
                   placeholder="输入ASIN"
-                  type="textarea"
                   class="asin-input"
                   clearable
                   v-model="filter.productId" :size="SELECT_SIZE">
@@ -27,8 +26,8 @@
               </el-form-item>
           </el-col>
           <el-col :span="5" :offset="0">
-              <el-button type="primary" round icon="el-icon-search" @click="searchGrid">搜索</el-button>
-              <el-button type="" round icon="el-icon-search" @click="resetSearch">重置</el-button>
+              <el-button type="primary" round icon="el-icon-search" @click="searchGrid" :size="SELECT_SIZE">搜索</el-button>
+              <el-button type="" round icon="el-icon-search" @click="resetSearch" :size="SELECT_SIZE">重置</el-button>
           </el-col>
         </el-row>
         <el-row>
