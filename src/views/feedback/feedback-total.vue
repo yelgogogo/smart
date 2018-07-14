@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="form">
+    <el-form ref="form" class="mini-class">
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
         <el-row>
           <el-col :span="5" style="padding-right: 5px;">
@@ -68,7 +68,7 @@
       <el-col :span="24">
         <el-table 
           border
-          height="500"
+          :height="tableHeight" 
           :data="gridData"
           @sort-change="changeSortItem">
           <el-table-column 
@@ -94,7 +94,7 @@
 import api from '../../utils/api'
 import { Message } from 'element-ui'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
-import {PERIOD_OPTIONS, HEADER_WIDTH} from '../../utils/enum'
+import {PERIOD_OPTIONS, HEADER_WIDTH, SELECT_SIZE} from '../../utils/enum'
 import searchBar from '@/components/search-bar/search-bar'
 
 export default {
@@ -104,6 +104,8 @@ export default {
   },
   data () {
     return {
+      SELECT_SIZE: SELECT_SIZE,
+      tableHeight: window.innerHeight - 240,
       dynamicHeaders: [],
       mockData: [],
       filter: {

@@ -24,7 +24,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 body {
   margin: 0;
 }
@@ -155,7 +155,9 @@ a {
   padding: 1px 0;
 }
 
-.el-form-item {
-  margin-bottom: 0px; 
-}
+.mini-class{
+  .el-form-item {
+    margin-bottom: 0px; 
+  }
+} 
 </style>
