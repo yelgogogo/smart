@@ -67,8 +67,8 @@
 			</el-col>
 		</el-row>
 		</el-header>
-    <el-container>
-      <el-aside class="menu" width="200">
+    <el-container class="main-box">
+      <el-aside class="menu" width="160">
         <el-menu
 					:router="true"
 					:defaultOpeneds="defaultOpeneds"
@@ -245,7 +245,8 @@ export default {
 </script>
 
 <style lang="scss">
-
+.main-box {
+}
 .main-header {
 	width: 100%;
 	box-shadow: 0px 2px 4px #666;
@@ -276,7 +277,7 @@ export default {
 	}
 }
 .menu {
-	width: 200px;
+	width: 160px;
   height: 100%;
 	overflow: visible;
 }
@@ -287,7 +288,7 @@ export default {
 }
 
 .el-submenu .el-menu-item {
-	min-width: 200px;
+	min-width: 160px;
 }
 
 .content {
