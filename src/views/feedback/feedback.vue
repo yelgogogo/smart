@@ -380,6 +380,15 @@ export default {
       this.getPageProducts()
     },
     searchGrid () {
+      if (this.filter.orderId !== '') {
+        this.filter.buyerId = ''
+        this.filter.productId = ''
+        this.filter.shopId = ''
+        this.filter.countryCode = ''
+        this.filter.status = ''
+        this.filter.star = ''
+        this.filter.userId = ''
+      }
       this.getPageProducts()
     },
     sizeChange (e) {
