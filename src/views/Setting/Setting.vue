@@ -125,7 +125,7 @@
       <el-dialog :title="modalType === 'edit' ? '用户详情' : '新增用户'" :visible.sync="dialogFormVisible">
           <el-form :model="form">
             <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
-              {{form.userId}}
+              {{form.userName}}
             </el-form-item>
             <el-form-item label="姓名" :label-width="formLabelWidth">
               <el-row>
