@@ -152,7 +152,7 @@ a {
 }
 
 .el-table th, .el-table td {
-  padding: 1px 0;
+  padding: 1px 0!important;
 }
 
 .mini-class{

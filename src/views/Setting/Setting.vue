@@ -7,6 +7,7 @@
             v-model="searchFullName"
             @clear="searchFullNameChange"
             @change="inputChange"
+            :size="SELECT_SIZE"
             clearable>
             <el-button slot="append" icon="el-icon-search" @click="searchFullNameChange">搜索</el-button>
           </el-input>
@@ -18,7 +19,7 @@
             用户角色:
           </el-col>
           <el-col :span="4" class="header-content">
-            <el-select size="mini" style="width: 150px;" v-model="roleId" @change="selectRole">
+            <el-select size="mini" style="width: 150px;" v-model="roleId" @change="selectRole" :size="SELECT_SIZE">
                 <el-option
                   v-for="item in roleList"
                   :key="item.roleId"
@@ -31,12 +32,12 @@
           用户状态:
         </el-col>
         <el-col :span="4" class="header-content">
-          <el-checkbox-group v-model="userStatusSelected" @change="userStatusChange" :min="1">
+          <el-checkbox-group v-model="userStatusSelected" @change="userStatusChange" :min="1" :size="SELECT_SIZE">
             <el-checkbox v-for="status of userStatusList" :label="status.id" :key="status.id" >{{status.value}}</el-checkbox>
           </el-checkbox-group>
         </el-col>
         <el-col :span="4" class="add-user">
-          <el-button type="primary" icon="el-icon-plus" round @click="add">新增用户</el-button>
+          <el-button type="primary" icon="el-icon-plus" round @click="add" :size="SELECT_SIZE">新增用户</el-button>
         </el-col>
       </el-row>
       <el-row :gutter="20">
@@ -53,6 +54,8 @@
         </el-col>
         <el-col :span="24">
           <el-table
+            :height="tableHeight"
+            border 
             :data="users">
               <el-table-column
                 label="工号"
@@ -170,9 +173,12 @@
   // import { ROLE } from '../../../static/enum.js'
   import api from '../../utils/api'
   import { Message } from 'element-ui'
+  import {SELECT_SIZE} from '../../utils/enum'
   export default {
     data () {
       return {
+        SELECT_SIZE: SELECT_SIZE,
+        tableHeight: window.innerHeight - 240,
         users: [],
         pageSize: 20,
         total: 0,

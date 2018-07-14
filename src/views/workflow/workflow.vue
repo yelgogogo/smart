@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="form" class="search-bar">
+    <el-form ref="form" class="search-bar mini-class">
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
       <el-row>
         <el-col :span="6" >
@@ -9,6 +9,7 @@
                   placeholder="请输入产品ASIN"
                   clearable
                   @clear="searchWorkflow"
+                  :size="SELECT_SIZE"
                   class="shop-select"
                   v-model="searchField.productId">
                 </el-input>
@@ -20,6 +21,7 @@
                 placeholder="输入建议人"
                 clearable
                 @clear="searchWorkflow"
+                :size="SELECT_SIZE"
                 class="nation-select"
                 v-model="searchField.proposer">
               </el-input>
@@ -32,12 +34,13 @@
               clearable
               class="period-select"
               @clear="searchWorkflow"
+              :size="SELECT_SIZE"
               v-model="searchField.auditor">
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="2" :offset="2">
-            <el-button type="primary" round icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
+            <el-button type="primary" round icon="el-icon-search" @click="searchWorkflow" :size="SELECT_SIZE">搜索</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -45,7 +48,7 @@
     <el-popover
       ref="showHideColumns"
       trigger="hover">
-      <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
+      <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns" :size="SELECT_SIZE">
         <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;" name="123"></el-checkbox>
       </el-checkbox-group>
     </el-popover>
@@ -75,6 +78,8 @@
       <el-col :span="24">
           <el-table v-if="gridData.length>0"
               ref="table"
+              border
+              :height="tableHeight" 
               @expand-change="getSugHistory"
               :data="gridData">
               <el-table-column type="expand">
@@ -159,17 +164,6 @@
               </template>
             </el-table-column>
             </el-table>
-      </el-col>
-      <el-col :span="24" class="text-left">
-        <el-pagination
-          @size-change="sizeChange"
-          @current-change="currentChange"
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100]"
-          :page-size="pageSize"
-          layout="sizes, total, prev, pager, next"
-          :total="total">
-        </el-pagination>
       </el-col>
     </el-row>
     <el-dialog title="工作流" :visible.sync="dialogWorkflowVisible">
@@ -280,7 +274,7 @@
   import json2csv from 'json2csv'
   import VueCsvDownload from '@/components/csvDownload/csvDownload'
   import searchBar from '@/components/search-bar/search-bar'
-  import { PERIOD_OPTIONS } from '../../utils/enum'
+  import { PERIOD_OPTIONS, SELECT_SIZE } from '../../utils/enum'
 
   export default {
     watch: {
@@ -292,6 +286,8 @@
     },
     data () {
       return {
+        SELECT_SIZE: SELECT_SIZE,
+        tableHeight: window.innerHeight - 240,
         dr: null,
         maxlength: 200,
         headerWidth: {

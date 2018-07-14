@@ -65,6 +65,11 @@ export default {
       periodOptions: PERIOD_OPTIONS
     }
   },
+  watch: {
+    nationList () {
+      this.nationListIn = this.nationList
+    }
+  },
   mounted () {
     this.nationListIn = this.nationList
     this.periodSelectIn = this.periodSelect
