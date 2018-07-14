@@ -216,7 +216,7 @@ export default {
       mockData: [
         // {sellerId: '11111-111', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
       ],
-      tableHeight: window.innerHeight - 260,
+      tableHeight: window.innerHeight - 280,
       filter: {
         shopId: null,
         // asinOrName: '',

@@ -1,25 +1,26 @@
 <template>
   <div>
-    <el-form ref="form">
+    <el-form ref="form" class="mini-class">
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
   <el-row>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item>
             <el-checkbox v-model="filter.dimension.shop" @change="useShopChange">按店铺</el-checkbox>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <el-radio-group v-model="useOrderQuantity" @change="useOrderQuantityChange">
+            <el-radio-group v-model="useOrderQuantity" @change="useOrderQuantityChange" :size="SELECT_SIZE">
               <el-radio label="order">按订单</el-radio>
               <el-radio label="quantity">按数量</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <el-col :span="6" class="text-left">
+        <el-col :span="5" class="text-left">
           <el-form-item>
-            <el-checkbox v-model="interestedOnly" @change="showHideLiked">只显示我关注的</el-checkbox>
+            <el-checkbox v-model="interestedOnly" @change="showHideLiked" :size="SELECT_SIZE">只显示我关注的</el-checkbox>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-input
+            :size="SELECT_SIZE"
             placeholder="请输入产品名称或者ASIN"
             v-model="filter.asinOrName"
             @clear="searchProduct"
@@ -58,9 +59,10 @@
         <el-table
           v-if="gridData.length > 0"
           :summary-method="getSummaries"
+          border
           show-summary
           :data="gridData"
-          height="500"
+          :height="tableHeight" 
           @sort-change="changeSortItem">
             <el-table-column
               label="店铺"
@@ -88,7 +90,7 @@
             </el-table-column>
             <el-table-column
               label="产品名称"
-              width="200">
+              width="300">
               <template slot-scope="scope">
                 {{scope.row.productName}}
                 <!-- <i class="el-icon-edit" @click="changeName(scope.row)"></i> -->
@@ -198,7 +200,7 @@
 <script>
 import api from '../../utils/api'
 import { Message } from 'element-ui'
-import {PERIOD_OPTIONS, PERIOD_UNIT} from '../../utils/enum'
+import {PERIOD_OPTIONS, PERIOD_UNIT, SELECT_SIZE} from '../../utils/enum'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import moment from 'moment'
 import searchBar from '@/components/search-bar/search-bar'
@@ -209,6 +211,8 @@ export default {
   },
   data () {
     return {
+      SELECT_SIZE: SELECT_SIZE,
+      tableHeight: window.innerHeight - 240,
       useOrderQuantity: 'quantity',
       dateList: [],
       useShop: null,

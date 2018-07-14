@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="form">
+    <el-form ref="form" class="mini-class">
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
         <el-row>
           <el-col :span="6" style="padding-right: 5px;">
@@ -9,6 +9,7 @@
                 class="shop-select"
                 placeholder="输入订单号"
                 clearable
+                :size="SELECT_SIZE"
                 v-model="filter.orderId">
               </el-input>
             </el-form-item>
@@ -19,6 +20,7 @@
                 class="nation-select"
                 placeholder="请输入买家Id"
                 clearable
+                :size="SELECT_SIZE"
                 v-model="filter.buyerId">
               </el-input>
             </el-form-item>
@@ -30,13 +32,14 @@
                   placeholder="输入ASIN"
                   class="asin-input"
                   clearable
+                  :size="SELECT_SIZE"
                   v-model="filter.productId">
                 </el-input>
               </el-form-item>
           </el-col>
           <el-col :span="6" style="padding-right: 5px;">
               <el-form-item label="订单状态">
-                <el-select v-model="orderStatus" placeholder="选择状态" @change="orderStatusChange" class="shop-select">
+                <el-select v-model="orderStatus" placeholder="选择状态" @change="orderStatusChange" class="shop-select" :size="SELECT_SIZE">
                   <el-option
                     v-for="status in statusList"
                     :key="status"
@@ -47,8 +50,8 @@
               </el-form-item>
             </el-col>
           <el-col :span="24" :offset="0" class="text-right">
-              <el-button type="primary" round icon="el-icon-search" @click="searchGrid">搜索</el-button>
-              <el-button type="" round icon="el-icon-search" @click="resetSearch">重置</el-button>
+              <el-button type="primary" round icon="el-icon-search" @click="searchGrid" :size="SELECT_SIZE">搜索</el-button>
+              <el-button type="" round icon="el-icon-search" @click="resetSearch" :size="SELECT_SIZE">重置</el-button>
           </el-col>
         </el-row>
         <el-row>
@@ -90,8 +93,8 @@
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table v-if="gridData.length>0"
+          :height="tableHeight" 
           border
-          height="500"
           :data="gridData"
           @sort-change="changeSortItem">
           <el-table-column 
@@ -109,17 +112,6 @@
           </el-table-column>
         </el-table>
       </el-col>
-      <el-col :span="24">
-          <el-pagination
-          @size-change="sizeChange"
-          @current-change="currentChange"
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100]"
-          :page-size="pageSize"
-          layout="sizes, total, prev, pager, next, jumper"
-          :total="total">
-        </el-pagination>
-      </el-col>
     </el-row>
   </div>
 </template>
@@ -129,7 +121,7 @@ import api from '../../utils/api'
 import { Message } from 'element-ui'
 import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
-import {PERIOD_OPTIONS, HEADER_WIDTH} from '../../utils/enum'
+import {PERIOD_OPTIONS, HEADER_WIDTH, SELECT_SIZE} from '../../utils/enum'
 import searchBar from '@/components/search-bar/search-bar'
 
 export default {
@@ -139,6 +131,8 @@ export default {
   },
   data () {
     return {
+      SELECT_SIZE: SELECT_SIZE,
+      tableHeight: window.innerHeight - 260,
       orderStatus: '',
       download: [],
       filter: {

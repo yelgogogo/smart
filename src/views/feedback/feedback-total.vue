@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="5" style="padding-right: 5px;">
             <el-form-item label="星评">
-              <el-select clearable v-model="star" placeholder="选择星评" class="shop-select" @change="starChange">
+              <el-select clearable v-model="star" placeholder="选择星评" class="shop-select" @change="starChange" :size="SELECT_SIZE">
                 <el-option
                   v-for="rate in rateList"
                   :key="rate"
@@ -22,7 +22,7 @@
                   type="textarea"
                   class="asin-input"
                   clearable
-                  v-model="filter.productId">
+                  v-model="filter.productId" :size="SELECT_SIZE">
                 </el-input>
               </el-form-item>
           </el-col>

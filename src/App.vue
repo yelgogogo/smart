@@ -157,7 +157,7 @@ a {
 
 .mini-class{
   .el-form-item {
-    margin-bottom: 0px; 
+    margin-bottom: 2px; 
   }
 } 
 </style>
