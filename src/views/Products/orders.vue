@@ -78,14 +78,14 @@
           <!-- </el-col> -->
           <el-col :span="8" class="text-right">
             <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
-            <el-button v-if="download.length===0" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
+            <el-button v-if="showDownload" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
             <vue-csv-download
               v-else
               :data="download"
               :fields="headersDownload"
               class="download"
               >
-              <el-button size="mini" icon="el-icon-document">下载</el-button>
+              <el-button size="mini" icon="el-icon-document" @click="changeDownloadStatus">下载</el-button>
             </vue-csv-download>
           </el-col>
         </el-row>
@@ -211,7 +211,8 @@ export default {
         suggestion: '',
         title: '',
         sn: 1
-      }
+      },
+      showDownload: true
     }
   },
   computed: {
@@ -401,6 +402,11 @@ export default {
         })
       })
       this.$sendDownloadHistory('订单查询')
+      this.showDownload = false
+    },
+    changeDownloadStatus () {
+      this.showDownload = true
+      this.download = []
     },
     getShopList () {
       api.get('/api/shop').then(res => {

@@ -1,5 +1,5 @@
 <template>
-    <a :download="downloadName" :href="downloadUrl" :disabled="this.data.length === 0">
+    <a :download="downloadName" :href="downloadUrl">
         <slot>
             <i class="fa fa-file-excel-o" aria-hidden="true"></i>
         </slot>

@@ -43,14 +43,13 @@
         </el-pagination>
       </el-col>
       <el-col :span="8" class="text-right">
-        <el-button v-if="download.length===0" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
+        <el-button v-if="showDownload" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
         <vue-csv-download
           v-else
           :data="download"
           :fields="headersDownload"
-          class="download"
-          >
-          <el-button size="mini" icon="el-icon-document">下载</el-button>
+          class="download">
+          <el-button size="mini" icon="el-icon-document" @click="changeDownloadStatus">下载</el-button>
         </vue-csv-download>
       </el-col>
     </el-row>
@@ -277,7 +276,8 @@ export default {
         countryCode: '国家',
         totalCount: '合计'
       },
-      operationShow: true
+      operationShow: true,
+      showDownload: true
     }
   },
   computed: {
@@ -512,6 +512,11 @@ export default {
         })
       })
       this.$sendDownloadHistory('销量报表')
+      this.showDownload = false
+    },
+    changeDownloadStatus () {
+      this.showDownload = true
+      this.download = []
     },
     getShopList () {
       api.get('/api/shop').then(res => {
