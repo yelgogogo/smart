@@ -372,6 +372,7 @@ export default {
           type: 'error'
         })
       })
+      this.showDownload = true
     },
     getDownload () {
       let pagination = {
