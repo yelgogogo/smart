@@ -269,7 +269,7 @@ export default {
       this.getPageProducts()
     },
     searchGrid () {
-      if (this.filter.orderId !== '') {
+      if (this.filter.orderId !== '' && this.filter.orderId !== undefined) {
         this.filter.buyerId = ''
         this.filter.productId = ''
         this.filter.shopId = ''
