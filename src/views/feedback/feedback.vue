@@ -30,7 +30,7 @@
 
           <el-col :span="10" :offset="1" style="padding-right: 5px;">
             <el-form-item label="选择用户" >
-              <el-select clearable v-model="filter.userId" placeholder="选择用户" class="period-select" :size="SELECT_SIZE">
+              <el-select clearable v-model="filter.userId" placeholder="选择用户" class="period-select" @change="userChange" :size="SELECT_SIZE">
                 <el-option
                   v-for="user in userList"
                   :key="user.value"
@@ -323,6 +323,7 @@ export default {
   created () {
     this.getShopList()
     this.getNationList()
+    this.getUserList()
     console.log('this.dictEn', this.dictEn)
   },
   methods: {
@@ -347,6 +348,10 @@ export default {
       } else {
         this.filter.star = value
       }
+      this.getPageProducts()
+    },
+    userChange (value) {
+      this.filter.userId = value
       this.getPageProducts()
     },
     createHeader () {
@@ -529,6 +534,21 @@ export default {
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
+      })
+    },
+    getUserList () {
+      let pagination = {
+        pageSize: 1,
+        currentPage: 50,
+        filter: {
+          fullName: '',
+          userName: '',
+          userRoleId: [],
+          userStatus: 'active'
+        }
+      }
+      api.post('/api/user/pagination', {pagination}).then(res => {
+        this.userList = res.data.grid
       })
     },
     updatePageProducts (currentPage) {
