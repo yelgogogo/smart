@@ -65,20 +65,21 @@
           @sort-change="changeSortItem">
             <el-table-column
               label="店铺"
-              width="150"
+              width="120"
               prop="shopName"
-              >
+              fixed="left">
             </el-table-column>
             <el-table-column
               label="国家"
-              width="60"
+              width="45"
               prop="countryCode"
-              >
+              fixed="left">
             </el-table-column>  
             <el-table-column
               label="ASIN"
-              width="120"
+              width="100"
               prop="ASIN"
+              fixed="left"
               sortable>
               <template slot-scope="scope">
                 <a :href="scope.row.url" target="_blank">{{scope.row.ASIN}}</a>
@@ -89,7 +90,8 @@
             </el-table-column>
             <el-table-column
               label="产品名称"
-              width="300">
+              width="300"
+              fixed="left">
               <template slot-scope="scope">
                 {{scope.row.productName}}
                 <!-- <i class="el-icon-edit" @click="changeName(scope.row)"></i> -->
@@ -99,16 +101,18 @@
             <el-table-column v-for="orderData in dateList"
               :key="orderData.label"
               :label="orderData.label"
-              width="120"
+              width="100"
               :prop="orderData.label"
-              sortable>
+              sortable
+              align="center">
             </el-table-column>
             <el-table-column
               label="合计"
-              width="100"
+              width="70"
               prop="totalCount"
               fixed="right"
-              sortable>
+              sortable
+              align="center">
             </el-table-column>
             <el-table-column
               header-align="center"
@@ -133,9 +137,10 @@
               </template>
             </el-table-column>
             <el-table-column
-              width="80"
+              width="45"
               fixed="right"
-              label="关注">
+              label="关注"
+              align="center">
               <template slot-scope="scope">
                 <i class="el-icon-star-off large-icon" title="点击关注" v-if="isNotLike(scope.row)" @click="likeProduct(scope.row, true)"></i>
                 <i class="el-icon-star-on large-icon" title="取消关注" v-else @click="likeProduct(scope.row, false)"></i>

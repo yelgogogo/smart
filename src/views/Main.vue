@@ -72,7 +72,7 @@
         <el-menu
 					:router="true"
 					:defaultOpeneds="defaultOpeneds"
-          default-active="1"
+          default-active="3-1"
 					active-text-color="#FF6600"
 					class="el-menu-vertical-d">					
 					<el-menu-item index="1" :route="{ path: '/main/setting' }" v-if="userInfo.userName==='admin'">
@@ -159,7 +159,7 @@ export default {
         {id: 'summed', index: '2-4', route: {path: '/main/workflow?status=summed'}, text: '已总结', count: null},
         {id: 'rejected', index: '2-5', route: {path: '/main/workflow?status=rejected'}, text: '被拒绝', count: null}
       ],
-      defaultOpeneds: ['2']
+      defaultOpeneds: ['3']
     }
   },
   created () {
