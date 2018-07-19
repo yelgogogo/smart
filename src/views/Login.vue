@@ -112,7 +112,8 @@ export default {
           message: '欢迎进入Smart!',
           type: 'success'
         })
-        this.$router.push('/main/workflow?status=issued_reissued')
+        // this.$router.push('/main/workflow?status=issued_reissued')
+        this.$router.push('/main/products')
       }).catch(error => {
         this.$store.dispatch('setLoadingState', false)
         if (error.response) {
