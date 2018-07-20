@@ -129,7 +129,7 @@
                     编辑
                   </el-button>
                 </router-link>
-                <router-link :to="{path: '/main/analysis', query: {productName:scope.row.productName,countryCode:scope.row.countryCode,marketplaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.ASIN}}">
+                <router-link :to="{path: '/main/analysis', query: {productName:scope.row.productName,countryCode:scope.row.countryCode,marketplaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.ASIN, productUrl: scope.row.url}}">
                   <el-button size="mini" round  v-show="operationShow">
                     分析
                   </el-button>

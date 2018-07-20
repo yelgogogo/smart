@@ -4,6 +4,7 @@
       <el-tab-pane label="本产品" name="sales">
         <el-row>
           <el-col :span="24" style="padding-top: 0;">
+            <a :href="this.$route.query.productUrl" target="_blank" style="font-size:19px"><b>&nbsp;{{ this.productName }}</b></a>
             <chart 
               :options="statisticsBar"
               :init-options="initOptions"
@@ -25,7 +26,7 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
-        <el-tab-pane label="每日QA" name="qaDaily">
+        <el-tab-pane label="QA比较" name="qaDaily">
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
               <chart 
@@ -36,7 +37,7 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
-        <el-tab-pane label="每日反馈" name="feedbackDaily">
+        <el-tab-pane label="反馈比较" name="feedbackDaily">
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
               <chart 
@@ -217,8 +218,12 @@ export default {
         'Reviews': 'Reviews'
       },
       headersArray: [
-        {fieldName: 'label', en: 'Date', cn: '日期', show: true},
+        {fieldName: 'label', en: '时间', cn: '日期', show: true},
+        {fieldName: 'Price', en: 'Price', cn: '价格', show: true},
         {fieldName: 'Orders', en: 'Orders', cn: '订单', show: true},
+        {fieldName: 'Sessions', en: 'Sessions', cn: 'Sessions', show: true},
+        {fieldName: 'Session Percentage', en: 'Order Session Percentage', cn: 'session率', show: true},
+        {fieldName: 'Unit Session Percentage', en: 'Unit', cn: 'unitSessionPercentage', show: true},
         {fieldName: 'Ad SalesByAd Div Sales', en: 'Ad SalesByAd Div Sales', cn: '总广告销售额/总销售额', show: false},
         {fieldName: 'Ad Spend', en: 'Ad Spend', cn: '总广告花费', show: false},
         {fieldName: 'Ad Spend Div Sales', en: 'Ad Spend Div Sales', cn: '广告花费/总销售额', show: false},
@@ -226,15 +231,11 @@ export default {
         {fieldName: 'Ad TotalSales', en: 'Ad TotalSales', cn: '广告总销量', show: false},
         {fieldName: 'Ad TotalSalesByAd', en: 'Ad TotalSalesByAd', cn: '广告总带动销量', show: false},
         {fieldName: 'Page Views', en: 'Page Views', cn: '浏览量', show: true},
+        {fieldName: 'Score', en: 'Review Score', cn: '评分', show: true},
         {fieldName: 'Page Views Percentage', en: 'Page Views Percentage', cn: '浏览率', show: true},
+        {fieldName: 'Reviews', en: 'Reviews', cn: '反馈', show: true},
         {fieldName: 'QA', en: 'QA', cn: 'QA', show: true},
-        {fieldName: 'Session Percentage', en: 'Session Percentage', cn: 'session率', show: true},
-        {fieldName: 'Sessions', en: 'Sessions', cn: 'Sessions', show: true},
-        {fieldName: 'Unit Session Percentage', en: 'Unit Session Percentage', cn: 'unitSessionPercentage', show: true},
-        {fieldName: 'Score', en: 'Score', cn: '评分', show: true},
-        {fieldName: 'Price', en: 'Price', cn: '价格', show: true},
-        {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true},
-        {fieldName: 'Reviews', en: 'Reviews', cn: '反馈', show: true}
+        {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true}
       ],
       headerWidth: HEADER_WIDTH,
       gridData: [],
@@ -337,7 +338,7 @@ export default {
         })
         return {
           title: {
-            text: this.productName
+            text: ''
           },
           tooltip: {
             trigger: 'axis',
@@ -454,9 +455,13 @@ export default {
       const arr = name.split(' > ')
       let txt1 = ''
       if (name.substring(0, 8) === 'Category') {
-        txt1 = '(C)' + arr[arr.length - 1]
+        if (name.indexOf('>') === -1) {
+          txt1 = '(C)' + name.substring(9)
+        } else {
+          txt1 = '(C)' + arr[arr.length - 1]
+        }
       } else {
-        txt1 = '(K)' + name
+        txt1 = '(K)' + name.substring(8)
       }
       return txt1
     },
