@@ -40,6 +40,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+.product-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .el-header,
 .el-footer {
   /* background-color: #b3c0d1; */

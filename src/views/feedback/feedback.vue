@@ -587,12 +587,6 @@ export default {
 }
 </script>
 <style>
-.product-name {
-  width: 100px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
 .el-icon-star-off {
   color:#FF6600
 }

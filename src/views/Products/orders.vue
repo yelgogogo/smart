@@ -107,7 +107,12 @@
             :sortable="headerName==='purchaseDate' || headerName==='amazonOrderId' || headerName==='asin' || headerName==='buyerName'
              || headerName==='buyerId' || headerName==='quantityOrdered'? 'custom':false">
             <template slot-scope="scope" v-if="scope.row[headerName]">
-              {{scope.row[headerName]}}
+                <p v-if="headerName === 'productName'" :title="scope.row.productName" class="product-name" >{{scope.row[headerName]}}</p>
+                <p v-else-if="headerName === 'buyerName'" :title="scope.row.buyerName" class="product-name" >{{scope.row[headerName]}}</p>
+                
+                <span v-else>
+                  {{scope.row[headerName]}}
+                </span>
             </template>
           </el-table-column>
         </el-table>
