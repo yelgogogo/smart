@@ -40,8 +40,8 @@ export const HEADER_WIDTH = {
   date: 200,
   countryCode: 60,
   price: 140,
-  shopName: 120,
-  productName: 300,
+  shopName: 100,
+  productName: 100,
   reviewDate: 120,
   orderId: 160,
   amazonOrderId: 160,
@@ -57,7 +57,7 @@ export const HEADER_WIDTH = {
   buyerId: 140,
   sellerId: 140,
   currentQuantity: 100,
-  asin: 120,
+  asin: 100,
   QA: 60,
   author: 150
 }

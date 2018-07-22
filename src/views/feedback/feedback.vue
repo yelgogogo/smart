@@ -134,6 +134,7 @@
             <template slot-scope="scope" v-if="scope.row[headerName]">
               <div v-if="headerName === 'title'"><a :href="scope.row.detailURL" target="_blank">{{scope.row[headerName]}}</a></div>
               <div v-else-if="headerName === 'author'"><a :href="scope.row.profileURL" target="_blank">{{scope.row[headerName]}}</a></div>
+              <p v-else-if="headerName === 'productName'" :title="scope.row.productName" class="product-name" >{{scope.row[headerName]}}</p>
               <div v-else>{{scope.row[headerName]}}</div>
             </template>
           </el-table-column>
@@ -586,6 +587,12 @@ export default {
 }
 </script>
 <style>
+.product-name {
+  width: 100px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .el-icon-star-off {
   color:#FF6600
 }
