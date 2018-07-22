@@ -160,7 +160,7 @@
                   </el-button>
                 </router-link>
                 <el-button v-if="scope.row.status === 'issued' || scope.row.status === 'reissued'" size="mini" @click="edit(scope.row)" round>编辑</el-button>
-                <el-button v-if="scope.row.status !== 'closed'" size="mini" icon="el-icon-edit" @click="doWorkflowUpdate(scope.row)" round>工作流</el-button>
+                <el-button v-if="scope.row.status !== 'closed'" size="mini" icon="el-icon-edit-outline" @click="doWorkflowUpdate(scope.row)" round>工作流</el-button>
               </template>
             </el-table-column>
             </el-table>
