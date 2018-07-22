@@ -631,22 +631,15 @@ export default {
   text-overflow: ellipsis;
 }
 .el-icon-picture-outline {
-  color:#FF6600
+  color:#82848a
 }
 
-.el-icon-star-off {
-  color:#FF6600
-}
-
-.el-icon-warning {
-  color:#FF6600
-}
 .el-icon-edit-outline {
-  color:#FF6600
+  color:#82848a
 }
 
 .el-icon-edit {
-  color:#FF6600
+  color:#82848a
 }
 
 .el-icon-star-on {
