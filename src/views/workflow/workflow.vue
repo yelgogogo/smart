@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form ref="form" class="search-bar mini-class">
-      <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
+      <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="30" @onChange="searchBarChange($event)" ></search-bar>
       <el-row>
         <el-col :span="6" >
             <el-form-item label="ASIN">
