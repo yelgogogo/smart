@@ -65,7 +65,7 @@
           @sort-change="changeSortItem">
             <el-table-column
               label="店铺"
-              width="120"
+              width="100"
               prop="shopName"
               fixed="left">
             </el-table-column>
@@ -90,10 +90,11 @@
             </el-table-column>
             <el-table-column
               label="产品名称"
-              width="300"
+              width="100"
               fixed="left">
               <template slot-scope="scope">
-                {{scope.row.productName}}
+                
+                <p :title="scope.row.productName" class="product-name" >{{scope.row.productName}}</p>
                 <!-- <i class="el-icon-edit" @click="changeName(scope.row)"></i> -->
               </template>
             </el-table-column>
@@ -117,22 +118,31 @@
             <el-table-column
               header-align="center"
               align="center"
-              width="200"
+              width="100"
               fixed="right"
               label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" round @click="add(scope.row)"  v-show="operationShow">
+                <!-- <el-button size="mini" round @click="add(scope.row)"  v-show="operationShow">
                   建议
-                </el-button>
+                </el-button> -->
+                <a href="#" @click="add(scope.row)">
+                <i title="建议" class="el-icon-edit-outline large-icon" v-show="operationShow"></i>
+                &nbsp;
+                </a>
                 <router-link :to="{path: '/main/edit-product', query: scope.row}">
-                  <el-button size="mini" round  v-show="operationShow">
+                  <!-- <el-button size="mini" round  v-show="operationShow">
                     编辑
-                  </el-button>
+                  </el-button> -->
+                  <i title="编辑" class="el-icon-edit large-icon" v-show="operationShow"></i>
+                  &nbsp;
                 </router-link>
                 <router-link :to="{path: '/main/analysis', query: {productName:scope.row.productName,countryCode:scope.row.countryCode,marketplaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.ASIN, productUrl: scope.row.url}}">
-                  <el-button size="mini" round  v-show="operationShow">
+                  <!-- <el-button size="mini" round  v-show="operationShow">
                     分析
-                  </el-button>
+                  </el-button> -->
+                  <i title="分析" class="el-icon-picture-outline large-icon" v-show="operationShow"></i>
+                  &nbsp;  
+                  
                 </router-link>
               </template>
             </el-table-column>
@@ -614,7 +624,24 @@ export default {
 }
 </script>
 <style>
+.product-name {
+  width: 100px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.el-icon-picture-outline {
+  color:#FF6600
+}
+
 .el-icon-star-off {
+  color:#FF6600
+}
+
+.el-icon-warning {
+  color:#FF6600
+}
+.el-icon-edit-outline {
   color:#FF6600
 }
 
