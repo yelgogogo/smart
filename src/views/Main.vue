@@ -68,7 +68,7 @@
 		</el-row>
 		</el-header>
     <el-container class="main-box">
-      <el-aside class="menu" width="160">
+      <el-aside class="menu" width="200">
         <el-menu
 					:router="true"
 					:defaultOpeneds="defaultOpeneds"

@@ -65,7 +65,7 @@
           @sort-change="changeSortItem">
             <el-table-column
               label="店铺"
-              width="100"
+              width="120"
               prop="shopName"
               fixed="left">
             </el-table-column>
@@ -73,7 +73,8 @@
               label="国家"
               width="45"
               prop="countryCode"
-              fixed="left">
+              fixed="left"
+              align="center">
             </el-table-column>  
             <el-table-column
               label="ASIN"
@@ -90,7 +91,7 @@
             </el-table-column>
             <el-table-column
               label="产品名称"
-              width="100"
+              width="200"
               fixed="left">
               <template slot-scope="scope">
                 
@@ -102,7 +103,7 @@
             <el-table-column v-for="orderData in dateList"
               :key="orderData.label"
               :label="orderData.label"
-              width="100"
+              width="90"
               :prop="orderData.label"
               sortable
               align="center">
@@ -147,7 +148,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              width="45"
+              width="60"
               fixed="right"
               label="关注"
               align="center">
