@@ -77,7 +77,7 @@
         ref="showHideColumns"
         trigger="hover">
         <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
-          <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;" name="123"></el-checkbox>
+          <el-checkbox v-for="(header, index) of headers" :key="index" :label="getShortHeader(header)" style="width: 100%;" name="123"></el-checkbox>
         </el-checkbox-group>
       </el-popover>
       <el-col :span="20">
@@ -122,7 +122,7 @@
         v-for="(headerName, index) in dynamicHeaders" 
         :width="headerWidth[headerName.fieldName]?headerWidth[headerName.fieldName]:'100'"
         :key="headerName.fieldName + '_' + index" 
-        :label="headerName.en"
+        :label="getShortHeader(headerName.en)"
         :prop="headerName.fieldName"
         sortable>
         <template slot-scope="scope" v-if="scope.row[headerName.fieldName]">
@@ -165,6 +165,7 @@ export default {
       checkedList: [],
       dailyQa: [],
       dailyFeedback: [],
+      competitionList: [],
       headersDownload: [],
       activeName: 'sales',
       currentPage: 1,
@@ -190,6 +191,7 @@ export default {
       productName: this.$route.query.productName,
       productId: this.$route.query.productId,
       shopId: this.$route.query.shopId,
+      comFields: [],
       categories: [],
       keywords: [],
       headers: [],
@@ -218,7 +220,7 @@ export default {
         'Reviews': 'Reviews'
       },
       headersArray: [
-        {fieldName: 'label', en: '时间', cn: '日期', show: true},
+        {fieldName: 'label', en: 'Date', cn: '日期', show: true},
         {fieldName: 'Price', en: 'Price', cn: '价格', show: true},
         {fieldName: 'Orders', en: 'Orders', cn: '订单', show: true},
         {fieldName: 'Sessions', en: 'Sessions', cn: 'Sessions', show: true},
@@ -237,8 +239,11 @@ export default {
         {fieldName: 'QA', en: 'QA', cn: 'QA', show: true},
         {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true}
       ],
+      competitionHearders: [],
+      compChecklist: [],
       headerWidth: HEADER_WIDTH,
       gridData: [],
+      tmpGridData: [],
       currentStatistics: [],
       adStatistics: [],
       competitionStatistics: [],
@@ -412,18 +417,35 @@ export default {
       } else {
         this.filter.high2low = false
       }
-      this.getPageData()
+      if (this.showChartCategory === true || this.showChartKeyword === true) {
+        this.showCompareData()
+      } else {
+        this.getPageData()
+      }
     },
     updateVisibleColumns () {
-      const checkList = this.checkedList.map(c => this.dictEn[c])
-      this.headersArray.forEach(h => {
-        if (checkList.includes(h.fieldName)) {
-          h.show = true
-        } else {
-          h.show = false
-        }
-      })
-      this.dynamicHeaders = this.headersArray.filter(h => h.show)
+      if (this.showChartCategory === true || this.showChartKeyword === true) {
+        const checkList = this.checkedList
+        this.competitionHearders.forEach(h => {
+          console.log('test123---' + h.fieldName)
+          if (checkList.includes(h.fieldName)) {
+            h.show = true
+          } else {
+            h.show = false
+          }
+        })
+        this.dynamicHeaders = this.competitionHearders.filter(h => h.show)
+      } else {
+        const checkList = this.checkedList.map(c => this.dictEn[c])
+        this.headersArray.forEach(h => {
+          if (checkList.includes(h.fieldName)) {
+            h.show = true
+          } else {
+            h.show = false
+          }
+        })
+        this.dynamicHeaders = this.headersArray.filter(h => h.show)
+      }
     },
     sizeChange (pageSize) {
       this.pageSize = pageSize
@@ -445,10 +467,61 @@ export default {
       this.chartTitle = tab.name
       if (tab.name.indexOf('Category:') !== -1) {
         setTimeout(() => { this.showChartCategory = true }, 0)
+        this.showCompareData()
       } else if (tab.name.indexOf('Keyword:') !== -1) {
         setTimeout(() => { this.showChartKeyword = true }, 0)
+        this.showCompareData()
+      } else {
+        this.gridData = this.tmpGridData
+        this.createHeader()
       }
       console.log(tab, event)
+    },
+    showCompareData () {
+      let pagination = {
+        pageSize: this.pageSize,
+        currentPage: this.currentPage
+      }
+      api.post('/api/product/competitionChart', {pagination, ...this.filter}).then(res => {
+        this.competitionList = res.data.grid
+        this.gridData = res.data.grid
+        this.dynamicHeaders = []
+        this.headers = []
+        this.checkedList = []
+        for (let subComField in this.competitionList[0]) {
+          console.log('subComField==========' + subComField)
+          if (subComField === 'label') {
+            this.dynamicHeaders.unshift({fieldName: subComField, en: 'Date', cn: subComField, show: true})
+          } else if (subComField.indexOf('Category') !== -1) {
+            this.dynamicHeaders.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
+          } else if (subComField.indexOf('Keyword') !== -1) {
+            this.dynamicHeaders.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
+          } else {
+            this.dynamicHeaders.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
+          }
+          this.compChecklist.push(subComField)
+        }
+        this.headers = this.dynamicHeaders.map(e => e.en)
+        this.checkedList = this.compChecklist
+        this.competitionHearders = this.dynamicHeaders
+      }).catch(err => {
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
+    },
+    getShortHeader (headerName) {
+      let shortHeader = ''
+      if (headerName.indexOf('Category') !== -1) {
+        shortHeader = headerName.substring(0, 10) + '  ' + this.getTabName(headerName.substring(headerName.indexOf('Category')))
+      } else if (headerName.indexOf('Keyword') !== -1) {
+        shortHeader = headerName.substring(0, 10) + '  ' + this.getTabName(headerName.substring(headerName.indexOf('Keyword')))
+      } else {
+        shortHeader = headerName
+      }
+      return shortHeader
     },
     getTabName (name) {
       console.log('getTabName', name)
@@ -485,7 +558,11 @@ export default {
       console.log('onSearchChange', filter, this.filter)
       this.filter = {...this.filter, ...filter}
       this.getGridData()
-      this.getPageData()
+      if (this.showChartCategory === true || this.showChartKeyword === true) {
+        this.showCompareData()
+      } else {
+        this.getPageData()
+      }
     },
     getPageData () {
       let pagination = {
@@ -498,6 +575,7 @@ export default {
       api.post('/api/product/chart', {pagination, ...this.filter, period}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
+          this.tmpGridData = res.data.grid
           this.total = res.data.pagination.total
           this.createHeader()
         }
