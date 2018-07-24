@@ -169,7 +169,6 @@ export default {
       headersDownload: [],
       headersArray: [],
       headerFixed: {
-        shopName: 'left',
         productName: 'left',
         countryCode: 'left',
         asin: 'left'
@@ -231,10 +230,10 @@ export default {
       this.getPageProducts()
     },
     createHeader (headers) {
-      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'totalQuantity', 'totalAverage', 'currentQuantity', 'currentAverage']
+      this.dynamicHeaders = ['asin', 'countryCode', 'productName', 'totalQuantity', 'totalAverage', 'currentQuantity', 'currentAverage']
       let sort = []
       for (let header in headers) {
-        if (!this.dynamicHeaders.includes(header) && header !== 'shopId') {
+        if (!this.dynamicHeaders.includes(header) && header !== 'shopId' && header !== 'shopName') {
           sort.push(header)
         }
       }
@@ -244,7 +243,7 @@ export default {
 
       this.dynamicHeaders = [...this.dynamicHeaders, ...sort]
       this.headers = this.dynamicHeaders
-      const headersFixed = ['shopName', 'asin', 'countryCode', 'totalQuantity', 'totalAverage', 'currentQuantity', 'currentAverage']
+      const headersFixed = ['asin', 'countryCode', 'totalQuantity', 'totalAverage', 'currentQuantity', 'currentAverage']
       const headersDownload = [...headersFixed, ...sort]
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },

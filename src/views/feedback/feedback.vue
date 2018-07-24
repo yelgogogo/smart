@@ -294,7 +294,6 @@ export default {
       headers: [],
       headerWidth: HEADER_WIDTH,
       headerFixed: {
-        shopName: 'left',
         productName: 'left',
         countryCode: 'left',
         asin: 'left'
@@ -356,7 +355,7 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['shopName', 'countryCode', 'asin', 'productName', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'title', 'operatorName', 'lastUpdateDate']
+      this.dynamicHeaders = ['countryCode', 'asin', 'productName', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'shopName', 'author', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
       const headersDownload = ['shopName', 'asin', 'countryCode', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'profileURL', 'title', 'text', 'detailURL', 'operatorName', 'lastUpdateDate']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
