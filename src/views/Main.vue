@@ -277,7 +277,7 @@ export default {
 	}
 }
 .menu {
-	width: 160px;
+	width: 200px;
   height: 100%;
 	overflow: visible;
 }
@@ -288,7 +288,7 @@ export default {
 }
 
 .el-submenu .el-menu-item {
-	min-width: 160px;
+	min-width: 200px;
 }
 
 .content {
