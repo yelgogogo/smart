@@ -76,65 +76,65 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="24">
-          <el-table v-if="gridData.length>0"
-              ref="table"
-              border
-              :height="tableHeight" 
-              @expand-change="getSugHistory"
-              :data="gridData">
-              <el-table-column type="expand">
-                  <template slot-scope="scope">
-                    <el-form label-position="right">
-                      <el-row>
-                        <el-col  :md="16" :lg="12">
-                          <el-form-item label="备注" :label-width="formLabelWidth">                    
-                            <el-input
-                              type="textarea"
-                              :maxlength="maxlength"
-                              :autosize="{ minRows: 3, maxRows: 5}"
-                              :placeholder="'添加注释..., 最大字数' + maxlength"
-                              v-model="scope.row.comments">
-                            </el-input>
-                            <el-button icon="el-icon-edit" round size="mini" @click="addComment(scope.row.suggestionId, scope.row.comments, scope.row.sn)">保存注释</el-button>
-                          </el-form-item>
-                        </el-col>
-                      </el-row>
-                      <el-form-item label="附件" :label-width="formLabelWidth">
-                        <el-upload
-                          name="attachment"
-                          :file-list="scope.row.attachment"
-                          :on-preview="downloadFile"
-                          :before-remove="beforeRemove"
-                          :on-remove="removeFile"
-                          :on-change="handlerUploader"
-                          :headers="getAuthHeaders()"
-                          :action="getUploadUrl(scope.row.suggestionId)">
-                          <i class="el-icon-upload"></i>
-                          点击上传
-                        </el-upload>
+        <el-table v-if="gridData.length>0"
+            ref="table"
+            border
+            :height="tableHeight" 
+            @expand-change="getSugHistory"
+            :data="gridData">
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-form label-position="right">
+                  <el-row>
+                    <el-col  :md="16" :lg="12">
+                      <el-form-item label="备注" :label-width="formLabelWidth">                    
+                        <el-input
+                          type="textarea"
+                          :maxlength="maxlength"
+                          :autosize="{ minRows: 3, maxRows: 5}"
+                          :placeholder="'添加注释..., 最大字数' + maxlength"
+                          v-model="scope.row.comments">
+                        </el-input>
+                        <el-button icon="el-icon-edit" round size="mini" @click="addComment(scope.row.suggestionId, scope.row.comments, scope.row.sn)">保存注释</el-button>
                       </el-form-item>
-                      <el-form-item label="历史" :label-width="formLabelWidth">
-                          <div v-if="scope.row.history" v-for="(his, index) in scope.row.history" :key="'his_' + index">
-                            <span><i class="el-icon-time"></i>{{ his.date }}</span>
-                            <span>{{ his.operator }}</span>
-                            <i class="el-icon-arrow-right"></i>
-                            <el-tag>{{ typeReverseMapping[his.operation] }}</el-tag>
-                            <span>{{ his.message }}</span>   
-                          </div>
-                          <div v-else>
-                            Loading...
-                          </div>
-                      </el-form-item>
-                    </el-form>
-                  </template>
-                </el-table-column>
+                    </el-col>
+                  </el-row>
+                  <el-form-item label="附件" :label-width="formLabelWidth">
+                    <el-upload
+                      name="attachment"
+                      :file-list="scope.row.attachment"
+                      :on-preview="downloadFile"
+                      :before-remove="beforeRemove"
+                      :on-remove="removeFile"
+                      :on-change="handlerUploader"
+                      :headers="getAuthHeaders()"
+                      :action="getUploadUrl(scope.row.suggestionId)">
+                      <i class="el-icon-upload"></i>
+                      点击上传
+                    </el-upload>
+                  </el-form-item>
+                  <el-form-item label="历史" :label-width="formLabelWidth">
+                      <div v-if="scope.row.history" v-for="(his, index) in scope.row.history" :key="'his_' + index">
+                        <span><i class="el-icon-time"></i>{{ his.date }}</span>
+                        <span>{{ his.operator }}</span>
+                        <i class="el-icon-arrow-right"></i>
+                        <el-tag>{{ typeReverseMapping[his.operation] }}</el-tag>
+                        <span>{{ his.message }}</span>   
+                      </div>
+                      <div v-else>
+                        Loading...
+                      </div>
+                  </el-form-item>
+                </el-form>
+              </template>
+            </el-table-column>
             <el-table-column 
               v-for="(headerName, index) in dynamicHeaders" 
-              :width="headerWidth[headerName.en]?headerWidth[headerName.en]:''"
+              :width="headerWidth[headerName.en]?headerWidth[headerName.en]:'65'"
               :key="headerName.en + '_' + index" 
-              :label="headerName.cn" >
+              :label="headerName.cn" 
+              :align="headerName.en === 'suggestionId' || headerName.en === 'status'?'center': 'left'">
                 <template slot-scope="scope" >
-                  
                   <span v-if="headerName.en==='productId'">
                     <!-- <router-link :to="{path: '/main/products', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
                       {{scope.row.productId}}
@@ -291,13 +291,15 @@
         dr: null,
         maxlength: 200,
         headerWidth: {
-          createDate: 100,
+          createDate: 75,
           finishDate: 100,
-          name: 160,
+          name: 200,
           productId: 100,
-          title: 160,
+          title: 320,
           lastUpdateTime: 160,
-          'Session Percentage': 90
+          'Session Percentage': 90,
+          status: 80,
+          suggestType: 160
         },
         nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
         nationListBK: [],
