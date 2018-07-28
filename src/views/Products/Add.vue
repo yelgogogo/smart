@@ -30,10 +30,13 @@
     </el-form-item>
     <el-form-item label="竞品">
       <div v-for="cp in competitors" :key="cp.competitorId">
-        {{cp.competitorId}} <i class="el-icon-delete" @click="deleteCompetitor(cp.competitorId)"></i>
+        {{cp.competitorId}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{cp.competitorName}}<i class="el-icon-delete" @click="deleteCompetitor(cp.competitorId)"></i>
       </div>
       <div v-if="showAddCpButton === false">
-        <el-input v-model="competitor.competitorId" placeholder="竞品ASIN"></el-input>
+        <div style="width: 450px;">
+          <el-input v-model="competitor.competitorId" placeholder="竞品ASIN" clearable size="small" style="width: 130px;"></el-input>
+          <el-input v-model="competitor.competitorName" placeholder="竞品名称" clearable size="small" style="width: 300px;"></el-input>
+        </div>
       </div>
       <div v-if="competitors.length < 2">
         <el-button size="mini" icon="el-icon-plus" v-if="showAddCpButton === true" @click="addCompetitor" round>增加竞品</el-button>
@@ -65,7 +68,8 @@ export default {
         marketplaceId: '',
         productId: '',
         competitorId: '',
-        shopId: ''
+        shopId: '',
+        competitorName: ''
       },
       gKeyword: {
         marketplaceId: '',
