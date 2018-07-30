@@ -172,7 +172,7 @@
           <el-steps direction="vertical" :active="getActiveStep(wf.status)" align-center :space="120" finish-status="success">
             <el-step v-for="(step, index) in getAllSteps(wf.status)" :key="'wf_step_' + index" :description="getDescription(wf, step)" :title="typeReverseMapping[step]"></el-step>
           </el-steps>
-          <el-form size="mini" :model="wf" style="margin-top: 15px;" v-if="wf.status !== 'summed' && wf.status !== 'closed' && (isSalesManager(userInfo.roles) || wf.status === 'permitted')">
+          <el-form size="mini" :model="wf" style="margin-top: 15px;" v-if="wf.status !== 'summed' && wf.status !== 'closed' && (isSalesManager(userInfo.roles) || wf.status === 'permitted' || wf.status === 'finished')">
             <el-form-item label="意见" :label-width="formLabelWidth">
               <el-row>
                 <el-col :span="10" v-if="wf.status !== 'closed'">
@@ -451,7 +451,8 @@
           },
           finished: {
             summed: {
-              manager: true
+              manager: true,
+              sales: true
             },
             closed: {
               manager: false
