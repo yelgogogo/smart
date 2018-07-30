@@ -64,7 +64,7 @@ export default {
     }
   },
   mounted () {
-    this.periodSelectIn = this.periodSelect
+    this.periodSelectIn = (this.periodSelect === 31 ? 30 : this.periodSelect)
     this.updatePerid()
   },
   methods: {
@@ -76,9 +76,16 @@ export default {
         return
       }
       let format = 'YYYY-MM-DD'
-      this.period.start = moment().subtract(this.periodSelectIn, 'days').format(format)
-      this.period.end = moment().subtract(1, 'days').format(format)
-      this.period.select = this.periodSelectIn
+      if (this.periodSelect === 31) {
+        // 31 set for analysis page - default 1 month not contain today
+        this.period.start = moment().subtract(this.periodSelectIn, 'days').format(format)
+        this.period.end = moment().subtract(1, 'days').format(format)
+        this.period.select = this.periodSelectIn
+      } else {
+        this.period.start = moment().subtract(this.periodSelectIn - 1, 'days').format(format)
+        this.period.end = moment().format(format)
+        this.period.select = this.periodSelectIn
+      }
       console.log('onChange', this.period)
       this.$emit('onChange', this.period)
     },

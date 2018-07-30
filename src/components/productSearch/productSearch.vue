@@ -10,7 +10,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="18">
-        <period :periodSelect='30' @onChange="periodChange"></period>
+        <period :periodSelect='31' @onChange="periodChange"></period>
       </el-col>
   </el-row>
 </template>
