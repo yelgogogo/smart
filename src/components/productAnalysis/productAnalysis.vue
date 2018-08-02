@@ -126,6 +126,8 @@
         :key="headerName.fieldName + '_' + index" 
         :label="getShortHeader(headerName.en)"
         :prop="headerName.fieldName"
+        :fixed="headerName.fieldName === 'label' || headerName.fieldName === 'Price' || headerName.fieldName === 'Orders' 
+        || headerName.fieldName === 'Sessions' || headerName.fieldName === 'Session Percentage'? 'left' : 0"
         sortable>
         <template slot-scope="scope" v-if="scope.row[headerName.fieldName]">
           {{scope.row[headerName.fieldName]}}
@@ -212,11 +214,12 @@ export default {
         'Ad TotalSalesByAd': 'Ad TotalSalesByAd',
         'Page Views': 'Page Views',
         'Page Views Percentage': 'Page Views Percentage',
-        'QA': 'QA',
+        'QAs': 'QAs',
         'Session Percentage': 'Session Percentage',
         'Sessions': 'Sessions',
-        'Unit Session Percentage': 'Unit Session Percentage',
-        'Score': 'Score',
+        'Units': 'Units',
+        'Review Score': 'Review Score',
+        'Daily Reviews': 'Daily Reviews',
         'Price': 'Price',
         'Quantity Ordered': 'Quantity Ordered',
         'Reviews': 'Reviews'
@@ -227,19 +230,40 @@ export default {
         {fieldName: 'Orders', en: 'Orders', cn: '订单', show: true},
         {fieldName: 'Sessions', en: 'Sessions', cn: 'Sessions', show: true},
         {fieldName: 'Session Percentage', en: 'Order Session Percentage', cn: 'session率', show: true},
-        {fieldName: 'Unit Session Percentage', en: 'Unit', cn: 'unitSessionPercentage', show: true},
+        {fieldName: 'Units', en: 'Units', cn: 'Units', show: true},
+        {fieldName: 'Page Views', en: 'Page Views', cn: '浏览量', show: true},
+        {fieldName: 'Review Score', en: 'Review Score', cn: '评分', show: true},
+        {fieldName: 'Reviews', en: 'Reviews', cn: '反馈', show: true},
+        {fieldName: 'Daily Reviews', en: 'Daily Reviews', cn: '每日反馈', show: true},
+        {fieldName: 'QAs', en: 'QAs', cn: 'QAs', show: true},
+        {fieldName: 'Daily QAs', en: 'Daily QAs', cn: 'Daily QAs', show: true},
         {fieldName: 'Ad SalesByAd Div Sales', en: 'Ad SalesByAd Div Sales', cn: '总广告销售额/总销售额', show: false},
         {fieldName: 'Ad Spend', en: 'Ad Spend', cn: '总广告花费', show: false},
         {fieldName: 'Ad Spend Div Sales', en: 'Ad Spend Div Sales', cn: '广告花费/总销售额', show: false},
         {fieldName: 'Ad TotalQuantity', en: 'Ad TotalQuantity', cn: '广告总数量', show: false},
         {fieldName: 'Ad TotalSales', en: 'Ad TotalSales', cn: '广告总销量', show: false},
-        {fieldName: 'Ad TotalSalesByAd', en: 'Ad TotalSalesByAd', cn: '广告总带动销量', show: false},
-        {fieldName: 'Page Views', en: 'Page Views', cn: '浏览量', show: true},
-        {fieldName: 'Score', en: 'Review Score', cn: '评分', show: true},
-        {fieldName: 'Page Views Percentage', en: 'Page Views Percentage', cn: '浏览率', show: true},
-        {fieldName: 'Reviews', en: 'Reviews', cn: '反馈', show: true},
-        {fieldName: 'QA', en: 'QA', cn: 'QA', show: true},
-        {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true}
+        {fieldName: 'Ad TotalSalesByAd', en: 'Ad TotalSalesByAd', cn: '广告总带动销量', show: false}
+        // {fieldName: 'Page Views Percentage', en: 'Page Views Percentage', cn: '浏览率', show: true},
+        // {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true}
+      ],
+      adsArrayDay: [
+        {fieldName: 'Impressions', en: 'Impressions', cn: 'Impressions', show: true},
+        {fieldName: 'Clicks', en: 'Clicks', cn: 'Clicks', show: true},
+        {fieldName: 'CTR', en: 'CTR', cn: 'CTR', show: true},
+        {fieldName: 'Spend', en: 'Spend', cn: 'Spend', show: true},
+        {fieldName: 'CPC', en: 'CPC', cn: 'CPC', show: true},
+        {fieldName: 'Ads Sales', en: 'Ads Sales', cn: 'Ads Sales', show: true},
+        {fieldName: 'Ads orders', en: 'Ads orders', cn: 'Ads orders', show: true},
+        {fieldName: 'ACoS', en: 'ACoS', cn: 'ACoS', show: true}
+      ],
+      adsArrayWeek: [
+        {fieldName: 'Impressions', en: 'Impressions', cn: 'Impressions', show: true},
+        {fieldName: 'Clicks', en: 'Clicks', cn: 'Clicks', show: true},
+        {fieldName: 'CPC', en: 'CPC', cn: 'CPC', show: true},
+        {fieldName: 'Spend', en: 'Spend', cn: 'Spend', show: true},
+        {fieldName: 'Ads Sales', en: 'Ads Sales', cn: 'Ads Sales', show: true},
+        {fieldName: 'Ads orders', en: 'Ads orders', cn: 'Ads orders', show: true},
+        {fieldName: 'ACoS', en: 'ACoS', cn: 'ACoS', show: true}
       ],
       competitionHearders: [],
       compChecklist: [],
