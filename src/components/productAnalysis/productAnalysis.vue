@@ -48,22 +48,24 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
-        <el-tab-pane v-for="ca of categories" :key="ca" :label="getTabName(ca)" :name="ca">
+        <el-tab-pane v-for="ca of categories" :key="ca.name" :label="getTabName(ca.name)" :name="ca.name">
           <el-row v-if="showChartCategory">
             <el-col :span="24" style="padding-top: 0">
+              <a :href="ca.url" target="_blank" style="font-size:19px"><b>&nbsp;{{ ca.name }}</b></a>
               <chart 
-              :options="categoryBar(ca)"
+              :options="categoryBar(ca.name)"
               :init-options="initOptions"
               auto-resize
             />
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane v-for="kw of keywords" :key="kw" :label="getTabName(kw)" :name="kw">
+      <el-tab-pane v-for="kw of keywords" :key="kw.name" :label="getTabName(kw.name)" :name="kw.name">
         <el-row v-if="showChartKeyword">
           <el-col :span="24" style="padding-top: 0;">
+            <a :href="kw.url" target="_blank" style="font-size:19px"><b>&nbsp;{{ kw.name }}</b></a>
             <chart 
-              :options="categoryBar(kw)"
+              :options="categoryBar(kw.name)"
               :init-options="initOptions"
               auto-resize
             />
@@ -635,12 +637,12 @@ export default {
               this.dailyFeedback = []
               self.competitionStatistics.forEach(c => {
                 c.name = c.id
-                const finderQa = c.info.find(i => i.name === 'QA')
+                const finderQa = c.info.find(i => i.name === 'QAs')
                 this.dailyQa.push({
                   name: c.name,
                   info: finderQa.info
                 })
-                const finderFeedback = c.info.find(i => i.name === 'QA')
+                const finderFeedback = c.info.find(i => i.name === 'QAs')
                 this.dailyFeedback.push({
                   name: c.name,
                   info: finderFeedback.info
@@ -680,12 +682,14 @@ export default {
             self.legends.push(dt.name)
             if (dt.name.startsWith('Category:') === true) {
               // dt.name.substr(10)
-              self.categories.push(dt.name)
-              self.categories.sort((a, b) => a.split(' > ').length > b.split(' > ').length ? 1 : -1)
+              // self.categories.push(dt.name)
+              self.categories.push({name: dt.name, url: dt.url})
+              self.categories.sort((a, b) => a.name.split(' > ').length > b.name.split(' > ').length ? 1 : -1)
             }
             if (dt.name.startsWith('Keyword:') === true) {
               // dt.name.substr(9)
-              self.keywords.push(dt.name)
+              // self.keywords.push(dt.name)
+              self.keywords.push({name: dt.name, url: dt.url})
             }
           }
         })
@@ -748,8 +752,7 @@ export default {
         })
         return {
           title: {
-            text: this.chartTitle,
-            top: 40
+            text: ''
           },
           legend: {
             top: 90,
