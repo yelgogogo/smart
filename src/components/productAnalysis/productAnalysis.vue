@@ -127,7 +127,7 @@
         :label="getShortHeader(headerName.en)"
         :prop="headerName.fieldName"
         :fixed="headerName.fieldName === 'label' || headerName.fieldName === 'Price' || headerName.fieldName === 'Orders' 
-        || headerName.fieldName === 'Sessions' || headerName.fieldName === 'Session Percentage'? 'left' : 0"
+        || headerName.fieldName === 'Sessions' || headerName.fieldName === 'Session Percentage'? 'left' : false"
         sortable>
         <template slot-scope="scope" v-if="scope.row[headerName.fieldName]">
           {{scope.row[headerName.fieldName]}}
@@ -224,7 +224,8 @@ export default {
         'Quantity Ordered': 'Quantity Ordered',
         'Reviews': 'Reviews'
       },
-      headersArray: [
+      headersArray: [],
+      commonHeadersArray: [
         {fieldName: 'label', en: 'Date', cn: '日期', show: true},
         {fieldName: 'Price', en: 'Price', cn: '价格', show: true},
         {fieldName: 'Orders', en: 'Orders', cn: '订单', show: true},
@@ -246,7 +247,8 @@ export default {
         // {fieldName: 'Page Views Percentage', en: 'Page Views Percentage', cn: '浏览率', show: true},
         // {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true}
       ],
-      adsArrayDay: [
+      competitionArray: [],
+      adsDayArray: [
         {fieldName: 'Impressions', en: 'Impressions', cn: 'Impressions', show: true},
         {fieldName: 'Clicks', en: 'Clicks', cn: 'Clicks', show: true},
         {fieldName: 'CTR', en: 'CTR', cn: 'CTR', show: true},
@@ -256,7 +258,7 @@ export default {
         {fieldName: 'Ads orders', en: 'Ads orders', cn: 'Ads orders', show: true},
         {fieldName: 'ACoS', en: 'ACoS', cn: 'ACoS', show: true}
       ],
-      adsArrayWeek: [
+      adsWeekArray: [
         {fieldName: 'Impressions', en: 'Impressions', cn: 'Impressions', show: true},
         {fieldName: 'Clicks', en: 'Clicks', cn: 'Clicks', show: true},
         {fieldName: 'CPC', en: 'CPC', cn: 'CPC', show: true},
@@ -603,6 +605,17 @@ export default {
           this.gridData = res.data.grid
           this.tmpGridData = res.data.grid
           this.total = res.data.pagination.total
+          for (let subField in this.gridData[0]) {
+            if (subField.startsWith('Category:')) {
+              this.competitionArray.push({fieldName: subField, en: this.getTabName(subField), cn: subField, show: true})
+            }
+          }
+          for (let subField in this.gridData[0]) {
+            if (subField.startsWith('Keyword:')) {
+              this.competitionArray.push({fieldName: subField, en: this.getTabName(subField), cn: subField, show: true})
+            }
+          }
+          this.headersArray = this.commonHeadersArray.concat(this.competitionArray).concat(this.adsDayArray)
           this.createHeader()
         }
         this.$store.dispatch('setLoadingState', false)
