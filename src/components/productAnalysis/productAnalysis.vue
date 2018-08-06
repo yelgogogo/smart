@@ -14,7 +14,7 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
-        <el-tab-pane label="广告" name="advertising">
+        <!-- <el-tab-pane label="广告" name="advertising">
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
               <chart 
@@ -25,7 +25,7 @@
                 />
             </el-col>
           </el-row>         
-        </el-tab-pane>
+        </el-tab-pane> -->
         <el-tab-pane label="QA比较" name="qaDaily">
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
@@ -79,7 +79,7 @@
         ref="showHideColumns"
         trigger="hover">
         <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
-          <el-checkbox v-for="(header, index) of headers" :key="index" :label="getShortHeader(header)" style="width: 100%;" name="123"></el-checkbox>
+          <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;" name="123"></el-checkbox>
         </el-checkbox-group>
       </el-popover>
       <el-col :span="20">
@@ -124,10 +124,10 @@
         v-for="(headerName, index) in dynamicHeaders" 
         :width="headerWidth[headerName.fieldName]?headerWidth[headerName.fieldName]:'100'"
         :key="headerName.fieldName + '_' + index" 
-        :label="getShortHeader(headerName.en)"
+        :label="headerName.en"
         :prop="headerName.fieldName"
         :fixed="headerName.fieldName === 'label' || headerName.fieldName === 'Price' || headerName.fieldName === 'Orders' 
-        || headerName.fieldName === 'Sessions' || headerName.fieldName === 'Session Percentage'? 'left' : false"
+        || headerName.fieldName === 'Sessions' || headerName.fieldName === 'Order Session Percentage'? 'left' : false"
         sortable>
         <template slot-scope="scope" v-if="scope.row[headerName.fieldName]">
           {{scope.row[headerName.fieldName]}}
@@ -205,24 +205,33 @@ export default {
       fields: [ ],
       dictCn: {
         'label': 'Date',
+        'Price': 'Price',
         'Orders': 'Orders',
+        'Sessions': 'Sessions',
+        'Order Session Percentage': 'Order Session Percentage',
+        'Units': 'Units',
+        'Page Views': 'Page Views',
+        'Review Score': 'Review Score',
+        'Reviews': 'Reviews',
+        'Daily Reviews': 'Daily Reviews',
+        'QAs': 'QAs',
+        'Daily QAs': 'Daily QAs',
         'Ad SalesByAd Div Sales': 'Ad SalesByAd Div Sales',
         'Ad Spend': 'Ad Spend',
         'Ad Spend Div Sales': 'Ad Spend Div Sales',
         'Ad TotalQuantity': 'Ad TotalQuantity',
         'Ad TotalSales': 'Ad TotalSales',
         'Ad TotalSalesByAd': 'Ad TotalSalesByAd',
-        'Page Views': 'Page Views',
         'Page Views Percentage': 'Page Views Percentage',
-        'QAs': 'QAs',
-        'Session Percentage': 'Session Percentage',
-        'Sessions': 'Sessions',
-        'Units': 'Units',
-        'Review Score': 'Review Score',
-        'Daily Reviews': 'Daily Reviews',
-        'Price': 'Price',
         'Quantity Ordered': 'Quantity Ordered',
-        'Reviews': 'Reviews'
+        'Impressions': 'Impressions',
+        'Clicks': 'Clicks',
+        'CTR': 'CTR',
+        'Spend': 'Spend',
+        'CPC': 'CPC',
+        'Ads Sales': 'Ads Sales',
+        'Ads orders': 'Ads orders',
+        'ACoS': 'ACoS'
       },
       headersArray: [],
       commonHeadersArray: [
@@ -230,39 +239,30 @@ export default {
         {fieldName: 'Price', en: 'Price', cn: '价格', show: true},
         {fieldName: 'Orders', en: 'Orders', cn: '订单', show: true},
         {fieldName: 'Sessions', en: 'Sessions', cn: 'Sessions', show: true},
-        {fieldName: 'Session Percentage', en: 'Order Session Percentage', cn: 'session率', show: true},
+        {fieldName: 'Order Session Percentage', en: 'Order Session Percentage', cn: 'session率', show: true},
         {fieldName: 'Units', en: 'Units', cn: 'Units', show: true},
         {fieldName: 'Page Views', en: 'Page Views', cn: '浏览量', show: true},
         {fieldName: 'Review Score', en: 'Review Score', cn: '评分', show: true},
         {fieldName: 'Reviews', en: 'Reviews', cn: '反馈', show: true},
         {fieldName: 'Daily Reviews', en: 'Daily Reviews', cn: '每日反馈', show: true},
         {fieldName: 'QAs', en: 'QAs', cn: 'QAs', show: true},
-        {fieldName: 'Daily QAs', en: 'Daily QAs', cn: 'Daily QAs', show: true},
-        {fieldName: 'Ad SalesByAd Div Sales', en: 'Ad SalesByAd Div Sales', cn: '总广告销售额/总销售额', show: false},
-        {fieldName: 'Ad Spend', en: 'Ad Spend', cn: '总广告花费', show: false},
-        {fieldName: 'Ad Spend Div Sales', en: 'Ad Spend Div Sales', cn: '广告花费/总销售额', show: false},
-        {fieldName: 'Ad TotalQuantity', en: 'Ad TotalQuantity', cn: '广告总数量', show: false},
-        {fieldName: 'Ad TotalSales', en: 'Ad TotalSales', cn: '广告总销量', show: false},
-        {fieldName: 'Ad TotalSalesByAd', en: 'Ad TotalSalesByAd', cn: '广告总带动销量', show: false}
+        {fieldName: 'Daily QAs', en: 'Daily QAs', cn: 'Daily QAs', show: true}
+        // {fieldName: 'Ad SalesByAd Div Sales', en: 'Ad SalesByAd Div Sales', cn: '总广告销售额/总销售额', show: false},
+        // {fieldName: 'Ad Spend', en: 'Ad Spend', cn: '总广告花费', show: false},
+        // {fieldName: 'Ad Spend Div Sales', en: 'Ad Spend Div Sales', cn: '广告花费/总销售额', show: false},
+        // {fieldName: 'Ad TotalQuantity', en: 'Ad TotalQuantity', cn: '广告总数量', show: false},
+        // {fieldName: 'Ad TotalSales', en: 'Ad TotalSales', cn: '广告总销量', show: false},
+        // {fieldName: 'Ad TotalSalesByAd', en: 'Ad TotalSalesByAd', cn: '广告总带动销量', show: false},
         // {fieldName: 'Page Views Percentage', en: 'Page Views Percentage', cn: '浏览率', show: true},
         // {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true}
       ],
       competitionArray: [],
-      adsDayArray: [
+      adsArray: [
         {fieldName: 'Impressions', en: 'Impressions', cn: 'Impressions', show: true},
         {fieldName: 'Clicks', en: 'Clicks', cn: 'Clicks', show: true},
         {fieldName: 'CTR', en: 'CTR', cn: 'CTR', show: true},
         {fieldName: 'Spend', en: 'Spend', cn: 'Spend', show: true},
         {fieldName: 'CPC', en: 'CPC', cn: 'CPC', show: true},
-        {fieldName: 'Ads Sales', en: 'Ads Sales', cn: 'Ads Sales', show: true},
-        {fieldName: 'Ads orders', en: 'Ads orders', cn: 'Ads orders', show: true},
-        {fieldName: 'ACoS', en: 'ACoS', cn: 'ACoS', show: true}
-      ],
-      adsWeekArray: [
-        {fieldName: 'Impressions', en: 'Impressions', cn: 'Impressions', show: true},
-        {fieldName: 'Clicks', en: 'Clicks', cn: 'Clicks', show: true},
-        {fieldName: 'CPC', en: 'CPC', cn: 'CPC', show: true},
-        {fieldName: 'Spend', en: 'Spend', cn: 'Spend', show: true},
         {fieldName: 'Ads Sales', en: 'Ads Sales', cn: 'Ads Sales', show: true},
         {fieldName: 'Ads orders', en: 'Ads orders', cn: 'Ads orders', show: true},
         {fieldName: 'ACoS', en: 'ACoS', cn: 'ACoS', show: true}
@@ -455,8 +455,7 @@ export default {
       if (this.showChartCategory === true || this.showChartKeyword === true) {
         const checkList = this.checkedList
         this.competitionHearders.forEach(h => {
-          console.log('test123---' + h.fieldName)
-          if (checkList.includes(h.fieldName)) {
+          if (checkList.includes(h.en)) {
             h.show = true
           } else {
             h.show = false
@@ -520,14 +519,17 @@ export default {
           console.log('subComField==========' + subComField)
           if (subComField === 'label') {
             this.dynamicHeaders.unshift({fieldName: subComField, en: 'Date', cn: subComField, show: true})
+            this.compChecklist.push('Date')
           } else if (subComField.indexOf('Category') !== -1) {
             this.dynamicHeaders.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
+            this.compChecklist.push(subComField)
           } else if (subComField.indexOf('Keyword') !== -1) {
             this.dynamicHeaders.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
+            this.compChecklist.push(subComField)
           } else {
             this.dynamicHeaders.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
+            this.compChecklist.push(subComField)
           }
-          this.compChecklist.push(subComField)
         }
         this.headers = this.dynamicHeaders.map(e => e.en)
         this.checkedList = this.compChecklist
@@ -552,17 +554,19 @@ export default {
       return shortHeader
     },
     getTabName (name) {
-      console.log('getTabName', name)
+      // console.log('getTabName', name)
       const arr = name.split(' > ')
       let txt1 = ''
       if (name.substring(0, 8) === 'Category') {
         if (name.indexOf('>') === -1) {
           txt1 = '(C)' + name.substring(9)
         } else {
-          txt1 = '(C)' + arr[arr.length - 1]
+          txt1 = '(C) ' + arr[arr.length - 1]
         }
-      } else {
+      } else if (name.substring(0, 7) === 'Keyword') {
         txt1 = '(K)' + name.substring(8)
+      } else {
+        txt1 = name
       }
       return txt1
     },
@@ -607,15 +611,17 @@ export default {
           this.total = res.data.pagination.total
           for (let subField in this.gridData[0]) {
             if (subField.startsWith('Category:')) {
-              this.competitionArray.push({fieldName: subField, en: this.getTabName(subField), cn: subField, show: true})
+              this.competitionArray.push({fieldName: this.getTabName(subField), en: this.getTabName(subField), cn: this.getTabName(subField), show: true})
+              this.$set(this.dictCn, this.getTabName(subField), this.getTabName(subField))
             }
           }
           for (let subField in this.gridData[0]) {
             if (subField.startsWith('Keyword:')) {
-              this.competitionArray.push({fieldName: subField, en: this.getTabName(subField), cn: subField, show: true})
+              this.competitionArray.push({fieldName: this.getTabName(subField), en: this.getTabName(subField), cn: this.getTabName(subField), show: true})
+              this.$set(this.dictCn, this.getTabName(subField), this.getTabName(subField))
             }
           }
-          this.headersArray = this.commonHeadersArray.concat(this.competitionArray).concat(this.adsDayArray)
+          this.headersArray = this.commonHeadersArray.concat(this.competitionArray).concat(this.adsArray)
           this.createHeader()
         }
         this.$store.dispatch('setLoadingState', false)
