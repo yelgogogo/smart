@@ -30,7 +30,9 @@
     </el-form-item>
     <el-form-item label="竞品">
       <div v-for="cp in competitors" :key="cp.competitorId">
-        {{cp.competitorId}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{cp.competitorName}}<i class="el-icon-delete" @click="deleteCompetitor(cp.competitorId)"></i>
+        {{cp.competitorId}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{cp.competitorName}}
+        <i class="el-icon-edit" @click="changeCompetitorName(product, cp.competitorId, cp.competitorName)"></i>
+        <i class="el-icon-delete" @click="deleteCompetitor(cp.competitorId)"></i>
       </div>
       <div v-if="showAddCpButton === false">
         <div style="width: 450px;">
@@ -235,6 +237,31 @@ export default {
           this.pageProductName = value
         }).catch(err => {
           this.errorHandler(err, {code: 404, message: '产品未找到'})
+        })
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: '取消输入'
+        // })
+      })
+    },
+    changeCompetitorName (row, competitorId, compName) {
+      console.log(row)
+      this.$prompt('请输入竞品名称', '提示', {
+        confirmButtonText: '确定',
+        inputValue: compName,
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        const competitorName = value
+        api.post(`/api/product/competitor/${row.marketplaceId}/${row.shopId}/${row.ASIN}/${competitorId}`, {competitorName}).then(res => {
+          this.$message({
+            showClose: true,
+            message: '更新成功!',
+            type: 'success'
+          })
+          this.listCompetitor()
+        }).catch(err => {
+          this.errorHandler(err, {code: 404, message: '竞品未找到'})
         })
       }).catch(() => {
         // this.$message({
