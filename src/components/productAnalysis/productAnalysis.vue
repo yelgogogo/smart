@@ -476,11 +476,19 @@ export default {
     },
     sizeChange (pageSize) {
       this.pageSize = pageSize
-      this.getPageData()
+      if (this.showChartCategory === true || this.showChartKeyword === true) {
+        this.showCompareData()
+      } else {
+        this.getPageData()
+      }
     },
     currentChange (currentPage) {
       this.currentPage = currentPage
-      this.getPageData()
+      if (this.showChartCategory === true || this.showChartKeyword === true) {
+        this.showCompareData()
+      } else {
+        this.getPageData()
+      }
     },
     onClick (evnet, e) {
       console.log(event, e, window.VueECharts)
@@ -489,6 +497,8 @@ export default {
     showHideColumns (newHeaders) {
     },
     handleClick (tab, event) {
+      this.pageSize = 20
+      this.currentPage = 1
       this.showChartCategory = false
       this.showChartKeyword = false
       this.chartTitle = tab.name
@@ -609,6 +619,7 @@ export default {
           this.gridData = res.data.grid
           this.tmpGridData = res.data.grid
           this.total = res.data.pagination.total
+          this.competitionArray = []
           for (let subField in this.gridData[0]) {
             if (subField.startsWith('Category:')) {
               this.competitionArray.push({fieldName: this.getTabName(subField), en: this.getTabName(subField), cn: this.getTabName(subField), show: true})
