@@ -133,7 +133,9 @@
               :width="headerWidth[headerName.en]?headerWidth[headerName.en]:'65'"
               :key="headerName.en + '_' + index" 
               :label="headerName.cn" 
-              :align="headerName.en === 'suggestionId' || headerName.en === 'status'?'center': 'left'">
+              :align="headerName.en === 'suggestionId' || headerName.en === 'status' || headerName.en === 'countryCode'
+               || headerName.en === 'proposer' || headerName.en === 'auditor'?'center': 'left'"
+              header-align="center">
                 <template slot-scope="scope" >
                   <span v-if="headerName.en==='productId'">
                     <!-- <router-link :to="{path: '/main/products', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
@@ -147,12 +149,14 @@
                   <span v-else-if="headerName.en==='status'">
                       <el-tag :type="getTagType(scope.row.status)">{{typeReverseMapping[scope.row.status]}}</el-tag>
                   </span>
+                  <span v-else-if="headerName.en==='title'" :title="scope.row.title" class="product-name" >{{scope.row.title}}</span>
                   <span v-else-if="scope.row[headerName.en]">{{scope.row[headerName.en]}}</span>
                 </template>
               </el-table-column>
               <el-table-column
               width="240"
-              label="操作">
+              label="操作"
+              header-align="center">
               <template slot-scope="scope">
                 <router-link :to="{path: '/main/analysis', query: {countryCode: scope.row.countryCode,marketplaceId: getMarketplaceId(scope.row.countryCode),shopId: scope.row.shopId, productId: scope.row.productId}}">
                   <el-button size="mini" round>
@@ -292,14 +296,16 @@
         maxlength: 200,
         headerWidth: {
           createDate: 75,
-          finishDate: 100,
+          finishDate: 75,
+          shopName: 120,
           name: 200,
           productId: 100,
-          title: 320,
+          title: 220,
           lastUpdateTime: 160,
           'Session Percentage': 90,
           status: 80,
-          suggestType: 160
+          suggestType: 120,
+          countryCode: 45
         },
         nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
         nationListBK: [],
@@ -328,13 +334,13 @@
           {en: 'productId', cn: 'ASIN', show: true},
           {en: 'status', cn: '提议状态', show: true},
           {en: 'suggestType', cn: '优化类型', show: true},
-          {en: 'shopName', cn: '店铺', show: false},
-          {en: 'countryCode', cn: '国家', show: false},
+          {en: 'shopName', cn: '店铺', show: true},
+          {en: 'countryCode', cn: '国家', show: true},
           {en: 'name', cn: '产品名称', show: true},
           {en: 'title', cn: '标题', show: true},
-          {en: 'proposer', cn: '提议人', show: false},
-          {en: 'auditor', cn: '审批人', show: false},
-          {en: 'finishDate', cn: '完成时间', show: false}
+          {en: 'proposer', cn: '提议人', show: true},
+          {en: 'auditor', cn: '审批人', show: true},
+          {en: 'finishDate', cn: '完成时间', show: true}
         ],
         dynamicHeaders: [],
         headers: [],
