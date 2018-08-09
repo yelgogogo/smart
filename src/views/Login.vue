@@ -203,7 +203,8 @@ export default {
                 this.setUserInfo(login.data)
                 this.cacheToken(login.headers)
                 console.log(this.$store.state)
-                this.$router.push('/main/workflow?status=issued_reissued')
+                // this.$router.push('/main/workflow?status=issued_reissued')
+                this.$router.push('/main/products')
               }).catch(error => {
                 if (error.response) {
                   // The request was made and the server responded with a status code
