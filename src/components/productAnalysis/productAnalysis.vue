@@ -256,6 +256,14 @@ export default {
         // {fieldName: 'Page Views Percentage', en: 'Page Views Percentage', cn: '浏览率', show: true},
         // {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true}
       ],
+      commonHeadersArray2: [
+        {fieldName: 'label', en: 'Date', cn: '日期', show: true},
+        {fieldName: 'Orders', en: 'Orders', cn: '订单', show: true},
+        {fieldName: 'Sessions', en: 'Sessions', cn: 'Sessions', show: true},
+        {fieldName: 'Order Session Percentage', en: 'Order Session Percentage', cn: 'session率', show: true},
+        {fieldName: 'Units', en: 'Units', cn: 'Units', show: true},
+        {fieldName: 'Page Views', en: 'Page Views', cn: '浏览量', show: true}
+      ],
       competitionArray: [],
       adsArray: [
         {fieldName: 'Impressions', en: 'Impressions', cn: 'Impressions', show: true},
@@ -599,6 +607,7 @@ export default {
     onSearchChange (filter) {
       console.log('onSearchChange', filter, this.filter)
       this.filter = {...this.filter, ...filter}
+      this.filter.unit = filter.unit
       this.getGridData()
       if (this.showChartCategory === true || this.showChartKeyword === true) {
         this.showCompareData()
@@ -632,7 +641,12 @@ export default {
               this.$set(this.dictCn, this.getTabName(subField), this.getTabName(subField))
             }
           }
-          this.headersArray = this.commonHeadersArray.concat(this.competitionArray).concat(this.adsArray)
+          if (this.filter.unit === 5) {
+            this.headersArray = this.commonHeadersArray.concat(this.competitionArray).concat(this.adsArray)
+          } else {
+            this.headersArray = this.commonHeadersArray2.concat(this.adsArray)
+            console.log('this.headersArray', this.headersArray)
+          }
           this.createHeader()
         }
         this.$store.dispatch('setLoadingState', false)
@@ -690,7 +704,7 @@ export default {
               this.dailyQa = []
               this.dailyFeedback = []
               self.competitionStatistics.forEach(c => {
-                c.name = c.id
+                // c.name = c.id
                 const finderQa = c.info.find(i => i.name === 'QAs')
                 this.dailyQa.push({
                   name: c.name,
@@ -796,7 +810,8 @@ export default {
           let params = pro.info.filter(param => param.name === tabName)
           composedArry.push({
             id: pro.id,
-            data: params.length === 0 ? [] : params[0].info
+            data: params.length === 0 ? [] : params[0].info,
+            name: pro.name
           })
         })
         composedArry.forEach(c => {
@@ -810,7 +825,7 @@ export default {
           },
           legend: {
             top: 90,
-            data: composedArry.map(dt => dt.id)
+            data: composedArry.map(dt => dt.name)
           },
           grid: {
             top: 140
@@ -830,7 +845,7 @@ export default {
             trigger: 'axis'
           },
           series: composedArry.map(dt => {
-            let name = dt.id
+            let name = dt.name
             let type = 'line'
             let markPoint = {
               clickable: true,
