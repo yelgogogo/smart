@@ -26,7 +26,7 @@
             </el-col>
           </el-row>         
         </el-tab-pane> -->
-        <el-tab-pane label="QA比较" name="qaDaily">
+        <el-tab-pane label="QA比较" name="QA">
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
               <chart 
@@ -37,7 +37,7 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
-        <el-tab-pane label="反馈比较" name="feedbackDaily">
+        <el-tab-pane label="反馈比较" name="Review">
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
               <chart 
@@ -284,6 +284,7 @@ export default {
       adStatistics: [],
       competitionStatistics: [],
       chartTitle: '',
+      curTabName: '',
       initOptions: {
         renderer: 'svg'
       },
@@ -453,14 +454,16 @@ export default {
       } else {
         this.filter.high2low = false
       }
-      if (this.showChartCategory === true || this.showChartKeyword === true) {
+      if (this.showChartCategory === true || this.showChartKeyword === true ||
+       this.curTabName === 'QA' || this.curTabName === 'Review') {
         this.showCompareData()
       } else {
         this.getPageData()
       }
     },
     updateVisibleColumns () {
-      if (this.showChartCategory === true || this.showChartKeyword === true) {
+      if (this.showChartCategory === true || this.showChartKeyword === true ||
+       this.curTabName === 'QA' || this.curTabName === 'Review') {
         const checkList = this.checkedList
         this.competitionHearders.forEach(h => {
           if (checkList.includes(h.en)) {
@@ -484,7 +487,8 @@ export default {
     },
     sizeChange (pageSize) {
       this.pageSize = pageSize
-      if (this.showChartCategory === true || this.showChartKeyword === true) {
+      if (this.showChartCategory === true || this.showChartKeyword === true ||
+       this.curTabName === 'QA' || this.curTabName === 'Review') {
         this.showCompareData()
       } else {
         this.getPageData()
@@ -492,7 +496,8 @@ export default {
     },
     currentChange (currentPage) {
       this.currentPage = currentPage
-      if (this.showChartCategory === true || this.showChartKeyword === true) {
+      if (this.showChartCategory === true || this.showChartKeyword === true ||
+       this.curTabName === 'QA' || this.curTabName === 'Review') {
         this.showCompareData()
       } else {
         this.getPageData()
@@ -505,16 +510,19 @@ export default {
     showHideColumns (newHeaders) {
     },
     handleClick (tab, event) {
+      console.log('tab===' + tab.name)
       this.pageSize = 20
       this.currentPage = 1
       this.showChartCategory = false
       this.showChartKeyword = false
-      this.chartTitle = tab.name
+      this.curTabName = tab.name
       if (tab.name.indexOf('Category:') !== -1) {
         setTimeout(() => { this.showChartCategory = true }, 0)
         this.showCompareData()
       } else if (tab.name.indexOf('Keyword:') !== -1) {
         setTimeout(() => { this.showChartKeyword = true }, 0)
+        this.showCompareData()
+      } else if (tab.name === 'QA' || tab.name === 'Review') {
         this.showCompareData()
       } else {
         this.gridData = this.tmpGridData
@@ -523,32 +531,39 @@ export default {
       console.log(tab, event)
     },
     showCompareData () {
-      let pagination = {
-        pageSize: this.pageSize,
-        currentPage: this.currentPage
-      }
-      api.post('/api/product/competitionChart', {pagination, ...this.filter}).then(res => {
-        this.competitionList = res.data.grid
-        this.gridData = res.data.grid
+      const period = this.filter.period
+      const tab = this.curTabName
+      api.post('/api/product/competitionChart', {period, tab, ...this.filter}).then(res => {
+        this.competitionList = res.data.info
+        this.gridData = res.data.info
         this.dynamicHeaders = []
         this.headers = []
         this.checkedList = []
+        let tmpHeader = []
         for (let subComField in this.competitionList[0]) {
           console.log('subComField==========' + subComField)
-          if (subComField === 'label') {
-            this.dynamicHeaders.unshift({fieldName: subComField, en: 'Date', cn: subComField, show: true})
-            this.compChecklist.push('Date')
+          if (subComField.indexOf('QA') !== -1) {
+            this.dynamicHeaders.unshift({fieldName: subComField, en: 'QA', cn: subComField, show: true})
+            this.compChecklist.push('QA')
+          } else if (subComField.indexOf('Review') !== -1) {
+            this.dynamicHeaders.unshift({fieldName: subComField, en: 'Review', cn: subComField, show: true})
+            this.compChecklist.push('Review')
           } else if (subComField.indexOf('Category') !== -1) {
-            this.dynamicHeaders.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
+            this.dynamicHeaders.unshift({fieldName: subComField, en: this.getTabName(subComField), cn: subComField, show: true})
             this.compChecklist.push(subComField)
           } else if (subComField.indexOf('Keyword') !== -1) {
-            this.dynamicHeaders.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
+            this.dynamicHeaders.unshift({fieldName: subComField, en: this.getTabName(subComField), cn: subComField, show: true})
             this.compChecklist.push(subComField)
           } else {
-            this.dynamicHeaders.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
+            tmpHeader.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
             this.compChecklist.push(subComField)
           }
         }
+        tmpHeader = tmpHeader.sort((a, b) => {
+          return a.en < b.en ? 1 : -1
+        })
+        this.dynamicHeaders = this.dynamicHeaders.concat(tmpHeader)
+        console.log('dynamicHeaders===', this.dynamicHeaders)
         this.headers = this.dynamicHeaders.map(e => e.en)
         this.checkedList = this.compChecklist
         this.competitionHearders = this.dynamicHeaders
@@ -609,7 +624,8 @@ export default {
       this.filter = {...this.filter, ...filter}
       this.filter.unit = filter.unit
       this.getGridData()
-      if (this.showChartCategory === true || this.showChartKeyword === true) {
+      if (this.showChartCategory === true || this.showChartKeyword === true ||
+       this.curTabName === 'QA' || this.curTabName === 'Review') {
         this.showCompareData()
       } else {
         this.getPageData()
