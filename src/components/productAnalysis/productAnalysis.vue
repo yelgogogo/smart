@@ -216,14 +216,8 @@ export default {
         'Daily Reviews': 'Daily Reviews',
         'QAs': 'QAs',
         'Daily QAs': 'Daily QAs',
-        'Ad SalesByAd Div Sales': 'Ad SalesByAd Div Sales',
-        'Ad Spend': 'Ad Spend',
-        'Ad Spend Div Sales': 'Ad Spend Div Sales',
-        'Ad TotalQuantity': 'Ad TotalQuantity',
-        'Ad TotalSales': 'Ad TotalSales',
-        'Ad TotalSalesByAd': 'Ad TotalSalesByAd',
-        'Page Views Percentage': 'Page Views Percentage',
-        'Quantity Ordered': 'Quantity Ordered',
+        'Reviews & QA': 'Reviews & QA',
+        'Ranking': 'Ranking',
         'Impressions': 'Impressions',
         'Clicks': 'Clicks',
         'CTR': 'CTR',
@@ -231,7 +225,8 @@ export default {
         'CPC': 'CPC',
         'Ads Sales': 'Ads Sales',
         'Ads orders': 'Ads orders',
-        'ACoS': 'ACoS'
+        'ACoS': 'ACoS',
+        'Advertising': 'Advertising'
       },
       headersArray: [],
       commonHeadersArray: [
@@ -241,20 +236,7 @@ export default {
         {fieldName: 'Sessions', en: 'Sessions', cn: 'Sessions', show: true},
         {fieldName: 'Order Session Percentage', en: 'Order Session Percentage', cn: 'session率', show: true},
         {fieldName: 'Units', en: 'Units', cn: 'Units', show: true},
-        {fieldName: 'Page Views', en: 'Page Views', cn: '浏览量', show: true},
-        {fieldName: 'Review Score', en: 'Review Score', cn: '评分', show: true},
-        {fieldName: 'Reviews', en: 'Reviews', cn: '反馈', show: true},
-        {fieldName: 'Daily Reviews', en: 'Daily Reviews', cn: '每日反馈', show: true},
-        {fieldName: 'QAs', en: 'QAs', cn: 'QAs', show: true},
-        {fieldName: 'Daily QAs', en: 'Daily QAs', cn: 'Daily QAs', show: true}
-        // {fieldName: 'Ad SalesByAd Div Sales', en: 'Ad SalesByAd Div Sales', cn: '总广告销售额/总销售额', show: false},
-        // {fieldName: 'Ad Spend', en: 'Ad Spend', cn: '总广告花费', show: false},
-        // {fieldName: 'Ad Spend Div Sales', en: 'Ad Spend Div Sales', cn: '广告花费/总销售额', show: false},
-        // {fieldName: 'Ad TotalQuantity', en: 'Ad TotalQuantity', cn: '广告总数量', show: false},
-        // {fieldName: 'Ad TotalSales', en: 'Ad TotalSales', cn: '广告总销量', show: false},
-        // {fieldName: 'Ad TotalSalesByAd', en: 'Ad TotalSalesByAd', cn: '广告总带动销量', show: false},
-        // {fieldName: 'Page Views Percentage', en: 'Page Views Percentage', cn: '浏览率', show: true},
-        // {fieldName: 'Quantity Ordered', en: 'Quantity Ordered', cn: '订单量', show: true}
+        {fieldName: 'Page Views', en: 'Page Views', cn: '浏览量', show: true}
       ],
       commonHeadersArray2: [
         {fieldName: 'label', en: 'Date', cn: '日期', show: true},
@@ -263,6 +245,18 @@ export default {
         {fieldName: 'Order Session Percentage', en: 'Order Session Percentage', cn: 'session率', show: true},
         {fieldName: 'Units', en: 'Units', cn: 'Units', show: true},
         {fieldName: 'Page Views', en: 'Page Views', cn: '浏览量', show: true}
+      ],
+      briefArray: [
+        {fieldName: 'Reviews & QA', en: 'Reviews & QA', cn: 'Reviews & QA', show: true},
+        {fieldName: 'Ranking', en: 'Ranking', cn: 'Ranking', show: true},
+        {fieldName: 'Advertising', en: 'Advertising', cn: 'Advertising', show: true}
+      ],
+      reviewQAArray: [
+        {fieldName: 'Review Score', en: 'Review Score', cn: '评分', show: true},
+        {fieldName: 'Reviews', en: 'Reviews', cn: '反馈', show: true},
+        {fieldName: 'Daily Reviews', en: 'Daily Reviews', cn: '每日反馈', show: true},
+        {fieldName: 'QAs', en: 'QAs', cn: 'QAs', show: true},
+        {fieldName: 'Daily QAs', en: 'Daily QAs', cn: 'Daily QAs', show: true}
       ],
       competitionArray: [],
       adsArray: [
@@ -443,8 +437,10 @@ export default {
   methods: {
     createHeader () {
       this.dynamicHeaders = this.headersArray.filter(h => h.show)
-      this.headers = this.headersArray.map(e => e.en)
-      this.checkedList = this.dynamicHeaders.map(e => e.en)
+      // this.headers = this.headersArray.map(e => e.en)
+      this.headers = this.commonHeadersArray.concat(this.briefArray).map(e => e.en)
+      // this.checkedList = this.dynamicHeaders.map(e => e.en)
+      this.checkedList = this.commonHeadersArray.concat(this.briefArray).map(e => e.en)
       this.headersDownload = this.headersArray.map(e => e.en)
     },
     changeSortItem (val) {
@@ -480,6 +476,27 @@ export default {
             h.show = true
           } else {
             h.show = false
+          }
+          if (checkList.includes('Reviews & QA')) {
+            this.reviewQAArray.forEach(r => {
+              if (r.fieldName === h.fieldName) {
+                h.show = true
+              }
+            })
+          }
+          if (checkList.includes('Ranking')) {
+            this.competitionArray.forEach(r => {
+              if (r.fieldName === h.fieldName) {
+                h.show = true
+              }
+            })
+          }
+          if (checkList.includes('Advertising')) {
+            this.adsArray.forEach(r => {
+              if (r.fieldName === h.fieldName) {
+                h.show = true
+              }
+            })
           }
         })
         this.dynamicHeaders = this.headersArray.filter(h => h.show)
@@ -638,7 +655,6 @@ export default {
       }
       const period = this.filter.period
       this.$store.dispatch('setLoadingState', true)
-
       api.post('/api/product/chart', {pagination, ...this.filter, period}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
@@ -658,7 +674,7 @@ export default {
             }
           }
           if (this.filter.unit === 5) {
-            this.headersArray = this.commonHeadersArray.concat(this.competitionArray).concat(this.adsArray)
+            this.headersArray = this.commonHeadersArray.concat(this.reviewQAArray).concat(this.competitionArray).concat(this.adsArray)
           } else {
             this.headersArray = this.commonHeadersArray2.concat(this.adsArray)
             console.log('this.headersArray', this.headersArray)
