@@ -527,7 +527,7 @@ export default {
     showHideColumns (newHeaders) {
     },
     handleClick (tab, event) {
-      console.log('tab===' + tab.name)
+      // console.log('tab===' + tab.name)
       this.pageSize = 20
       this.currentPage = 1
       this.showChartCategory = false
@@ -558,7 +558,6 @@ export default {
         this.checkedList = []
         let tmpHeader = []
         for (let subComField in this.competitionList[0]) {
-          console.log('subComField==========' + subComField)
           if (subComField.indexOf('QA') !== -1) {
             this.dynamicHeaders.unshift({fieldName: subComField, en: 'QA', cn: subComField, show: true})
             this.compChecklist.push('QA')
@@ -567,20 +566,20 @@ export default {
             this.compChecklist.push('Review')
           } else if (subComField.indexOf('Category') !== -1) {
             this.dynamicHeaders.unshift({fieldName: subComField, en: this.getTabName(subComField), cn: subComField, show: true})
-            this.compChecklist.push(subComField)
+            this.compChecklist.push(this.getTabName(subComField))
           } else if (subComField.indexOf('Keyword') !== -1) {
             this.dynamicHeaders.unshift({fieldName: subComField, en: this.getTabName(subComField), cn: subComField, show: true})
-            this.compChecklist.push(subComField)
+            this.compChecklist.push(this.getTabName(subComField))
           } else {
             tmpHeader.push({fieldName: subComField, en: subComField, cn: subComField, show: true})
-            this.compChecklist.push(subComField)
+            this.compChecklist.push(this.getTabName(subComField))
           }
         }
         tmpHeader = tmpHeader.sort((a, b) => {
           return a.en < b.en ? 1 : -1
         })
         this.dynamicHeaders = this.dynamicHeaders.concat(tmpHeader)
-        console.log('dynamicHeaders===', this.dynamicHeaders)
+        // console.log('compChecklist===', this.compChecklist)
         this.headers = this.dynamicHeaders.map(e => e.en)
         this.checkedList = this.compChecklist
         this.competitionHearders = this.dynamicHeaders
@@ -677,7 +676,6 @@ export default {
             this.headersArray = this.commonHeadersArray.concat(this.reviewQAArray).concat(this.competitionArray).concat(this.adsArray)
           } else {
             this.headersArray = this.commonHeadersArray2.concat(this.adsArray)
-            console.log('this.headersArray', this.headersArray)
           }
           this.createHeader()
         }
