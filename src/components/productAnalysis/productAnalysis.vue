@@ -251,6 +251,9 @@ export default {
         {fieldName: 'Ranking', en: 'Ranking', cn: 'Ranking', show: true},
         {fieldName: 'Advertising', en: 'Advertising', cn: 'Advertising', show: true}
       ],
+      briefArray2: [
+        {fieldName: 'Advertising', en: 'Advertising', cn: 'Advertising', show: true}
+      ],
       reviewQAArray: [
         {fieldName: 'Review Score', en: 'Review Score', cn: '评分', show: true},
         {fieldName: 'Reviews', en: 'Reviews', cn: '反馈', show: true},
@@ -438,9 +441,14 @@ export default {
     createHeader () {
       this.dynamicHeaders = this.headersArray.filter(h => h.show)
       // this.headers = this.headersArray.map(e => e.en)
-      this.headers = this.commonHeadersArray.concat(this.briefArray).map(e => e.en)
       // this.checkedList = this.dynamicHeaders.map(e => e.en)
-      this.checkedList = this.commonHeadersArray.concat(this.briefArray).map(e => e.en)
+      if (this.filter.unit === 5) {
+        this.headers = this.commonHeadersArray.concat(this.briefArray).map(e => e.en)
+        this.checkedList = this.commonHeadersArray.concat(this.briefArray).map(e => e.en)
+      } else {
+        this.headers = this.commonHeadersArray.concat(this.briefArray2).map(e => e.en)
+        this.checkedList = this.commonHeadersArray.concat(this.briefArray2).map(e => e.en)
+      }
       this.headersDownload = this.headersArray.map(e => e.en)
     },
     changeSortItem (val) {
@@ -530,6 +538,7 @@ export default {
       // console.log('tab===' + tab.name)
       this.pageSize = 20
       this.currentPage = 1
+      this.filter.unit = 5
       this.showChartCategory = false
       this.showChartKeyword = false
       this.curTabName = tab.name
