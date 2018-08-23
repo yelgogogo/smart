@@ -104,7 +104,7 @@
 					<el-submenu index="3">
 							<template slot="title">
 								<i class="el-icon-location"></i>
-								<span><b>订单统计</b></span>
+								<span><b>销售数据</b></span>
 							</template>
 							<el-menu-item index="3-1" :route="{ path: '/main/products' }">销量报表</el-menu-item>
 							<el-menu-item index="3-2" :route="{ path: '/main/orders' }">订单查询</el-menu-item>
