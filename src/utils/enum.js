@@ -61,3 +61,24 @@ export const HEADER_WIDTH = {
   QA: 60,
   author: 150
 }
+
+export const ADS_HEADER_WIDTH = {
+  Shop: 120,
+  Country: 60,
+  'Advertised ASIN': 125,
+  'Advertised SKU': 160,
+  Date: 80,
+  Currency: 70,
+  'Campaign Name': 150,
+  'Ad Group Name': 150,
+  Impressions: 105,
+  Clicks: 80,
+  'Click-Thru Rate (CTR)': 150,
+  'Cost Per Click (CPC)': 145,
+  Spend: 80,
+  'Total Sales': 100,
+  'Total Advertising Cost of Sales (ACoS)': 230,
+  'Total Orders (#)': 100,
+  Type: 60,
+  total: 80
+}

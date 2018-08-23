@@ -10,7 +10,7 @@
         <el-button size="mini" icon="el-icon-plus" v-if="showAddKwButton === true" @click="addSuggestType" round>增加优化类型</el-button>
         <el-button size="mini" v-if="showAddKwButton === false" @click="saveSuggestType" round>保存优化类型</el-button>
       </el-form-item>
-      <el-form-item label="广告上传">
+      <!-- <el-form-item label="广告上传">
         <el-upload
           name="advertise"
           :file-list="adList"
@@ -23,7 +23,7 @@
           <i class="el-icon-upload"></i>
           点击上传
         </el-upload>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
   </template>
   

@@ -13,6 +13,7 @@ import competitorFeedback from '@/views/competitors/competitor-feedback'
 import orders from '@/views/Products/orders'
 import feedbackTotal from '@/views/feedback/feedback-total'
 import WorkFlow from '@/views/workflow/workflow'
+import Ads from '@/views/Products/Ads'
 
 Vue.use(Router)
 
@@ -52,6 +53,11 @@ export default new Router({
           path: 'orders',
           name: 'orders',
           component: orders
+        },
+        {
+          path: 'ads',
+          name: 'ads',
+          component: Ads
         },
         {
           path: 'add-product',

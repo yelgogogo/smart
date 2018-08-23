@@ -108,6 +108,7 @@
 							</template>
 							<el-menu-item index="3-1" :route="{ path: '/main/products' }">销量报表</el-menu-item>
 							<el-menu-item index="3-2" :route="{ path: '/main/orders' }">订单查询</el-menu-item>
+							<el-menu-item index="3-3" :route="{ path: '/main/ads' }">广告数据</el-menu-item>
 					</el-submenu>
 					<el-submenu index="4">
 							<template slot="title">
