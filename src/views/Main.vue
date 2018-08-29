@@ -79,10 +79,19 @@
 						<i class="el-icon-setting"></i>
 						<span><b>用户管理</b></span>
 					</el-menu-item>
-					<el-menu-item index="5" :route="{ path: '/main/config' }" v-if="userInfo.userName==='admin'">
+					<!-- <el-menu-item index="5" :route="{ path: '/main/config' }" v-if="userInfo.userName==='admin'">
 						<i class="el-icon-setting"></i>
 						<span><b>系统设置</b></span>
-					</el-menu-item>
+					</el-menu-item> -->
+					<el-submenu index="5">
+							<template slot="title">
+								<i class="el-icon-setting"></i>
+								<span><b>系统设置</b></span>
+							</template>
+							<el-menu-item index="5-1" :route="{ path: '/main/config' }">优化类型</el-menu-item>
+							<!-- <el-menu-item index="5-2" :route="{ path: '' }">广告管理</el-menu-item>
+							<el-menu-item index="5-3" :route="{ path: '' }">邮件群发</el-menu-item> -->
+					</el-submenu>
 					<el-submenu index="2" class="workflow-box">
 						<template slot="title" >
 								<el-menu-item index="2-0" :route="{ path: '/main/workflow' }" class="workflow-main">

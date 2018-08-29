@@ -1,14 +1,18 @@
 <template v-if="product">
     <el-form :label-position="labelPosition" label-width="80px" class="product-form">
       <el-form-item label="优化类型">
-        <div v-for="(kw, index) in suggestTypes" :key="kw + '_' + index">
-          {{kw}} <i class="el-icon-delete" @click="deleteSuggestType(kw)"></i>
-        </div>
         <div v-if="showAddKwButton === false">
           <el-input v-model="gSuggestType.suggestType" placeholder="优化类型"></el-input>
         </div>
         <el-button size="mini" icon="el-icon-plus" v-if="showAddKwButton === true" @click="addSuggestType" round>增加优化类型</el-button>
         <el-button size="mini" v-if="showAddKwButton === false" @click="saveSuggestType" round>保存优化类型</el-button>
+        <el-row>
+          <el-col :span="12" v-for="(kw, index) in suggestTypes" :key="kw + '_' + index">
+            <div>
+              {{kw}} <i class="el-icon-delete" @click="deleteSuggestType(kw)"></i>
+            </div>
+          </el-col>
+        </el-row>
       </el-form-item>
       <!-- <el-form-item label="广告上传">
         <el-upload
