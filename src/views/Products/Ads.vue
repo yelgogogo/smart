@@ -108,7 +108,10 @@
             :fixed="headerName === 'Shop' || headerName === 'Country' || (headerName === 'Currency' && useAsinCountryShop === 'inShop') 
             || headerName === 'Type' || headerName === 'Advertised ASIN' || headerName === 'Advertised SKU'? 'left' : false">
             <template slot-scope="scope" v-if="scope.row[headerName]">
-              {{scope.row[headerName]}}
+              <p v-if="headerName === 'Advertised SKU'" :title="scope.row['Advertised SKU']" class="product-name" >{{scope.row[headerName]}}</p>
+              <p v-else-if="headerName === 'Campaign Name'" :title="scope.row['Campaign Name']" class="product-name" >{{scope.row[headerName]}}</p>
+              <p v-else-if="headerName === 'Ad Group Name'" :title="scope.row['Ad Group Name']" class="product-name" >{{scope.row[headerName]}}</p>
+              <span v-else>{{ scope.row[headerName] }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -202,13 +205,13 @@ export default {
         'Spend': 'Spend',
         'Total Sales': 'Total Sales',
         'Total Advertising Cost of Sales (ACoS)': 'Total Advertising Cost of Sales (ACoS)',
-        'Total Orders (#)': 'Total Orders (#)',
+        'Total Orders': 'Total Orders (#)',
         'Type': 'Type',
         'total': '合计'
       },
       byCountryShop: ['Shop', 'Country', 'Currency', 'Type'],
       byASIN: ['Shop', 'Country', 'Advertised ASIN', 'Advertised SKU', 'Date', 'Currency', 'Campaign Name', 'Ad Group Name', 'Impressions',
-        'Clicks', 'Click-Thru Rate (CTR)', 'Cost Per Click (CPC)', 'Spend', 'Total Sales', 'Total Advertising Cost of Sales (ACoS)', 'Total Orders (#)']
+        'Clicks', 'Click-Thru Rate (CTR)', 'Cost Per Click (CPC)', 'Spend', 'Total Sales', 'Total Advertising Cost of Sales (ACoS)', 'Total Orders']
     }
   },
   created () {

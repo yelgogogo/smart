@@ -78,7 +78,7 @@ export const ADS_HEADER_WIDTH = {
   Spend: 80,
   'Total Sales': 100,
   'Total Advertising Cost of Sales (ACoS)': 230,
-  'Total Orders (#)': 100,
+  'Total Orders': 120,
   Type: 60,
   total: 80
 }
