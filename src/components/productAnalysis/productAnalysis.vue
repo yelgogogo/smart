@@ -671,14 +671,14 @@ export default {
           this.competitionArray = []
           for (let subField in this.gridData[0]) {
             if (subField.startsWith('Category:')) {
-              this.competitionArray.push({fieldName: this.getTabName(subField), en: this.getTabName(subField), cn: this.getTabName(subField), show: true})
-              this.$set(this.dictCn, this.getTabName(subField), this.getTabName(subField))
+              this.competitionArray.push({fieldName: subField, en: this.getTabName(subField), cn: this.getTabName(subField), show: true})
+              this.$set(this.dictCn, subField, this.getTabName(subField))
             }
           }
           for (let subField in this.gridData[0]) {
             if (subField.startsWith('Keyword:')) {
-              this.competitionArray.push({fieldName: this.getTabName(subField), en: this.getTabName(subField), cn: this.getTabName(subField), show: true})
-              this.$set(this.dictCn, this.getTabName(subField), this.getTabName(subField))
+              this.competitionArray.push({fieldName: subField, en: this.getTabName(subField), cn: this.getTabName(subField), show: true})
+              this.$set(this.dictCn, subField, this.getTabName(subField))
             }
           }
           if (this.filter.unit === 5) {
