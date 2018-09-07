@@ -14,6 +14,7 @@ import orders from '@/views/Products/orders'
 import feedbackTotal from '@/views/feedback/feedback-total'
 import WorkFlow from '@/views/workflow/workflow'
 import Ads from '@/views/Products/Ads'
+import mailSetting from '@/views/config/mailSetting'
 
 Vue.use(Router)
 
@@ -98,6 +99,11 @@ export default new Router({
           path: 'config',
           name: 'config',
           component: config
+        },
+        {
+          path: 'mailSetting',
+          name: 'mailSetting',
+          component: mailSetting
         }
       ]
     }

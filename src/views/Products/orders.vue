@@ -203,8 +203,9 @@ export default {
         productName: '产品名字',
         buyerName: '买家名字',
         buyerId: '买家ID',
-        quantityOrdered: '订单数量',
         price: '订单价格',
+        emailSent: '邮件数',
+        quantityOrdered: '订单数量',
         countryCode: '国家',
         shopName: '店铺'
       },
@@ -257,9 +258,9 @@ export default {
       this.getPageProducts()
     },
     createHeader () {
-      this.dynamicHeaders = ['purchaseDate', 'shopName', 'countryCode', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'quantityOrdered', 'price']
+      this.dynamicHeaders = ['purchaseDate', 'shopName', 'countryCode', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'price', 'quantityOrdered', 'emailSent']
       this.headers = this.dynamicHeaders
-      const headersDownload = ['purchaseDate', 'shopName', 'countryCode', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'quantityOrdered', 'price']
+      const headersDownload = ['purchaseDate', 'shopName', 'countryCode', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'price', 'quantityOrdered', 'emailSent']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
     orderStatusChange (evnet) {

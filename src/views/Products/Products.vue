@@ -119,7 +119,7 @@
             <el-table-column
               header-align="center"
               align="center"
-              width="100"
+              width="130"
               fixed="right"
               label="操作">
               <template slot-scope="scope">
@@ -142,9 +142,12 @@
                     分析
                   </el-button> -->
                   <i title="分析" class="el-icon-picture-outline large-icon" v-show="operationShow"></i>
-                  &nbsp;  
-                  
+                  &nbsp;                   
                 </router-link>
+                <a href="#" @click="mailRules(scope.row)">
+                <i title="邮件" class="el-icon-message large-icon" v-show="operationShow"></i>
+                &nbsp;
+                </a>
               </template>
             </el-table-column>
             <el-table-column
@@ -209,6 +212,76 @@
           <el-button type="primary" @click="saveWork" v-if="modalType === 'add'">保  存</el-button>
         </div>
       </el-dialog>
+      <el-dialog title="邮件自动发送模板和规则设置" :center="true" :visible.sync="dialogMailFormVisible" width="40%">
+        <el-form :model="mailForm" size="mini">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="Shop Name: " :label-width="mailFormLabelWidth"> {{mailForm.shopName}} </el-form-item>
+            </el-col>
+            <el-col :span="10">
+              <el-form-item label="Country: " :label-width="mailFormLabelWidth"> {{mailForm.countryCode}} </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="Product Name: " :label-width="mailFormLabelWidth"> {{mailForm.productName}} </el-form-item>
+          <el-form-item label="ASIN: " :label-width="mailFormLabelWidth"> {{mailForm.ASIN}} </el-form-item>
+          <el-form-item label="Subject: " :label-width="mailFormLabelWidth">
+            <el-col :span="20">
+              <el-input v-model="mailForm.subject"></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="Content: " :label-width="mailFormLabelWidth">
+            <el-col :span="20">
+              <el-input v-model="mailForm.content" type="textarea" rows="6" placeholder="请输入邮件模板内容"></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="Send Time: " :label-width="mailFormLabelWidth">
+            <el-col :span="5">
+              <el-select v-model="mailForm.sendTime" placeholder="">
+                <el-option
+                  v-for="sendTime in sendNum"
+                  :key="sendTime"
+                  :label="sendTime"
+                  :value="sendTime">
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="1">&nbsp;&nbsp;天</el-col>
+          </el-form-item>
+          <el-form-item label="Freeze Time: " :label-width="mailFormLabelWidth">
+            <el-col :span="5">
+              <el-select v-model="mailForm.freezeTime" placeholder="" size="mini">
+                <el-option
+                  v-for="freezeTime in freezeNum"
+                  :key="freezeTime"
+                  :label="freezeTime"
+                  :value="freezeTime">
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="1">&nbsp;&nbsp;天</el-col>
+          </el-form-item>
+          <el-form-item label="Limit: " :label-width="mailFormLabelWidth">
+            <el-col :span="5">
+              <el-select v-model="mailForm.limit" placeholder="数量">
+                <el-option
+                  v-for="option in limitNum"
+                  :key="option"
+                  :label="option"
+                  :value="option">
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="1">&nbsp;&nbsp;封</el-col>
+          </el-form-item>
+          <el-form-item label="Enable/Disable: " :label-width="mailFormLabelWidth">
+            <el-checkbox v-model="mailForm.enableDisable"></el-checkbox>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogMailFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="saveMailRules">保 存</el-button>
+        </div>
+      </el-dialog>
   </div>
 </template>
 
@@ -267,10 +340,12 @@ export default {
       likedProducts: [],
       shopList: [],
       formLabelWidth: '120px',
+      mailFormLabelWidth: '120px',
       options: [],
       productType: '',
       modalType: 'add',
       dialogFormVisible: false,
+      dialogMailFormVisible: false,
       optimizationTypes: [],
       headersDownload: [],
       download: [],
@@ -284,6 +359,21 @@ export default {
         title: '',
         sn: 1
       },
+      mailForm: {
+        shopName: '',
+        countryCode: '',
+        productName: '',
+        ASIN: '',
+        subject: '',
+        content: '',
+        sendTime: '',
+        freezeTime: '',
+        limit: '',
+        enableDisable: false
+      },
+      sendNum: ['0', '1', '2', '3', '4', '5'],
+      freezeNum: ['0', '1', '2', '3', '4', '5'],
+      limitNum: ['0', '1', '2', '3', '4', '5'],
       dynamicHeaders: [],
       dictCn: {
         shopName: '店铺名称',
@@ -459,6 +549,68 @@ export default {
       this.form.optimizationType = ''
       this.form.suggestion = undefined
       this.form.title = undefined
+    },
+    mailRules (row) {
+      console.log(row)
+      const {ASIN, productName, countryCode, shopName, shopId} = row
+      this.dialogMailFormVisible = true
+      this.mailForm.shopName = shopName
+      this.mailForm.countryCode = countryCode
+      this.mailForm.productName = productName
+      this.mailForm.ASIN = ASIN
+      const asin = ASIN
+      this.shopId = shopId
+      api.post('/api/email/email_template', {shopId, countryCode, asin}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.mailForm.content = res.data.content
+          this.mailForm.subject = res.data.subject
+          this.mailForm.sendTime = res.data.sendTime
+          this.mailForm.freezeTime = res.data.freezeTime
+          this.mailForm.limit = res.data.limit
+          this.mailForm.enableDisable = res.data.enabled
+        }
+      }).catch(err => {
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
+    },
+    saveMailRules () {
+      const shopId = this.shopId
+      const countryCode = this.mailForm.countryCode
+      const asin = this.mailForm.ASIN
+      const subject = this.mailForm.subject
+      const content = this.mailForm.content
+      const sendTime = this.mailForm.sendTime
+      const freezeTime = this.mailForm.freezeTime
+      const limit = this.mailForm.limit
+      const enabled = this.mailForm.enableDisable
+      api.post('/api/email/modify_email_template', {shopId, countryCode, asin, subject, content, sendTime, freezeTime, limit, enabled}).then(res => {
+        if (res.status === 200 && res.data) {
+          console.log('res.data===', res.data.errstr)
+          if (res.data.errstr === 'ok') {
+            Message({
+              showClose: true,
+              message: '保存成功！',
+              type: 'success'
+            })
+          } else {
+            Message({
+              showClose: true,
+              message: res.data.errstr,
+              type: 'error'
+            })
+          }
+        }
+      }).catch(err => {
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
     },
     isNotLike (product) {
       return !this.likedProducts.find(p => {

@@ -82,3 +82,14 @@ export const ADS_HEADER_WIDTH = {
   Type: 60,
   total: 80
 }
+
+export const SERVER_HEADER_WIDTH = {
+  shopName: 150,
+  countryCode: 120,
+  senderEmail: 150,
+  emailSMTPServer: 150,
+  emailAccount: 150,
+  emailPassword: 150,
+  quotaLimit: 150,
+  rateLimit: 150
+}
