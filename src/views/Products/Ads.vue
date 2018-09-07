@@ -52,13 +52,6 @@
             </el-col>
         </el-row>
         <el-row>
-          <!-- <el-popover
-            ref="showHideColumns"
-            trigger="hover">
-            <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
-              <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;"></el-checkbox>
-            </el-checkbox-group>
-          </el-popover> -->
           <el-col :span="16">
             <el-pagination
             @size-change="sizeChange"
@@ -71,17 +64,9 @@
             </el-pagination>
           </el-col>
           <el-col :span="8" class="text-right">
-            <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
-            <el-button v-if="showDownload" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
-            <!-- <vue-csv-download
-              v-else
-              :data="download"
-              :fields="headersDownload"
-              class="download">
-              <el-button size="mini" icon="el-icon-document" @click="changeDownloadStatus">下载</el-button>
-            </vue-csv-download> -->
-            <el-button size="mini" icon="el-icon-upload" @click="uploadDialogDisplay = true">广告上传</el-button>
-            <el-button size="mini" icon="el-icon-delete" @click="adsDataDel">删除</el-button>
+            <el-button size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
+            <el-button size="mini" icon="el-icon-upload" @click="uploadDialogDisplay = true" v-if="filter.dimension.inASIN === true">广告上传</el-button>
+            <el-button size="mini" icon="el-icon-delete" @click="adsDataDel" v-if="filter.dimension.inASIN === true">删除</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -187,7 +172,6 @@ export default {
       headers: [],
       headersDownload: [],
       headerWidth: ADS_HEADER_WIDTH,
-      showDownload: true,
       uploadDialogDisplay: false,
       dictCn: {
         'Shop': 'Shop',
@@ -403,7 +387,6 @@ export default {
           type: 'error'
         })
       })
-      this.showDownload = true
     },
     getDownload () {
       api.post('/api/advertisement_data_download', this.filter, {responseType: 'blob'}).then(res => {
@@ -428,11 +411,6 @@ export default {
         })
       })
       this.$sendDownloadHistory('广告数据')
-      // this.showDownload = false
-    },
-    changeDownloadStatus () {
-      this.showDownload = true
-      this.download = []
     },
     getShopList () {
       api.get('/api/shop').then(res => {

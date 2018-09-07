@@ -466,7 +466,7 @@ export default {
       const asins = this.manualSendForm.asins
       const dateStart = this.manualSendForm.dateFrom
       const dateEnd = this.manualSendForm.dateTo
-      const testemail = '19610645@qq.com'
+      const testemail = ''
       const subject = this.manualSendForm.subject
       const content = this.manualSendForm.content
       api.post('/api/email/send_email', {shopId, countryCode, asins, dateStart, dateEnd, testemail, subject, content}).then(res => {
