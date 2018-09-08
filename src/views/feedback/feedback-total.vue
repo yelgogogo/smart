@@ -78,9 +78,11 @@
             :label="dictCn[headerName]?dictCn[headerName]:headerName"
             v-if="dynamicHeaders.includes(headerName)"
             :prop="headerName"
-            :sortable="headerName==='asin' || headerName==='currentQuantity' || headerName==='currentAverage' || headerName==='totalQuantity' || headerName==='totalAverage'? 'custom':false">
+            align = center
+            :sortable="headerName==='countryCode' || headerName==='productName' ? false : 'custom'">
             <template slot-scope="scope" v-if="scope.row[headerName]">
-              {{scope.row[headerName]}}
+              <a :href="scope.row.homeURL" target="_blank" v-if="headerName === 'asin'">{{scope.row[headerName]}}</a>
+              <span v-else>{{scope.row[headerName]}}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -233,7 +235,7 @@ export default {
       this.dynamicHeaders = ['asin', 'countryCode', 'productName', 'totalQuantity', 'totalAverage', 'currentQuantity', 'currentAverage']
       let sort = []
       for (let header in headers) {
-        if (!this.dynamicHeaders.includes(header) && header !== 'shopId' && header !== 'shopName') {
+        if (!this.dynamicHeaders.includes(header) && header !== 'shopId' && header !== 'shopName' && header !== 'homeURL' && header !== 'marketplaceId') {
           sort.push(header)
         }
       }
