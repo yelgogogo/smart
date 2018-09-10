@@ -224,7 +224,7 @@ export default {
         'Spend': 'Spend',
         'CPC': 'CPC',
         'Ads Sales': 'Ads Sales',
-        'Ads orders': 'Ads orders',
+        'Ads Orders': 'Ads Orders',
         'ACoS': 'ACoS',
         'Advertising': 'Advertising'
       },
@@ -269,7 +269,7 @@ export default {
         {fieldName: 'Spend', en: 'Spend', cn: 'Spend', show: true},
         {fieldName: 'CPC', en: 'CPC', cn: 'CPC', show: true},
         {fieldName: 'Ads Sales', en: 'Ads Sales', cn: 'Ads Sales', show: true},
-        {fieldName: 'Ads orders', en: 'Ads orders', cn: 'Ads orders', show: true},
+        {fieldName: 'Ads Orders', en: 'Ads Orders', cn: 'Ads Orders', show: true},
         {fieldName: 'ACoS', en: 'ACoS', cn: 'ACoS', show: true}
       ],
       competitionHearders: [],
