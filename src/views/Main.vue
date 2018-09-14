@@ -89,7 +89,7 @@
 								<span><b>系统设置</b></span>
 							</template>
 							<el-menu-item index="5-1" :route="{ path: '/main/config' }">优化类型</el-menu-item>
-							<!-- <el-menu-item index="5-2" :route="{ path: '' }">广告管理</el-menu-item> -->
+							<el-menu-item index="5-2" :route="{ path: '/main/ads' }">广告管理</el-menu-item>
 							<el-menu-item index="5-3" :route="{ path: '/main/mailSetting' }">邮件群发</el-menu-item>
 					</el-submenu>
 					<el-submenu index="2" class="workflow-box">
@@ -117,7 +117,7 @@
 							</template>
 							<el-menu-item index="3-1" :route="{ path: '/main/products' }">销量报表</el-menu-item>
 							<el-menu-item index="3-2" :route="{ path: '/main/orders' }">订单查询</el-menu-item>
-							<el-menu-item index="3-3" :route="{ path: '/main/ads' }">广告数据</el-menu-item>
+							<!-- <el-menu-item index="3-3" :route="{ path: '/main/ads' }">广告数据</el-menu-item> -->
 					</el-submenu>
 					<el-submenu index="4">
 							<template slot="title">
