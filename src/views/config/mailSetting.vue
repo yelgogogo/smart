@@ -266,6 +266,7 @@ export default {
         dateTo: '',
         ordersNum: '?'
       },
+      mailReceipt: '',
       serverFormLabelWidth: '120px',
       manualSendFormLabelWidth: '80px'
     }
@@ -473,6 +474,30 @@ export default {
         if (res.status === 200 && res.data) {
           console.log(res.data.successList)
           console.log(res.data.failList)
+          const successNum = res.data.successList.length
+          const failNum = res.data.failList.length
+          // const receipt = failNum > 0 ? '成功发送' + successNum + '条，以下' + failNum + '条发送失败：' + res.data.failList : '成功发送' + successNum + '条，0条失败'
+          // this.mailReceipt = res.data.errstr
+          if (failNum > 0) {
+            this.mailReceipt = '成功发送' + successNum + '条，以下' + failNum + '条发送失败：' + res.data.failList
+            if (res.data.errstr !== '') {
+              this.mailReceipt = this.mailReceipt + '<br/> 错误信息： ' + res.data.errstr
+            }
+          } else if (res.data.errstr !== '') {
+            this.mailReceipt = '错误信息： ' + res.data.errstr
+          } else if (failNum === 0) {
+            this.mailReceipt = '成功发送' + successNum + '条，0条失败'
+          }
+          this.$alert(this.mailReceipt, '邮件发送结果', {
+            confirmButtonText: '确定',
+            dangerouslyUseHTMLString: true
+            // callback: action => {
+            //   this.$message({
+            //     type: 'info',
+            //     message: 'action: ${ action }'
+            //   })
+            // }
+          })
         }
         this.$store.dispatch('setLoadingState', false)
       }).catch(err => {
