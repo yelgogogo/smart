@@ -414,7 +414,7 @@ export default {
               clickable: true,
               data: this.workFlow.map(m => {
                 return {
-                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
+                  name: m.suggestTitle, value: m.suggestId, xAxis: m.date, yAxis: 0
                 }
               })
             }
@@ -435,7 +435,7 @@ export default {
   created () {
     this.statisticsQuery = this.$route.query
     this.statisticsQuery.shopId = parseInt(this.statisticsQuery.shopId)
-    // this.getSuggestion()
+    this.getSuggestion()
   },
   methods: {
     createHeader () {
@@ -633,7 +633,7 @@ export default {
         this.$store.dispatch('setLoadingState', false)
         if (res.status === 200 && res.data) {
           console.log('suggestion', res)
-          this.workFlow = res.data.filter(r => r.operation === 'finished')
+          this.workFlow = res.data.filter(r => (r.operation === 'finished' || r.operation === 'issued'))
         }
       }).catch(err => {
         this.$store.dispatch('setLoadingState', false)
@@ -886,16 +886,16 @@ export default {
           series: composedArry.map(dt => {
             let name = dt.name
             let type = 'line'
-            let markPoint = {
-              clickable: true,
-              data: this.workFlow.map(m => {
-                return {
-                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: composedArry[0].data.find(dt => dt.label === m.date).value
-                }
-              })
-            }
+            // let markPoint = {
+            //   clickable: true,
+            //   data: this.workFlow.map(m => {
+            //     return {
+            //       name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: composedArry[0].data.find(dt => dt.label === m.date).value
+            //     }
+            //   })
+            // }
             let data = dt.data.map(i => i.value)
-            return {name, type, markPoint, data}
+            return {name, type, data}
           })
         }
       }
@@ -935,16 +935,16 @@ export default {
           series: inArray.map(dt => {
             let name = dt.name
             let type = 'line'
-            let markPoint = {
-              clickable: true,
-              data: this.workFlow.map(m => {
-                return {
-                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
-                }
-              })
-            }
+            // let markPoint = {
+            //   clickable: true,
+            //   data: this.workFlow.map(m => {
+            //     return {
+            //       name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
+            //     }
+            //   })
+            // }
             let data = dt.info.map(i => i.value)
-            return {name, type, markPoint, data}
+            return {name, type, data}
           })
         }
       }
