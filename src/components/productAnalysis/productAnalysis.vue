@@ -386,6 +386,14 @@ export default {
               params.forEach(param => {
                 res = res + param.seriesName + ': ' + self.currentStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
               })
+              // let findSuggestion = this.workFlow.findIndex(w => w.date === params[0].name && w.operation === 'issued')
+              // if (findSuggestion !== -1) {
+              //   res = res + '建议' + this.workFlow[findSuggestion].suggestId + '开始 -' + this.workFlow[findSuggestion].operator + '</br>' + this.workFlow[findSuggestion].suggestTitle + '</br>'
+              // }
+              let findSuggestion = this.workFlow.findIndex(w => w.date === params[0].name && w.operation === 'finished')
+              if (findSuggestion !== -1) {
+                res = res + '建议' + this.workFlow[findSuggestion].suggestId + '完成 -' + this.workFlow[findSuggestion].operator + '</br>' + this.workFlow[findSuggestion].suggestTitle + '</br>'
+              }
               return res
             }
           },
@@ -633,7 +641,7 @@ export default {
         this.$store.dispatch('setLoadingState', false)
         if (res.status === 200 && res.data) {
           console.log('suggestion', res)
-          this.workFlow = res.data.filter(r => (r.operation === 'finished' || r.operation === 'issued'))
+          this.workFlow = res.data.filter(r => (r.operation === 'finished'))
         }
       }).catch(err => {
         this.$store.dispatch('setLoadingState', false)
