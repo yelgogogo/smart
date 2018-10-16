@@ -156,6 +156,7 @@ import { Message } from 'element-ui'
 import {HEADER_WIDTH} from '../../utils/enum'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import {PERIOD_UNIT} from '@/utils/enum'
+import moment from 'moment'
 
 export default {
   components: {
@@ -286,6 +287,7 @@ export default {
         renderer: 'svg'
       },
       workFlow: [],
+      workFlowTmp: [],
       toolBoxOptions: {
         show: true,
         top: 0,
@@ -418,9 +420,10 @@ export default {
           series: self.currentStatistics.map(dt => {
             let name = dt.name
             let type = 'line'
+            this.workFlowTmp = this.workFlow.filter(m => moment(m.date).isBetween(moment(this.filter.period.start), moment(this.filter.period.end)))
             let markPoint = {
               clickable: true,
-              data: this.workFlow.map(m => {
+              data: this.workFlowTmp.map(m => {
                 return {
                   name: m.suggestTitle, value: m.suggestId, xAxis: m.date, yAxis: 0
                 }
