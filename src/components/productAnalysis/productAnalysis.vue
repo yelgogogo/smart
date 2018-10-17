@@ -454,11 +454,11 @@ export default {
       // this.headers = this.headersArray.map(e => e.en)
       // this.checkedList = this.dynamicHeaders.map(e => e.en)
       if (this.filter.unit === 5) {
-        this.headers = this.commonHeadersArray.concat(this.briefArray).map(e => e.en)
-        this.checkedList = this.commonHeadersArray.concat(this.briefArray).map(e => e.en)
+        this.headers = this.briefArray.map(e => e.en)
+        this.checkedList = this.briefArray.map(e => e.en)
       } else {
-        this.headers = this.commonHeadersArray.concat(this.briefArray2).map(e => e.en)
-        this.checkedList = this.commonHeadersArray.concat(this.briefArray2).map(e => e.en)
+        this.headers = this.briefArray2.map(e => e.en)
+        this.checkedList = this.briefArray2.map(e => e.en)
       }
       this.headersDownload = this.headersArray.map(e => e.en)
     },
@@ -517,6 +517,11 @@ export default {
               }
             })
           }
+          this.commonHeadersArray.forEach(r => {
+            if (r.fieldName === h.fieldName) {
+              h.show = true
+            }
+          })
         })
         this.dynamicHeaders = this.headersArray.filter(h => h.show)
       }
