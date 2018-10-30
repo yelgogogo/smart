@@ -99,14 +99,17 @@ export default {
       this.period.start = this.periodCustomizeStart
       if (this.period.end !== '' && moment(this.period.start) > moment(this.period.end)) {
         this.$message('开始日期必须小于结束日期')
+        this.periodCustomizeStart = ''
       }
     },
     updatePeriodEnd () {
       this.period.end = this.periodCustomizeEnd
       if (this.period.start === '') {
-        this.$message('请输入开始日期')
+        this.$message('请先输入开始日期')
+        this.periodCustomizeEnd = ''
       } else if (moment(this.period.start) > moment(this.period.end)) {
         this.$message('开始日期必须小于结束日期')
+        this.periodCustomizeEnd = ''
       } else {
         this.$emit('onChange', this.period)
       }

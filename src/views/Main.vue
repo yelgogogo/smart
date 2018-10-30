@@ -287,7 +287,7 @@ export default {
 	}
 }
 .menu {
-	width: 200px;
+	width: 204px;
   height: 100%;
 	overflow: visible;
 }

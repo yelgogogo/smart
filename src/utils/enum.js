@@ -85,11 +85,11 @@ export const ADS_HEADER_WIDTH = {
 
 export const SERVER_HEADER_WIDTH = {
   shopName: 150,
-  countryCode: 120,
-  senderEmail: 150,
-  emailSMTPServer: 150,
-  emailAccount: 150,
-  emailPassword: 150,
-  quotaLimit: 150,
-  rateLimit: 150
+  countryCode: 80,
+  senderEmail: 200,
+  emailSMTPServer: 220,
+  emailAccount: 170,
+  emailPassword: 130,
+  quotaLimit: 100,
+  rateLimit: 100
 }
