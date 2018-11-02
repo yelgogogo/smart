@@ -1,8 +1,11 @@
 <template>
   <div>
+    <!-- 销量报表表单 -->
     <el-form ref="form" class="mini-class">
+      <!-- 引用search-bar组件（包括店铺，国家和时间选择） -->
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
-  <el-row>
+      <el-row>
+        <!-- 按店铺&按订单&按数量 单选框 -->
         <el-col :span="6">
           <el-form-item>
             <el-checkbox v-model="filter.dimension.shop" @change="useShopChange">按店铺</el-checkbox>
@@ -13,11 +16,13 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
+        <!-- 显示/隐藏我关注的 -->
         <el-col :span="5" class="text-left">
           <el-form-item>
             <el-checkbox v-model="interestedOnly" @change="showHideLiked" :size="SELECT_SIZE">只显示我关注的</el-checkbox>
           </el-form-item>
         </el-col>
+        <!-- ASIN输入框 -->
         <el-col :span="8">
           <el-input
             :size="SELECT_SIZE"
@@ -31,6 +36,7 @@
       </el-row>
     </el-form>
     <el-row>
+      <!-- 分页设置 -->
       <el-col :span="16">
         <el-pagination
           @size-change="sizeChange"
@@ -54,6 +60,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="20">
+      <!-- 销量报表表格 -->
       <el-col :span="24">
         <el-table
           v-if="gridData.length > 0"
@@ -163,125 +170,127 @@
           </el-table>
       </el-col>
     </el-row>
+    <!-- 工作流对话框 -->
     <el-dialog title="工作流" :visible.sync="dialogFormVisible">
-        <el-form :model="form">
-          <el-form-item label="ASIN" :label-width="formLabelWidth">
-              {{form.ASIN}}
+      <el-form :model="form">
+        <el-form-item label="ASIN" :label-width="formLabelWidth">
+            {{form.ASIN}}
+        </el-form-item>
+        <!-- <el-form-item label="产品描述" :label-width="formLabelWidth">
+            {{form.name}}
+        </el-form-item> -->
+        <el-form-item label="产品名称" :label-width="formLabelWidth">
+          {{form.productName}}
+        </el-form-item>
+        <el-form-item label="优化类型" :label-width="formLabelWidth">
+          <el-select v-model="form.optimizationType" placeholder="选择优化类型">
+            <el-option
+              v-for="option in optimizationTypes"
+              :key="option"
+              :label="option"
+              :value="option">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属店铺" :label-width="formLabelWidth">
+          {{form.shopName}}
+        </el-form-item>
+        <el-form-item label="所属国家" :label-width="formLabelWidth">
+          {{form.marketplaceName}}
+        </el-form-item>
+        <el-form-item label="优先级" :label-width="formLabelWidth">
+            <el-radio-group v-model="form.status">
+              <el-radio label='normal'>普通</el-radio>
+              <el-radio label='high'>高</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="建议主题" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="10">
+              <el-input v-model="form.title"></el-input>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="建议" :label-width="formLabelWidth">
+            <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.suggestion"></el-input>
           </el-form-item>
-          <!-- <el-form-item label="产品描述" :label-width="formLabelWidth">
-              {{form.name}}
-          </el-form-item> -->
-          <el-form-item label="产品名称" :label-width="formLabelWidth">
-            {{form.productName}}
-          </el-form-item>
-          <el-form-item label="优化类型" :label-width="formLabelWidth">
-            <el-select v-model="form.optimizationType" placeholder="选择优化类型">
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>        
+        <el-button type="primary" @click="saveWork" v-if="modalType === 'add'">保  存</el-button>
+      </div>
+    </el-dialog>
+    <!-- 邮件自动发送模板和规则设置对话框 -->
+    <el-dialog title="邮件自动发送模板和规则设置" :center="true" :visible.sync="dialogMailFormVisible" width="40%">
+      <el-form :model="mailForm" size="mini">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="Shop Name: " :label-width="mailFormLabelWidth"> {{mailForm.shopName}} </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="Country: " :label-width="mailFormLabelWidth"> {{mailForm.countryCode}} </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="Product Name: " :label-width="mailFormLabelWidth"> {{mailForm.productName}} </el-form-item>
+        <el-form-item label="ASIN: " :label-width="mailFormLabelWidth"> {{mailForm.ASIN}} </el-form-item>
+        <el-form-item label="Subject: " :label-width="mailFormLabelWidth">
+          <el-col :span="20">
+            <el-input v-model="mailForm.subject"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="Content: " :label-width="mailFormLabelWidth">
+          <el-col :span="20">
+            <el-input v-model="mailForm.content" type="textarea" rows="6" placeholder="请输入邮件模板内容"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="Send Time: " :label-width="mailFormLabelWidth">
+          <el-col :span="5">
+            <el-select v-model="mailForm.sendTime" placeholder="">
               <el-option
-                v-for="option in optimizationTypes"
+                v-for="sendTime in sendNum"
+                :key="sendTime"
+                :label="sendTime"
+                :value="sendTime">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="1">&nbsp;&nbsp;天</el-col>
+        </el-form-item>
+        <el-form-item label="Freeze Time: " :label-width="mailFormLabelWidth">
+          <el-col :span="5">
+            <el-select v-model="mailForm.freezeTime" placeholder="" size="mini">
+              <el-option
+                v-for="freezeTime in freezeNum"
+                :key="freezeTime"
+                :label="freezeTime"
+                :value="freezeTime">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="1">&nbsp;&nbsp;天</el-col>
+        </el-form-item>
+        <el-form-item label="Limit: " :label-width="mailFormLabelWidth">
+          <el-col :span="5">
+            <el-select v-model="mailForm.limit" placeholder="数量">
+              <el-option
+                v-for="option in limitNum"
                 :key="option"
                 :label="option"
                 :value="option">
               </el-option>
             </el-select>
-          </el-form-item>
-          <el-form-item label="所属店铺" :label-width="formLabelWidth">
-            {{form.shopName}}
-          </el-form-item>
-          <el-form-item label="所属国家" :label-width="formLabelWidth">
-            {{form.marketplaceName}}
-          </el-form-item>
-          <el-form-item label="优先级" :label-width="formLabelWidth">
-              <el-radio-group v-model="form.status">
-                <el-radio label='normal'>普通</el-radio>
-                <el-radio label='high'>高</el-radio>
-              </el-radio-group>
-          </el-form-item>
-          <el-form-item label="建议主题" :label-width="formLabelWidth">
-            <el-row>
-              <el-col :span="10">
-                <el-input v-model="form.title"></el-input>
-              </el-col>
-            </el-row>
-          </el-form-item>
-          <el-form-item label="建议" :label-width="formLabelWidth">
-              <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.suggestion"></el-input>
-            </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>        
-          <el-button type="primary" @click="saveWork" v-if="modalType === 'add'">保  存</el-button>
-        </div>
-      </el-dialog>
-      <el-dialog title="邮件自动发送模板和规则设置" :center="true" :visible.sync="dialogMailFormVisible" width="40%">
-        <el-form :model="mailForm" size="mini">
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="Shop Name: " :label-width="mailFormLabelWidth"> {{mailForm.shopName}} </el-form-item>
-            </el-col>
-            <el-col :span="10">
-              <el-form-item label="Country: " :label-width="mailFormLabelWidth"> {{mailForm.countryCode}} </el-form-item>
-            </el-col>
-          </el-row>
-          <el-form-item label="Product Name: " :label-width="mailFormLabelWidth"> {{mailForm.productName}} </el-form-item>
-          <el-form-item label="ASIN: " :label-width="mailFormLabelWidth"> {{mailForm.ASIN}} </el-form-item>
-          <el-form-item label="Subject: " :label-width="mailFormLabelWidth">
-            <el-col :span="20">
-              <el-input v-model="mailForm.subject"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="Content: " :label-width="mailFormLabelWidth">
-            <el-col :span="20">
-              <el-input v-model="mailForm.content" type="textarea" rows="6" placeholder="请输入邮件模板内容"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="Send Time: " :label-width="mailFormLabelWidth">
-            <el-col :span="5">
-              <el-select v-model="mailForm.sendTime" placeholder="">
-                <el-option
-                  v-for="sendTime in sendNum"
-                  :key="sendTime"
-                  :label="sendTime"
-                  :value="sendTime">
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="1">&nbsp;&nbsp;天</el-col>
-          </el-form-item>
-          <el-form-item label="Freeze Time: " :label-width="mailFormLabelWidth">
-            <el-col :span="5">
-              <el-select v-model="mailForm.freezeTime" placeholder="" size="mini">
-                <el-option
-                  v-for="freezeTime in freezeNum"
-                  :key="freezeTime"
-                  :label="freezeTime"
-                  :value="freezeTime">
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="1">&nbsp;&nbsp;天</el-col>
-          </el-form-item>
-          <el-form-item label="Limit: " :label-width="mailFormLabelWidth">
-            <el-col :span="5">
-              <el-select v-model="mailForm.limit" placeholder="数量">
-                <el-option
-                  v-for="option in limitNum"
-                  :key="option"
-                  :label="option"
-                  :value="option">
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="1">&nbsp;&nbsp;封</el-col>
-          </el-form-item>
-          <el-form-item label="Enable/Disable: " :label-width="mailFormLabelWidth">
-            <el-checkbox v-model="mailForm.enableDisable"></el-checkbox>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogMailFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="saveMailRules">保 存</el-button>
-        </div>
-      </el-dialog>
+          </el-col>
+          <el-col :span="1">&nbsp;&nbsp;封</el-col>
+        </el-form-item>
+        <el-form-item label="Enable/Disable: " :label-width="mailFormLabelWidth">
+          <el-checkbox v-model="mailForm.enableDisable"></el-checkbox>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogMailFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveMailRules">保 存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -413,6 +422,7 @@ export default {
     this.listSuggestTypes()
   },
   methods: {
+    // 生成销量报表表格表头
     createHeader (headers) {
       this.dynamicHeaders = ['shopName', 'countryCode', 'ASIN', 'productName', 'totalCount']
       let sort = []
@@ -433,6 +443,7 @@ export default {
       const headersDownload = [...headersFixed, ...sort, 'totalCount']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
+    // 改变排序方式
     changeSortItem (val) {
       this.filter.sortParam = val.prop
       if (val.order === 'descending') {
@@ -442,6 +453,7 @@ export default {
       }
       this.getPageProducts()
     },
+    // 获取合计数
     getSummaries (param) {
       const sums = ['合计', '', '', '']
       if (this.summaryData.length > 0) {
@@ -451,6 +463,7 @@ export default {
       }
       return sums
     },
+    // 按订单&按数量改变后更新数据
     useOrderQuantityChange () {
       console.log(this.useOrderQuantity, this.filter)
       this.filter.dimension.order = false
@@ -459,6 +472,7 @@ export default {
       console.log(this.useOrderQuantity, this.filter)
       this.getPageProducts()
     },
+    // 店铺改变后操作
     useShopChange (event) {
       // this.filter.dimension = {shop: this.useShop}
       this.getPageProducts()
@@ -469,6 +483,7 @@ export default {
       }
       console.log(event)
     },
+    // searchBar变动后的自动更新数据
     searchBarChange (filter) {
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
@@ -482,44 +497,17 @@ export default {
       this.currentPage = 1
       this.getPageProducts()
     },
-    periodCustomizeChange () {
-      console.log(this.dr)
-      this.filter.period.start = this.dr[0]
-      this.filter.period.end = this.dr[1]
-      this.getPageProducts()
-    },
     sizeChange (e) {
       this.pageSize = e
       this.getPageProducts()
     },
-
-    periodChange () {
-      if (this.periodSelect === 0) {
-        return
-      }
-      let format = 'YYYY-MM-DD'
-      let start = moment().subtract(this.periodSelect, 'days').format(format)
-      let end = moment().format(format)
-      // const status = this.getStatus
-      this.filter.period.start = start
-      this.filter.period.end = end
-      this.getPageProducts()
-      // this.searchField.period = {
-      //   dateType: status.join(','),
-      //   start: start,
-      //   end: end
-      // }
-      // this.getPageWorkflows()
-    },
-    getShopName (shopId) {
-      const finder = this.shopList.find(s => s.shopId === shopId)
-      return finder ? finder.shopName : ''
-    },
+    // 获取优化类型列表
     listSuggestTypes () {
       api.get(`/api/suggest_type`).then(res => {
         this.optimizationTypes = res.data
       })
     },
+    // 保存工作流
     saveWork () {
       let self = this
       self.form.sn = undefined
@@ -535,6 +523,7 @@ export default {
         self.errorHandler(err, {code: 404, message: '产品未找到'})
       })
     },
+    // 增加建议
     add (row) {
       console.log(row)
       const {ASIN, productName, shopId, shopName, marketplaceName} = row
@@ -550,6 +539,7 @@ export default {
       this.form.suggestion = undefined
       this.form.title = undefined
     },
+    // 获取邮件自动发送模板和规则设置字段信息
     mailRules (row) {
       console.log(row)
       const {ASIN, productName, countryCode, shopName, shopId} = row
@@ -577,6 +567,7 @@ export default {
         })
       })
     },
+    // 保存邮件自动发送模板和规则设置
     saveMailRules () {
       const shopId = this.shopId
       const countryCode = this.mailForm.countryCode
@@ -612,11 +603,13 @@ export default {
         })
       })
     },
+    // 返回关注的产品
     isNotLike (product) {
       return !this.likedProducts.find(p => {
         return product.ASIN === p.productId
       })
     },
+    // 查询销量数据
     searchProduct () {
       // let filter = {
       //   productId: this.filter.asinOrName,
@@ -624,6 +617,7 @@ export default {
       // }
       this.getPageProducts()
     },
+    // 获取销量数据
     getPageProducts () {
       let pagination = {
         pageSize: this.pageSize,
@@ -653,6 +647,7 @@ export default {
       })
       this.showDownload = true
     },
+    // 下载销量数据
     getDownload () {
       let pagination = {
         pageSize: 99999,
@@ -683,31 +678,37 @@ export default {
       this.$sendDownloadHistory('销量报表')
       this.showDownload = false
     },
+    // 修改下载状态
     changeDownloadStatus () {
       this.showDownload = true
       this.download = []
     },
+    // 获取店铺列表
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
       })
     },
+    // 获取国家列表
     getNationList () {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
         this.nationListBK = this.nationList
       })
     },
+    // 页面改变，数据更新
     currentChange (currentPage) {
       this.currentPage = currentPage
       this.getPageProducts()
     },
+    // 获取关注的产品列表
     listLikedProducts () {
       api.get(`/api/interested`).then(res => {
         console.log(res.data)
         this.likedProducts = res.data
       })
     },
+    // 显示我关注的数据
     showHideLiked () {
       // let filter = {
       //   productId: this.filter.asinOrName,
@@ -717,6 +718,7 @@ export default {
       this.filter.interestedOnly = this.interestedOnly
       this.getPageProducts()
     },
+    // 改变关注状态
     likeProduct (product, like) {
       let productInfo = {
         productId: product.ASIN,
@@ -746,6 +748,7 @@ export default {
         })
       }
     },
+    // error控制
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
         Message({

@@ -1,97 +1,105 @@
 <template>
   <div>
+    <!-- 订单查询表单 -->
     <el-form ref="form" class="mini-class">
+      <!-- 引用search-bar组件（包括店铺，国家和时间选择） -->
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
-        <el-row>
-          <el-col :span="6" style="padding-right: 5px;">
-            <el-form-item label="订单">
+      <el-row>
+        <!-- 订单号输入框 -->
+        <el-col :span="6" style="padding-right: 5px;">
+          <el-form-item label="订单">
+            <el-input
+              class="shop-select"
+              placeholder="输入订单号"
+              clearable
+              :size="SELECT_SIZE"
+              v-model="filter.orderId">
+            </el-input>
+          </el-form-item>
+        </el-col> 
+        <!-- 买家Id输入框 -->
+        <el-col :span="4" style="padding-right: 5px;">
+          <el-form-item label="买家">
+            <el-input
+              class="nation-select"
+              placeholder="请输入买家Id"
+              clearable
+              :size="SELECT_SIZE"
+              v-model="filter.buyerId">
+            </el-input>
+          </el-form-item>
+        </el-col>  
+        <!-- ASIN输入框 -->
+        <el-col :span="6" :offset="1">
+          <el-form-item label="产品ASIN">
               <el-input
-                class="shop-select"
-                placeholder="输入订单号"
+                placeholder="输入ASIN"
+                class="asin-input"
                 clearable
                 :size="SELECT_SIZE"
-                v-model="filter.orderId">
+                v-model="filter.productId">
               </el-input>
             </el-form-item>
-          </el-col> 
-          <el-col :span="4" style="padding-right: 5px;">
-            <el-form-item label="买家">
-              <el-input
-                class="nation-select"
-                placeholder="请输入买家Id"
-                clearable
-                :size="SELECT_SIZE"
-                v-model="filter.buyerId">
-              </el-input>
-            </el-form-item>
-          </el-col>  
- 
-          <el-col :span="6" :offset="1">
-            <el-form-item label="产品ASIN">
-                <el-input
-                  placeholder="输入ASIN"
-                  class="asin-input"
-                  clearable
-                  :size="SELECT_SIZE"
-                  v-model="filter.productId">
-                </el-input>
-              </el-form-item>
-          </el-col>
-          <el-col :span="6" style="padding-right: 5px;">
-              <el-form-item label="订单状态">
-                <el-select v-model="orderStatus" placeholder="选择状态" @change="orderStatusChange" class="shop-select" :size="SELECT_SIZE">
-                  <el-option
-                    v-for="status in statusList"
-                    :key="status"
-                    :label="status"
-                    :value="status">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          <el-col :span="24" :offset="0" class="text-right">
-              <el-button type="primary" round icon="el-icon-search" @click="searchGrid" :size="SELECT_SIZE">搜索</el-button>
-              <el-button type="" round icon="el-icon-search" @click="resetSearch" :size="SELECT_SIZE">重置</el-button>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-popover
-            ref="showHideColumns"
-            trigger="hover">
-            <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
-              <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;"></el-checkbox>
-            </el-checkbox-group>
-          </el-popover>
-          <el-col :span="16">
-            <el-pagination
-            @size-change="sizeChange"
-            @current-change="currentChange"
-            :current-page="currentPage"
-            :page-sizes="[20, 50, 100]"
-            :page-size="pageSize"
-            layout="sizes, total, prev, pager, next, jumper"
-            :total="total">
-            </el-pagination>
-          </el-col>
-        <!-- <el-col :span="5" :offset="0" class="text-right"> -->
-          <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
-          <!-- </el-col> -->
-          <el-col :span="8" class="text-right">
-            <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
-            <el-button v-if="showDownload" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
-            <vue-csv-download
-              v-else
-              :data="download"
-              :fields="headersDownload"
-              class="download"
-              >
-              <el-button size="mini" icon="el-icon-document" @click="changeDownloadStatus">下载</el-button>
-            </vue-csv-download>
-          </el-col>
-        </el-row>
-      </el-form>
+        </el-col>
+        <!-- 订单状态选择框 -->
+        <el-col :span="6" style="padding-right: 5px;">
+          <el-form-item label="订单状态">
+            <el-select v-model="orderStatus" placeholder="选择状态" @change="orderStatusChange" class="shop-select" :size="SELECT_SIZE">
+              <el-option
+                v-for="status in statusList"
+                :key="status"
+                :label="status"
+                :value="status">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <!-- 搜索&重置按钮 -->
+        <el-col :span="24" :offset="0" class="text-right">
+          <el-button type="primary" round icon="el-icon-search" @click="searchGrid" :size="SELECT_SIZE">搜索</el-button>
+          <el-button type="" round icon="el-icon-search" @click="resetSearch" :size="SELECT_SIZE">重置</el-button>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-popover
+          ref="showHideColumns"
+          trigger="hover">
+          <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
+            <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;"></el-checkbox>
+          </el-checkbox-group>
+        </el-popover>
+        <!-- 分页设置 -->
+        <el-col :span="16">
+          <el-pagination
+          @size-change="sizeChange"
+          @current-change="currentChange"
+          :current-page="currentPage"
+          :page-sizes="[20, 50, 100]"
+          :page-size="pageSize"
+          layout="sizes, total, prev, pager, next, jumper"
+          :total="total">
+          </el-pagination>
+        </el-col>
+      <!-- <el-col :span="5" :offset="0" class="text-right"> -->
+        <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
+        <!-- </el-col> -->
+        <el-col :span="8" class="text-right">
+          <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
+          <el-button v-if="showDownload" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
+          <vue-csv-download
+            v-else
+            :data="download"
+            :fields="headersDownload"
+            class="download"
+            >
+            <el-button size="mini" icon="el-icon-document" @click="changeDownloadStatus">下载</el-button>
+          </vue-csv-download>
+        </el-col>
+      </el-row>
+    </el-form> 
     <el-row :gutter="20">
       <el-col :span="24">
+        <!-- 订单查询表格 -->
         <el-table v-if="gridData.length>0"
           :height="tableHeight" 
           border
@@ -109,7 +117,6 @@
             <template slot-scope="scope" v-if="scope.row[headerName]">
                 <p v-if="headerName === 'productName'" :title="scope.row.productName" class="product-name" >{{scope.row[headerName]}}</p>
                 <p v-else-if="headerName === 'buyerName'" :title="scope.row.buyerName" class="product-name" >{{scope.row[headerName]}}</p>
-                
                 <span v-else>
                   {{scope.row[headerName]}}
                 </span>
@@ -124,7 +131,7 @@
 <script>
 import api from '../../utils/api'
 import { Message } from 'element-ui'
-import moment from 'moment'
+// import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import {PERIOD_OPTIONS, HEADER_WIDTH, SELECT_SIZE} from '../../utils/enum'
 import searchBar from '@/components/search-bar/search-bar'
@@ -241,6 +248,7 @@ export default {
   mounted () {
   },
   methods: {
+    // 改变排序方式
     changeSortItem (val) {
       this.filter.sortParam = val.prop
       if (val.order === 'descending') {
@@ -250,6 +258,7 @@ export default {
       }
       this.getPageProducts()
     },
+    // 重置查询条件
     resetSearch () {
       this.filter.orderId = ''
       this.filter.buyerId = ''
@@ -257,12 +266,14 @@ export default {
       this.orderStatus = ['Not Canceled']
       this.getPageProducts()
     },
+    // 创建表格表头
     createHeader () {
       this.dynamicHeaders = ['purchaseDate', 'shopName', 'countryCode', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'price', 'quantityOrdered', 'emailSent']
       this.headers = this.dynamicHeaders
       const headersDownload = ['purchaseDate', 'shopName', 'countryCode', 'amazonOrderId', 'orderStatus', 'asin', 'productName', 'buyerName', 'buyerId', 'price', 'quantityOrdered', 'emailSent']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
+    // 订单状态改变操作
     orderStatusChange (evnet) {
       console.log(this.orderStatus)
       if (this.orderStatus === 'All') {
@@ -274,6 +285,7 @@ export default {
       }
       this.getPageProducts()
     },
+    // 根据筛选条件查询数据
     searchGrid () {
       if (this.filter.orderId !== '' && this.filter.orderId !== undefined) {
         this.filter.buyerId = ''
@@ -310,51 +322,7 @@ export default {
       }
       this.dynamicHeaders = { ...this.dynamicHeaders }
     },
-    updateLu () {
-      let format = 'YYYY-MM-DD'
-      let start = moment().subtract(this.periodSelect, 'days').format(format)
-      let end = moment().format(format)
-      const status = this.getStatus
-
-      console.log('updateLu', status, start, end)
-      // this.searchField.period = {
-      //   dateType: status.join(','),
-      //   start: start,
-      //   end: end
-      // }
-      // this.getPageWorkflows()
-    },
-    updateDateRangeValue () {
-      console.log(this.dr)
-    },
-    saveWork () {
-      let self = this
-      self.form.sn = undefined
-      api.post(`/api/suggestion`, self.form).then(res => {
-        Message({
-          showClose: true,
-          message: '更新成功!',
-          type: 'success'
-        })
-        self.dialogFormVisible = false
-        self.getPageWorkflows(true)
-      }).catch(err => {
-        self.errorHandler(err, {code: 404, message: '产品未找到'})
-      })
-    },
-    edit (row) {
-      console.log(row)
-      this.form = row
-      this.dialogFormVisible = true
-    },
-    isNotLike (product) {
-      return !this.likedProducts.find(p => {
-        return product.asin === p.productId
-      })
-    },
-    searchProduct () {
-      this.getPageProducts()
-    },
+    // 获取订单数据
     getPageProducts () {
       let pagination = {
         pageSize: this.pageSize,
@@ -380,6 +348,7 @@ export default {
       })
       this.showDownload = true
     },
+    // 下载订单数据
     getDownload () {
       let pagination = {
         pageSize: 99999,
@@ -411,39 +380,32 @@ export default {
       this.$sendDownloadHistory('订单查询')
       this.showDownload = false
     },
+    // 修改下载状态
     changeDownloadStatus () {
       this.showDownload = true
       this.download = []
     },
+    // 获取店铺列表
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
       })
     },
+    // 获取国家列表
     getNationList () {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
         this.nationListBK = this.nationList
       })
     },
+    // searchBar变动后的自动更新数据
     searchBarChange (filter) {
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
       this.currentPage = 1
       this.getPageProducts()
     },
-    updatePageProducts (currentPage) {
-      this.currentPage = currentPage
-      this.getPageProducts()
-    },
-    showHideLiked () {
-      let filter = {
-        productId: this.search_val,
-        shopId: this.shopId,
-        interestedOnly: this.isShowLiked ? 1 : undefined
-      }
-      this.getPageProducts(filter)
-    },
+    // error控制
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
         Message({

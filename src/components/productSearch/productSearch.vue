@@ -1,6 +1,7 @@
 <template>
   <el-row>
       <el-col :span="6">
+        <!-- 时间单位单选框 -->
         <el-form-item label="单位">
           <el-radio-group size="mini" v-model="unit" @change="unitChange">
             <el-radio :label="PERIOD_UNIT.DAY">日</el-radio>
@@ -10,6 +11,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="18">
+        <!-- 引入时间周期选择组件 -->
         <period :periodSelect='31' @onChange="periodChange"></period>
       </el-col>
   </el-row>
@@ -36,14 +38,16 @@ export default {
   props: [
   ],
   methods: {
+    // 改变时间周期
     periodChange (period) {
       this.filter.period = period
       console.log('onChange', this.filter)
       this.$emit('onChange', this.filter)
     },
-    updateDateRangeValue () {
-      this.updateDateRange(this.dr)
-    },
+    // updateDateRangeValue () {
+    //   this.updateDateRange(this.dr)
+    // },
+    // 改变日期单位
     unitChange (unit) {
       this.filter.unit = unit
       this.$emit('onChange', this.filter)

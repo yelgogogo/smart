@@ -1,6 +1,7 @@
 <template>
   <el-row class="first-search">
     <el-col :span="6" style="padding-right: 5px;">
+      <!-- 店铺选择框 -->
       <el-form-item label="店铺">
         <el-select clearable v-model="shopIdIn" placeholder="选择店铺" class="shop-select" @change="updateShop" :size="SELECT_SIZE">
           <el-option
@@ -14,6 +15,7 @@
     </el-col>
     <el-col :span="4" style="padding-right: 5px;">
       <el-form-item label="国家">
+        <!-- 国家选择框 -->
         <el-select clearable v-model="nationIdIn" placeholder="选择国家" class="nation-select" @change="updateNation" :size="SELECT_SIZE">
           <el-option
             v-for="nation in nationListIn"
@@ -25,6 +27,7 @@
       </el-form-item>
     </el-col>
     <el-col :span="13" :offset="1">
+      <!-- 时间周期选择框 -->
       <period :periodSelect="periodSelect" @onChange="periodChange($event)"></period>
       </el-col>   
   </el-row>
@@ -75,6 +78,7 @@ export default {
     this.periodSelectIn = this.periodSelect
   },
   methods: {
+    // 改变店铺选择
     updateShop () {
       const shopFinder = this.shopList.find(s => s.shopId === this.shopIdIn)
       let shopList
@@ -88,11 +92,13 @@ export default {
       this.$emit('onChange', this.filter)
       console.log('shopChange', this.filter)
     },
+    // 改变国家选择
     updateNation () {
       this.filter.countryCode = this.nationIdIn
       this.$emit('onChange', this.filter)
       console.log('nationChange', this.filter)
     },
+    // 改变时间选择
     periodChange (period) {
       // if (this.periodSelectIn === 0) {
       //   return

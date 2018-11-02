@@ -1,77 +1,87 @@
 <template>
   <div>
+    <!-- 广告管理表单 -->
     <el-form ref="form" class="mini-class">
+      <!-- 引用search-bar组件（包括店铺，国家和时间选择） -->
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
-        <el-row>
-          <el-col :span="5" style="padding-right: 5px;">
-            <el-form-item label="ASIN">
+      <el-row>
+        <!-- ASIN输入框 -->
+        <el-col :span="5" style="padding-right: 5px;">
+          <el-form-item label="ASIN">
+            <el-input
+              class="asin-input"
+              placeholder="输入ASIN"
+              clearable
+              :size="SELECT_SIZE"
+              v-model="filter.asin">
+            </el-input>
+          </el-form-item>
+        </el-col> 
+        <!-- Campaign Name输入框 -->
+        <el-col :span="5" style="padding-right: 5px;">
+          <el-form-item label="Campaign Name">
+            <el-input
+              class="campaignName-input"
+              placeholder="输入Campaign Name"
+              clearable
+              :size="SELECT_SIZE"
+              v-model="filter.campaignName">
+            </el-input>
+          </el-form-item>
+        </el-col>  
+        <!-- Group Name输入框 -->
+        <el-col :span="5" :offset="1">
+          <el-form-item label="Group Name">
               <el-input
-                class="asin-input"
-                placeholder="输入ASIN"
+                placeholder="输入Group Name"
+                class="group-input"
                 clearable
                 :size="SELECT_SIZE"
-                v-model="filter.asin">
+                v-model="filter.groupName">
               </el-input>
             </el-form-item>
-          </el-col> 
-          <el-col :span="5" style="padding-right: 5px;">
-            <el-form-item label="Campaign Name">
-              <el-input
-                class="campaignName-input"
-                placeholder="输入Campaign Name"
-                clearable
-                :size="SELECT_SIZE"
-                v-model="filter.campaignName">
-              </el-input>
+        </el-col>
+        <!-- 搜索&重置按钮 -->
+        <el-col :span="5" :offset="0" class="text-right">
+            <el-button type="primary" round icon="el-icon-search" @click="searchGrid" :size="SELECT_SIZE">搜索</el-button>
+            <el-button type="" round icon="el-icon-search" @click="resetSearch" :size="SELECT_SIZE">重置</el-button>
+        </el-col>
+      <el-row>
+      <!-- 按ASIN&按国家店铺 单选框 -->
+      </el-row>          
+        <el-col :span="12">
+            <el-form-item>
+                <el-radio-group v-model="useAsinCountryShop" @change="useAsinCountryShopChange" :size="SELECT_SIZE">
+                    <el-radio label="inASIN">按ASIN</el-radio>
+                    <el-radio label="inShop">按国家店铺</el-radio>
+                </el-radio-group>
             </el-form-item>
-          </el-col>  
-          <el-col :span="5" :offset="1">
-            <el-form-item label="Group Name">
-                <el-input
-                  placeholder="输入Group Name"
-                  class="group-input"
-                  clearable
-                  :size="SELECT_SIZE"
-                  v-model="filter.groupName">
-                </el-input>
-              </el-form-item>
-          </el-col>
-          <el-col :span="5" :offset="0" class="text-right">
-              <el-button type="primary" round icon="el-icon-search" @click="searchGrid" :size="SELECT_SIZE">搜索</el-button>
-              <el-button type="" round icon="el-icon-search" @click="resetSearch" :size="SELECT_SIZE">重置</el-button>
-          </el-col>
-        </el-row>          
-        <el-row>
-            <el-col :span="12">
-                <el-form-item>
-                    <el-radio-group v-model="useAsinCountryShop" @change="useAsinCountryShopChange" :size="SELECT_SIZE">
-                        <el-radio label="inASIN">按ASIN</el-radio>
-                        <el-radio label="inShop">按国家店铺</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-            </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="16">
-            <el-pagination
-            @size-change="sizeChange"
-            @current-change="currentChange"
-            :current-page="filter.pagination.currentPage"
-            :page-sizes="[20, 50, 100]"
-            :page-size="filter.pagination.pageSize"
-            layout="sizes, total, prev, pager, next, jumper"
-            :total="total">
-            </el-pagination>
-          </el-col>
-          <el-col :span="8" class="text-right">
-            <el-button size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
-            <el-button size="mini" icon="el-icon-upload" @click="uploadDialogDisplay = true" v-if="filter.dimension.inASIN === true">广告上传</el-button>
-            <el-button size="mini" icon="el-icon-delete" @click="adsDataDel" v-if="filter.dimension.inASIN === true">删除</el-button>
-          </el-col>
-        </el-row>
-      </el-form>
+        </el-col>
+      </el-row>
+      <el-row>
+        <!-- 分页设置 -->
+        <el-col :span="16">
+          <el-pagination
+          @size-change="sizeChange"
+          @current-change="currentChange"
+          :current-page="filter.pagination.currentPage"
+          :page-sizes="[20, 50, 100]"
+          :page-size="filter.pagination.pageSize"
+          layout="sizes, total, prev, pager, next, jumper"
+          :total="total">
+          </el-pagination>
+        </el-col>
+        <!-- 请求下载&广告上传&删除 按钮 -->
+        <el-col :span="8" class="text-right">
+          <el-button size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
+          <el-button size="mini" icon="el-icon-upload" @click="uploadDialogDisplay = true" v-if="filter.dimension.inASIN === true">广告上传</el-button>
+          <el-button size="mini" icon="el-icon-delete" @click="adsDataDel" v-if="filter.dimension.inASIN === true">删除</el-button>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-row :gutter="20">
       <el-col :span="24">
+        <!-- 广告管理表格 -->
         <el-table v-if="gridData.length>0"
           :height="tableHeight" 
           stripe
@@ -102,6 +112,7 @@
         </el-table>
       </el-col>
     </el-row>
+    <!-- 广告上传对话框 -->
     <el-dialog title="广告上传" width="30%" :visible.sync="uploadDialogDisplay">
       <el-upload
         name="advertise"
@@ -205,6 +216,7 @@ export default {
   mounted () {
   },
   methods: {
+    // 获取上传群发模板URL
     getUploadUrl () {
       return api.baseURL + '/api/advertisement_data'
     },
@@ -213,6 +225,7 @@ export default {
       headers[api.tokenKey] = api.getToken()
       return headers
     },
+    // 获取上传后的响应并提示用户
     onSuccess (response, file, fileList) {
       console.log(response, file, fileList)
       if (response === 'ok') {
@@ -253,6 +266,7 @@ export default {
         })
       }
     },
+    // 上传失败后根据不同的状态进行报错提示
     onError (err, file, fileList) {
       switch (err.status) {
         case 400: this.$message.error('400 ERROR')
@@ -261,6 +275,7 @@ export default {
           break
       }
     },
+    // 删除广告数据并提示用户操作结果
     adsDataDel () {
       this.$confirm('是否确定删除当前广告数据?', '提示', {
         confirmButtonText: '确定',
@@ -290,6 +305,7 @@ export default {
         })
       })
     },
+    // 改变排序方式
     changeSortItem (val) {
       this.filter.sortParam = val.prop
       if (val.order === 'descending') {
@@ -299,12 +315,14 @@ export default {
       }
       this.getPageAds()
     },
+    // 重置查询条件
     resetSearch () {
       this.filter.asin = ''
       this.filter.campaignName = ''
       this.filter.groupName = ''
       this.getPageAds()
     },
+    // 创建广告管理表格表头
     createHeader (headers) {
       this.filter.dimension.inASIN === true ? this.dynamicHeaders = this.byASIN : this.dynamicHeaders = this.byCountryShop
       if (this.filter.dimension.inASIN === true) {
@@ -327,6 +345,7 @@ export default {
       const headersDownload = []
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
+    // 改变‘按国家/按店铺’
     useAsinCountryShopChange () {
       console.log(this.useAsinCountryShop, this.filter)
       this.filter.dimension.inASIN = false
@@ -335,6 +354,7 @@ export default {
       console.log(this.useAsinCountryShop, this.filter)
       this.getPageAds()
     },
+    // 根据筛选条件查询数据
     searchGrid () {
       if (this.filter.asin !== '' && this.filter.asin !== undefined) {
         this.filter.campaignName = ''
@@ -352,23 +372,7 @@ export default {
       this.filter.pagination.currentPage = e
       this.getPageAds()
     },
-    updateVisibleColumns () {
-      this.showHideColumns(this.checkedList)
-      // this.headers = this.checkedList
-    },
-    showHideColumns (newHeaders) {
-      for (let dh in this.dynamicHeaders) {
-        let found = newHeaders.find(nh => {
-          return dh === nh
-        })
-        if (found) {
-          this.dynamicHeaders[dh] = true
-        } else {
-          this.dynamicHeaders[dh] = false
-        }
-      }
-      this.dynamicHeaders = { ...this.dynamicHeaders }
-    },
+    // 获取广告数据列表
     getPageAds () {
       const period = this.filter.period
       this.$store.dispatch('setLoadingState', true)
@@ -388,6 +392,7 @@ export default {
         })
       })
     },
+    // 下载
     getDownload () {
       api.post('/api/advertisement_data_download', this.filter, {responseType: 'blob'}).then(res => {
         if (res.status === 200 && res.data) {
@@ -412,22 +417,26 @@ export default {
       })
       this.$sendDownloadHistory('广告数据')
     },
+    // 获取店铺列表
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
       })
     },
+    // 获取国家列表
     getNationList () {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
       })
     },
+    // searchBar变动后的自动更新数据
     searchBarChange (filter) {
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
       this.filter.pagination.currentPage = 1
       this.getPageAds()
     },
+    // error控制
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
         Message({

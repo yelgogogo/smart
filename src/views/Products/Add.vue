@@ -1,4 +1,5 @@
 <template v-if="product">
+  <!-- 编辑竞品和关键字表单 -->
   <el-form :label-position="labelPosition" label-width="80px" class="product-form">
     <el-form-item label="产品ASIN">
       {{product.ASIN}}
@@ -91,33 +92,36 @@ export default {
     }
   },
   methods: {
-    handleAvatarSuccess (res, file) {
-      this.product.imgUrl = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload (file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
+    // handleAvatarSuccess (res, file) {
+    //   this.product.imgUrl = URL.createObjectURL(file.raw)
+    // },
+    // beforeAvatarUpload (file) {
+    //   const isJPG = file.type === 'image/jpeg'
+    //   const isLt2M = file.size / 1024 / 1024 < 2
 
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isJPG && isLt2M
-    },
+    //   if (!isJPG) {
+    //     this.$message.error('上传头像图片只能是 JPG 格式!')
+    //   }
+    //   if (!isLt2M) {
+    //     this.$message.error('上传头像图片大小不能超过 2MB!')
+    //   }
+    //   return isJPG && isLt2M
+    // },
+    // 添加竞品
     addCompetitor () {
       this.competitor.marketplaceId = this.product.marketplaceId
       this.competitor.shopId = this.product.shopId
       this.competitor.productId = this.product.ASIN
       this.showAddCpButton = false
     },
+    // 添加关键字
     addKeyword () {
       this.gKeyword.marketplaceId = this.product.marketplaceId
       this.gKeyword.shopId = this.product.shopId
       this.gKeyword.productId = this.product.ASIN
       this.showAddKwButton = false
     },
+    // 分配关键字 data [Array] 分配data里的关键字
     assignKeywords (data) {
       let self = this
       self.keywords = data.map(kw => {
@@ -128,28 +132,33 @@ export default {
       })
       console.log(self.keywords)
     },
+    // 清除竞品
     clearCompetitor () {
       this.competitor.competitorId = undefined
       this.competitor = Object.assign({}, this.competitor)
       this.showAddCpButton = true
     },
+    // 清除关键字
     clearGKeywork () {
       this.gKeyword.keyword = undefined
       this.gKeyword = Object.assign({}, this.gKeyword)
       this.showAddCpButton = true
     },
+    // 保存竞品
     saveCompetitor () {
       let self = this
       api.post(`/api/product/competitor`, self.competitor).then(res => {
         self.listCompetitor()
       })
     },
+    // 保存关键字
     saveKeyword () {
       let self = this
       api.post(`/api/product/keyword`, self.gKeyword).then(res => {
         self.listKeywords()
       })
     },
+    // 获取竞品列表
     listCompetitor () {
       let self = this
       api.get(`/api/product/competitor/${self.product.marketplaceId}/${self.product.shopId}/${self.product.ASIN}`).then(res => {
@@ -158,6 +167,7 @@ export default {
         self.clearCompetitor()
       })
     },
+    // 获取关键字列表
     listKeywords () {
       let self = this
       api.get(`/api/product/keyword/${self.product.marketplaceId}/${self.product.shopId}/${self.product.ASIN}`).then(res => {
@@ -165,6 +175,7 @@ export default {
         self.clearGKeywork()
       })
     },
+    // 删除竞品 id [String] 删除名为id的竞品
     deleteCompetitor (id) {
       let self = this
       MessageBox.confirm('确定删除竞品?', '提示', {
@@ -192,6 +203,7 @@ export default {
       //   })
       // }
     },
+    // 删除关键字 id [String] 删除名为的关键字
     deleteKeyword (kw) {
       let self = this
       MessageBox.confirm('确定删除关键字?', '提示', {
@@ -219,6 +231,11 @@ export default {
       //   })
       // }
     },
+    /**
+     *@desc  修改产品名称
+     *@param  row      [String]  修改对象的row
+     *@param  pageProductName  [String]  产品名称
+     */
     changeName (row, pageProductName) {
       console.log(row)
       this.$prompt('请输入产品名称', '提示', {
@@ -245,6 +262,12 @@ export default {
         // })
       })
     },
+    /**
+     *@desc  修改竞品名称
+     *@param  row      [String]  修改对象的row
+     *@param  competitorId      [String]  修改对象的competitorId
+     *@param  compName  [String]  修改对象的compName
+     */
     changeCompetitorName (row, competitorId, compName) {
       console.log(row)
       this.$prompt('请输入竞品名称', '提示', {

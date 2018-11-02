@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="mail-title">邮件群发</div>
+    <!-- 服务器设置表单 -->
     <el-form :model="serverForm" :size="SELECT_SIZE" v-if="userInfo.userName==='admin'">
       <el-form-item label="服务器设置"/>
         <el-row>
@@ -57,6 +58,7 @@
         </el-row>
       </el-row>
     </el-form>
+    <!-- 修改服务器设置对话框 -->
     <el-dialog title="服务器设置" :center="true" :visible.sync="dialogServerSettingVisible" width="40%">
       <el-form :model="serverForm" size="mini">
         <el-row>
@@ -109,6 +111,7 @@
         <el-button type="primary" @click="saveServerSetting">保 存</el-button>
       </div>
     </el-dialog>
+    <!-- 自动群发设置表单 -->
     <el-form  :size="SELECT_SIZE" v-if="isSalesManager(userInfo.roles)">
     <br><br>
       <el-form-item label="自动群发设置"/>
@@ -117,6 +120,7 @@
         <el-button type="" round icon="el-icon-download" @click="getDownload" size="mini">下载</el-button>
       </el-col>
     </el-form>
+    <!-- 自动群发设置上传对话框 -->
     <el-dialog title="上传" width="30%" :visible.sync="uploadDialogDisplay">
       <el-upload
         name="template"
@@ -132,6 +136,7 @@
       </div>
     </el-dialog>
     <br><br><br><br>
+    <!-- 手动群发设置表单 -->
     <el-form :model="manualSendForm" :size="SELECT_SIZE" label-position="left">
       <el-form-item label="手动群发设置"/>
       <el-form-item label="主题" :label-width="manualSendFormLabelWidth">
@@ -282,21 +287,26 @@ export default {
     ])
   },
   methods: {
+    // 设置用户信息
     ...mapActions({ setUserInfo: 'setUserInfo' }),
+    // 获取店铺列表
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
       })
     },
+    // 获取国家列表
     getNationList () {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
       })
     },
+    // 判断是否销售经理 roles [Array] 获取所有角色
     isSalesManager (roles) {
       const finder = roles.findIndex(r => r.roleId === 6)
       return finder !== -1
     },
+    // 保存服务器设置
     saveServerSetting () {
       api.post('/api/email/set_server', {...this.serverForm}).then(res => {
         if (res.status === 200 && res.data) {
@@ -318,6 +328,7 @@ export default {
         })
       })
     },
+    // 获取邮件服务器列表
     getEmailServerList () {
       let pagination = this.pagination
       api.post('/api/email/list_server', {pagination}).then(res => {
@@ -335,6 +346,7 @@ export default {
         })
       })
     },
+    // 修改服务器设置
     modifyRow (row) {
       this.dialogServerSettingVisible = true
       const {shopId, countryCode, senderEmail, emailSMTPServer, emailAccount, emailPassword, quotaLimit, rateLimit} = row
@@ -347,14 +359,10 @@ export default {
       this.serverForm.quotaLimit = quotaLimit
       this.serverForm.rateLimit = rateLimit
     },
+    // 删除当前行
     delRow (row) {
-      console.log(row)
+      // console.log(row)
       const {shopId, marketplaceId} = row
-      // this.$confirm('是否确定删除该行数据?', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(() => {
       api.post('/api/email/delete_server', {shopId, marketplaceId}).then(res => {
         if (res.status === 200 && res.data) {
           if (res.data === 'ok') {
@@ -374,8 +382,8 @@ export default {
           type: 'error'
         })
       })
-      // })
     },
+    // 获取上传群发模板URL
     getUploadUrl () {
       return api.baseURL + '/api/email/upload_email_template'
     },
@@ -384,6 +392,7 @@ export default {
       headers[api.tokenKey] = api.getToken()
       return headers
     },
+    // 获取上传后的响应并提示用户
     onSuccess (response, file, fileList) {
       console.log(response, file, fileList)
       if (response.errstr === 'ok') {
@@ -398,6 +407,7 @@ export default {
         })
       }
     },
+    // 上传失败后根据不同的状态进行报错提示
     onError (err, file, fileList) {
       switch (err.status) {
         case 400: this.$message.error('400 ERROR')
@@ -406,6 +416,7 @@ export default {
           break
       }
     },
+    // 下载邮件模板
     getDownload () {
       api.post('/api/email/download_email_template', '', {responseType: 'blob'}).then(res => {
         if (res.status === 200 && res.data) {
@@ -427,11 +438,13 @@ export default {
       })
       this.$sendDownloadHistory('邮件模板')
     },
+    // 判断起始日期是否为空并且判断开始日期是否小于结束日期
     updateDateFrom () {
       if (this.manualSendForm.dateTo !== '' && moment(this.manualSendForm.dateFrom) > moment(this.manualSendForm.dateTo)) {
         this.$message('开始日期必须小于结束日期')
       }
     },
+    // 判断起始日期是否为空并且判断结束日期是否大于开始日期
     updateDateTo () {
       if (this.manualSendForm.dateFrom === '') {
         this.$message('请输入开始日期')
@@ -440,6 +453,7 @@ export default {
         this.$message('结束日期必须大于开始日期')
       }
     },
+    // 根据手动群发设置表单信息查询订单数
     searchOrders () {
       const shopId = this.manualSendForm.shopId
       const countryCode = this.manualSendForm.countryCode
@@ -461,6 +475,7 @@ export default {
         })
       })
     },
+    // 向手动群发设置表单信息所关联的用户发送邮件，并向用户提示发送结果
     sendMails () {
       const shopId = this.manualSendForm.shopId
       const countryCode = this.manualSendForm.countryCode
@@ -491,12 +506,6 @@ export default {
           this.$alert(this.mailReceipt, '邮件发送结果', {
             confirmButtonText: '确定',
             dangerouslyUseHTMLString: true
-            // callback: action => {
-            //   this.$message({
-            //     type: 'info',
-            //     message: 'action: ${ action }'
-            //   })
-            // }
           })
         }
         this.$store.dispatch('setLoadingState', false)

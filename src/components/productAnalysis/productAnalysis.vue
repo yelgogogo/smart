@@ -1,6 +1,8 @@
 <template>
   <div>
+    <!-- 销量报表分析组件 -->
     <el-tabs v-model="activeName" @tab-click="handleClick">
+      <!-- 本产品标签页 -->
       <el-tab-pane label="本产品" name="sales">
         <el-row>
           <el-col :span="24" style="padding-top: 0;">
@@ -14,18 +16,7 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
-        <!-- <el-tab-pane label="广告" name="advertising">
-          <el-row>
-            <el-col :span="24" style="padding-top: 0;">
-              <chart 
-                :options="adBar"
-                :init-options="initOptions"
-                @legendselectchanged="onClick($event)"
-                auto-resize
-                />
-            </el-col>
-          </el-row>         
-        </el-tab-pane> -->
+        <!-- QA比较标签页 -->
         <el-tab-pane label="QA比较" name="QA">
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
@@ -37,6 +28,7 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
+        <!-- 反馈比较标签页 -->
         <el-tab-pane label="反馈比较" name="Review">
           <el-row>
             <el-col :span="24" style="padding-top: 0;">
@@ -48,6 +40,7 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
+        <!-- category标签页 -->
         <el-tab-pane v-for="ca of categories" :key="ca.name" :label="getTabName(ca.name)" :name="ca.name">
           <el-row v-if="showChartCategory">
             <el-col :span="24" style="padding-top: 0">
@@ -60,6 +53,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
+      <!-- Keyword标签页 -->
       <el-tab-pane v-for="kw of keywords" :key="kw.name" :label="getTabName(kw.name)" :name="kw.name">
         <el-row v-if="showChartKeyword">
           <el-col :span="24" style="padding-top: 0;">
@@ -75,6 +69,7 @@
     </el-tabs>
 
     <el-row class="analysis-table-header">
+      <!-- 显示/隐藏列弹出框 -->
       <el-popover
         ref="showHideColumns"
         trigger="hover">
@@ -82,6 +77,7 @@
           <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;" name="123"></el-checkbox>
         </el-checkbox-group>
       </el-popover>
+      <!-- 引入产品查询组件（包括日/周/月， 时间选择） -->
       <el-col :span="20">
         <el-form>
           <product-search 
@@ -91,6 +87,7 @@
       </el-col>
       <el-col :span="4" class="text-right">
       </el-col>
+      <!-- 分页设置 -->
       <el-col :span="16">
         <el-pagination
           @size-change="sizeChange"
@@ -102,6 +99,7 @@
           :total="total">
         </el-pagination>
       </el-col>
+      <!-- 显示/隐藏列 和 下载按钮 -->
       <el-col :span="8" class="text-right">      
         <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
         <el-button v-if="showDownload" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
@@ -115,6 +113,7 @@
         </vue-csv-download>
         </el-col>
     </el-row>
+    <!-- 销量报表分析页面表格 -->
     <el-table 
       border
       height="500"
@@ -304,68 +303,69 @@ export default {
     }
   },
   computed: {
-    adBar () {
-      var self = this
-      if (Array.isArray(self.adStatistics) && self.adStatistics.length > 0) {
-        var selected = {}
-        this.adStatistics.forEach((dt, index) => {
-          if (index < 3) {
-            selected[dt.name] = true
-          } else {
-            selected[dt.name] = false
-          }
-        })
-        return {
-          title: {
-            text: this.productName
-          },
-          tooltip: {
-            trigger: 'axis',
-            formatter: (params) => {
-              let res = '' + params[0].name + '</br>'
-              params.forEach(param => {
-                if (param.seriesName.startsWith('Ad')) {
-                  res = res + param.seriesName + ': ' + self.adStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
-                }
-              })
-              return res
-            }
-          },
-          legend: {
-            data: self.adStatistics.map(dt => dt.name).filter(f => f.startsWith('Ad')),
-            top: 30,
-            selected: selected
-          },
-          grid: {
-            top: 150
-          },
-          toolbox: self.toolBoxOptions,
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            minInterval: 1,
-            data: self.adStatistics[0].info.map(dt => dt.label)
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: self.adStatistics.map(dt => {
-            let name = dt.name
-            let type = 'line'
-            let markPoint = {
-              clickable: true,
-              data: this.workFlow.map(m => {
-                return {
-                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
-                }
-              })
-            }
-            let data = dt.info.map(i => i.rate)
-            return {name, type, markPoint, data}
-          })
-        }
-      }
-    },
+    // adBar () {
+    //   var self = this
+    //   if (Array.isArray(self.adStatistics) && self.adStatistics.length > 0) {
+    //     var selected = {}
+    //     this.adStatistics.forEach((dt, index) => {
+    //       if (index < 3) {
+    //         selected[dt.name] = true
+    //       } else {
+    //         selected[dt.name] = false
+    //       }
+    //     })
+    //     return {
+    //       title: {
+    //         text: this.productName
+    //       },
+    //       tooltip: {
+    //         trigger: 'axis',
+    //         formatter: (params) => {
+    //           let res = '' + params[0].name + '</br>'
+    //           params.forEach(param => {
+    //             if (param.seriesName.startsWith('Ad')) {
+    //               res = res + param.seriesName + ': ' + self.adStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
+    //             }
+    //           })
+    //           return res
+    //         }
+    //       },
+    //       legend: {
+    //         data: self.adStatistics.map(dt => dt.name).filter(f => f.startsWith('Ad')),
+    //         top: 30,
+    //         selected: selected
+    //       },
+    //       grid: {
+    //         top: 150
+    //       },
+    //       toolbox: self.toolBoxOptions,
+    //       xAxis: {
+    //         type: 'category',
+    //         boundaryGap: false,
+    //         minInterval: 1,
+    //         data: self.adStatistics[0].info.map(dt => dt.label)
+    //       },
+    //       yAxis: {
+    //         type: 'value'
+    //       },
+    //       series: self.adStatistics.map(dt => {
+    //         let name = dt.name
+    //         let type = 'line'
+    //         let markPoint = {
+    //           clickable: true,
+    //           data: this.workFlow.map(m => {
+    //             return {
+    //               name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
+    //             }
+    //           })
+    //         }
+    //         let data = dt.info.map(i => i.rate)
+    //         return {name, type, markPoint, data}
+    //       })
+    //     }
+    //   }
+    // },
+    // 本产品折线图数据展示
     statisticsBar () {
       var self = this
       if (Array.isArray(self.currentStatistics) && self.currentStatistics.length > 0) {
@@ -449,6 +449,7 @@ export default {
     this.getSuggestion()
   },
   methods: {
+    // 生成分析页面表格表头
     createHeader () {
       this.dynamicHeaders = this.headersArray.filter(h => h.show)
       // this.headers = this.headersArray.map(e => e.en)
@@ -462,6 +463,7 @@ export default {
       }
       this.headersDownload = this.headersArray.map(e => e.en)
     },
+    // 改变排序方式
     changeSortItem (val) {
       this.filter.sortParam = val.prop
       if (val.order === 'descending') {
@@ -476,6 +478,7 @@ export default {
         this.getPageData()
       }
     },
+    // 显示/隐藏列 根据不同的标签页更新表格表头
     updateVisibleColumns () {
       if (this.showChartCategory === true || this.showChartKeyword === true ||
        this.curTabName === 'QA' || this.curTabName === 'Review') {
@@ -526,6 +529,7 @@ export default {
         this.dynamicHeaders = this.headersArray.filter(h => h.show)
       }
     },
+    // 页面大小改变后更新数据
     sizeChange (pageSize) {
       this.pageSize = pageSize
       if (this.showChartCategory === true || this.showChartKeyword === true ||
@@ -535,6 +539,7 @@ export default {
         this.getPageData()
       }
     },
+    // 页面改变后更新数据
     currentChange (currentPage) {
       this.currentPage = currentPage
       if (this.showChartCategory === true || this.showChartKeyword === true ||
@@ -550,6 +555,7 @@ export default {
     },
     showHideColumns (newHeaders) {
     },
+    // 标签页改变后操作
     handleClick (tab, event) {
       // console.log('tab===' + tab.name)
       this.pageSize = 20
@@ -572,6 +578,7 @@ export default {
       }
       console.log(tab, event)
     },
+    // 显示竞品数据
     showCompareData () {
       const period = this.filter.period
       const tab = this.curTabName
@@ -616,17 +623,18 @@ export default {
         })
       })
     },
-    getShortHeader (headerName) {
-      let shortHeader = ''
-      if (headerName.indexOf('Category') !== -1) {
-        shortHeader = headerName.substring(0, 10) + '  ' + this.getTabName(headerName.substring(headerName.indexOf('Category')))
-      } else if (headerName.indexOf('Keyword') !== -1) {
-        shortHeader = headerName.substring(0, 10) + '  ' + this.getTabName(headerName.substring(headerName.indexOf('Keyword')))
-      } else {
-        shortHeader = headerName
-      }
-      return shortHeader
-    },
+    // getShortHeader (headerName) {
+    //   let shortHeader = ''
+    //   if (headerName.indexOf('Category') !== -1) {
+    //     shortHeader = headerName.substring(0, 10) + '  ' + this.getTabName(headerName.substring(headerName.indexOf('Category')))
+    //   } else if (headerName.indexOf('Keyword') !== -1) {
+    //     shortHeader = headerName.substring(0, 10) + '  ' + this.getTabName(headerName.substring(headerName.indexOf('Keyword')))
+    //   } else {
+    //     shortHeader = headerName
+    //   }
+    //   return shortHeader
+    // },
+    // 获取标签页名
     getTabName (name) {
       // console.log('getTabName', name)
       const arr = name.split(' > ')
@@ -644,6 +652,7 @@ export default {
       }
       return txt1
     },
+    // 获取工作流建议
     getSuggestion () {
       api.get(`/api/suggestion/all/${this.shopId}/${this.productId}`).then(res => {
         this.$store.dispatch('setLoadingState', false)
@@ -660,6 +669,7 @@ export default {
         })
       })
     },
+    // 产品筛选时间改变后的操作
     onSearchChange (filter) {
       console.log('onSearchChange', filter, this.filter)
       this.filter = {...this.filter, ...filter}
@@ -672,6 +682,7 @@ export default {
         this.getPageData()
       }
     },
+    // 获取产品chart数据
     getPageData () {
       let pagination = {
         pageSize: this.pageSize,
@@ -715,6 +726,7 @@ export default {
       })
       this.showDownload = true
     },
+    // 下载产品数据
     getDownload () {
       let pagination = {
         pageSize: 99999,
@@ -741,10 +753,12 @@ export default {
       this.$sendDownloadHistory('产品分析')
       this.showDownload = false
     },
+    // 改变下载状态
     changeDownloadStatus () {
       this.showDownload = true
       this.download = []
     },
+    // 获取产品分析表格数据
     getGridData () {
       let self = this
       this.$store.dispatch('setLoadingState', true)
@@ -792,6 +806,7 @@ export default {
         this.$store.dispatch('setLoadingState', false)
       })
     },
+    // 解析类目
     parseCategories () {
       const statistics = this.competitionStatistics[0].info
       let self = this
@@ -818,6 +833,7 @@ export default {
         })
       }
     },
+    // 处理本产品标签页数据
     parseStatisticsTableData () {
       var self = this
       if (Array.isArray(self.currentStatistics) && self.currentStatistics.length > 0) {
@@ -857,6 +873,7 @@ export default {
         return productsData
       }
     },
+    // 类目chart数据展示
     categoryBar (tabName) {
       // only process active tab
       if (this.activeName === tabName) {
@@ -917,6 +934,7 @@ export default {
       }
       return {}
     },
+    // QA比较chart数据展示
     optionCreate (inArray) {
       var self = this
       if (Array.isArray(inArray) && inArray.length > 0) {

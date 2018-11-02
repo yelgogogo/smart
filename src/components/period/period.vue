@@ -2,6 +2,7 @@
   <el-row class="first-search">
     <el-col :span="8">
       <el-form-item label="选择时间">
+        <!-- 选择时间输入框 -->
         <el-select class="period-select" v-model="periodSelectIn" @change="updatePerid" :size="SELECT_SIZE">
           <el-option
           v-for="item in periodOptions"
@@ -15,6 +16,7 @@
     <el-col :span="15">
       <el-form-item v-if="periodSelectIn===0">
         <el-col :span="10">
+          <!-- 开始日期选择器 -->
           <el-date-picker
             v-model="periodCustomizeStart"
             type="date"
@@ -28,6 +30,7 @@
         </el-col>
         <el-col :span="2">&nbsp;&nbsp;&nbsp;至</el-col>
         <el-col :span="10">
+          <!-- 结束日期选择器 -->
           <el-date-picker
             v-model="periodCustomizeEnd"
             type="date"
@@ -68,6 +71,7 @@ export default {
     this.updatePerid()
   },
   methods: {
+    // 改变时间周期（当选择自定义时间时，开始和结束日期设置为空）
     updatePerid () {
       if (this.periodSelectIn === 0) {
         this.period = {start: '', end: '', select: this.periodSelectIn}
@@ -89,12 +93,14 @@ export default {
       console.log('onChange', this.period)
       this.$emit('onChange', this.period)
     },
+    // 更新自定义时间
     updatePeriodCustomize () {
       this.period.start = this.periodCustomize[0]
       this.period.end = this.periodCustomize[1]
       this.period.select = this.periodSelectIn
       this.$emit('onChange', this.period)
     },
+    // 更新自定义开始时间
     updatePeriodStart () {
       this.period.start = this.periodCustomizeStart
       if (this.period.end !== '' && moment(this.period.start) > moment(this.period.end)) {
@@ -102,6 +108,7 @@ export default {
         this.periodCustomizeStart = ''
       }
     },
+    // 更新自定义结束时间
     updatePeriodEnd () {
       this.period.end = this.periodCustomizeEnd
       if (this.period.start === '') {
