@@ -7,7 +7,6 @@
       <el-row  >
         工作管理
       </el-row>
-      <!-- <h1 class="project-title text-center"><span class="header-logo">$</span><span class="logo-txt">mart</span></h1> -->
     </el-header>
     <el-main>      
       <el-row>
@@ -22,13 +21,6 @@
           </div>
         </el-col>
       </el-row>
-      <!-- <el-row>
-        <el-col :span="24" class="text-center"> -->
-          <!-- <el-button @click="startJourney">快速体验</el-button> -->
-          <!-- <el-button v-if="inputMode" @click="switchInputMode">微信登陆</el-button> -->
-          <!-- <el-button @click="switchInputMode">密码登陆</el-button>
-        </el-col>
-      </el-row> -->
       <el-row v-if="inputMode">
         <el-col :lg="9" :md="8" :sm="6" :xs="3">&nbsp;</el-col>
         <el-col :lg="6" :md="8" :sm="12" :xs="18" class="text-center">
@@ -218,9 +210,6 @@ export default {
                     this.register = false
                     this.inputMode = true
                   }
-                  console.log(error.response.data)
-                  console.log(error.response.status)
-                  console.log(error.response.headers)
                 } else if (error.request) {
                   // The request was made but no response was received
                   // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
