@@ -68,10 +68,10 @@ npm run build --report
     |   |-- styles                             echarts
     |   |   |-- echarts.css
     |   |-- utils                              公共配置文件目录
-    |   |   |-- api.js
-    |   |   |-- enum.js
-    |   |   |-- service.js
-    |   |   |-- util.js
+    |   |   |-- api.js                         接口
+    |   |   |-- enum.js                        枚举值
+    |   |   |-- service.js                     微信登陆服务
+    |   |   |-- util.js                        文件下载服务
     |   |-- views                              页面目录
     |       |-- Login.vue                      登陆页
     |       |-- Main.vue                       首页
