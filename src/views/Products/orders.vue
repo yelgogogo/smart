@@ -297,18 +297,22 @@ export default {
       }
       this.getPageProducts()
     },
+    // 改变页面条数
     sizeChange (e) {
       this.pageSize = e
       this.getPageProducts()
     },
+    // 改变当前页面
     currentChange (e) {
       this.currentPage = e
       this.getPageProducts()
     },
+    // 更新可视列
     updateVisibleColumns () {
       this.showHideColumns(this.checkedList)
       // this.headers = this.checkedList
     },
+    // 更新可视列
     showHideColumns (newHeaders) {
       for (let dh in this.dynamicHeaders) {
         let found = newHeaders.find(nh => {
