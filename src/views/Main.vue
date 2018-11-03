@@ -4,6 +4,7 @@
 			class="main-header"
 			height="65px">      
 			<el-row height="auto">
+				<!-- 顶部header -->
 				<el-col :span="4">
 					<img src="../assets/logo.png">
 				</el-col>
@@ -18,6 +19,7 @@
 			<!-- <span class="header-logo">$</span> -->
 			<!-- <span class="logo-txt">mart</span> -->
 			<el-col :span="6">
+			<!-- 用户信息弹窗 -->
 			<el-popover
 				ref="userDetail"
 				placement="top-start"
@@ -68,6 +70,7 @@
 		</el-row>
 		</el-header>
     <el-container class="main-box">
+			<!-- 左侧菜单 -->
       <el-aside class="menu" width="200">
         <el-menu
 					:router="true"
@@ -178,23 +181,27 @@ export default {
   },
   methods: {
     ...mapActions({ setUserInfo: 'setUserInfo' }),
+    // 刷新建议条数
     refresh () {
       this.getCount()
     },
+    // 取日期
     getDate () {
       setInterval(() => {
         this.date = moment().locale('zh-cn').format('MM/DD/YYYY HH:mm:ss dddd')
       }, 1000)
     },
+    // 回退
     goBack () {
       this.$router.go(-1)
     },
+    // 登出
     logout () {
-      console.log('logout')
       this.$router.push('/')
       location.reload()
       localStorage.removeItem('userInfo')
     },
+    // 工作流建议数量统计
     getCount () {
       // const params = {
       //   pagination: {
@@ -233,6 +240,7 @@ export default {
       //   console.log(err)
       // })
     },
+    // 解绑用户
     unbind (userId) {
       const wechatId = null
       const wechatName = ''
