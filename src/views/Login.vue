@@ -22,6 +22,7 @@
         </el-col>
       </el-row>
       <el-row v-if="inputMode">
+        <!-- 登陆输入框 -->
         <el-col :lg="9" :md="8" :sm="6" :xs="3">&nbsp;</el-col>
         <el-col :lg="6" :md="8" :sm="12" :xs="18" class="text-center">
           <el-form :model="userInformation">
@@ -70,10 +71,12 @@ export default {
   },
   methods: {
     ...mapActions({ setUserInfo: 'setUserInfo' }),
+    // 登陆成功后 跳转主页
     startJourney () {
       clearInterval(this.timer)
       this.$router.push('/main')
     },
+    // 切换登陆模式
     switchInputMode () {
       this.inputMode = !this.inputMode
       if (this.inputMode === true) {
@@ -82,10 +85,12 @@ export default {
         this.getWXCode()
       }
     },
+    // token存贮
     cacheToken (headers) {
       let key = 'x-auth-token'
       window.sessionStorage.setItem(key, headers[key])
     },
+    // 登陆方法
     login () {
       const userName = this.userInformation.name
       const passWord = this.userInformation.password
@@ -117,13 +122,8 @@ export default {
           if (error.response.status === 401) {
             this.register = false
           }
-          console.log('error')
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log(error.response.data)
-          console.log(error.response)
-          console.log(error.response.status)
-          console.log(error.response.headers)
         } else if (error.request) {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -140,10 +140,8 @@ export default {
       const wechatName = this.userInfo.nickname ? this.userInfo.nickname : ''
       const wechatImage = this.userInfo.headimgurl ? this.userInfo.headimgurl : ''
       const force = 1
-      console.log(userId, wechatId, this.userInfo)
       api.post('/api/wechat/bind', {userId, wechatId, wechatName, wechatImage, force}).then(login => {
         this.setUserInfo(login.data)
-        console.log(login)
       })
     },
     guid () {
@@ -153,13 +151,12 @@ export default {
         return v.toString(16)
       })
     },
+    // 微信登陆使用函数, 根据微信服务地址生成相应的二维码
     getWXCode () {
-      console.log(this.$message)
       const uid = this.guid()
       let self = this
       let $path = window.encodeURI(`http://www.starstech.cc/login?shopID=${this.$route.query.shopID}_${uid}`)
       let url = '/wepay/webAuthCodeUrl?path=' + $path
-      console.log('getWXCode')
       service.get(url).then(res => {
         let wxUrl = res.data
         self.showLoading = false
@@ -181,13 +178,10 @@ export default {
         }
         service.get(infoUrl).then(res => {
           // let wxUrl = res.data
-          console.log(res)
           if (res.data.openid) {
             clearInterval(this.timer)
             const openid = res.data.openid
-            console.log(res)
             service.get('/wepay/userinfo?openid=' + openid).then(r => {
-              console.log(r)
               // this.$store.commit('setUserInfo', r.data)
               this.setUserInfo(r.data)
               api.post('/api/wechat/login', {wechatId: openid}).then(login => {
