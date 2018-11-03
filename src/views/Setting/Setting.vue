@@ -1,6 +1,7 @@
 <template>
     <div>
       <el-row class="search-bar">
+          <!-- 搜索栏 -->
           <el-col :span="6">
           <el-input
             placeholder="请输入姓名或者工号"
@@ -42,6 +43,7 @@
       </el-row>
       <el-row :gutter="20">
         <el-col :span="24" class="text-left">
+          <!-- 分页器 -->
           <el-pagination
             @size-change="sizeChange"
             @current-change="updatePageUsers"
@@ -53,6 +55,7 @@
           </el-pagination>
         </el-col>
         <el-col :span="24">
+          <!-- 数据表格 -->
           <el-table
             :height="tableHeight"
             border 
@@ -238,6 +241,7 @@
     mounted () {
     },
     methods: {
+      // 修改密码
       changePassWord (user) {
         this.account.userId = user.userId
         this.account.userName = user.userName
@@ -256,9 +260,11 @@
           })
         })
       },
+      // 监控change
       inputChange (value) {
         // console.log(value)
       },
+      // 解绑微信Id
       unbind (userId) {
         const wechatId = null
         const wechatName = ''
@@ -268,20 +274,25 @@
           this.setUserInfo(res.data)
         })
       },
+      // 页面条数变更
       sizeChange (pageSize) {
         this.pageSize = pageSize
         this.getUserData()
       },
+      // 选择角色
       selectRole () {
         this.filter.userRoleId = [this.roleId]
         this.getUserData()
       },
+      // 布尔值转换
       getBoolen (value) {
         return value
       },
+      // 修改密码弹窗出现
       changePassword (row) {
         row.changePasswordFlag = true
       },
+      // 确认修改密码
       confirmChangePassword () {
         const userId = this.account.userId
         const passWord = this.account.password
@@ -301,6 +312,7 @@
           })
         })
       },
+      // 按姓名查找用户
       searchFullNameChange () {
         const isNumber = /^[0-9]+$/
         if (isNumber.test(this.searchFullName)) {
@@ -313,11 +325,13 @@
         this.getUserData()
         console.log('searchFullNameChange', this.searchFullName)
       },
+      // 用户状态变更
       userStatusChange () {
         console.log(this.userStatusSelected)
         this.filter.userStatus = this.userStatusSelected.length === 1 ? this.userStatusSelected[0] : ''
         this.getUserData()
       },
+      // 用户状态提交
       switchStatus (userId, status) {
         api.post(`/api/user/status`, {userId, status}).then(res => {
           Message({
@@ -334,6 +348,7 @@
           })
         })
       },
+      // 保存用户设置
       saveUser () {
         this.dialogFormVisible = false
         const fullName = this.form.fullName
@@ -360,11 +375,13 @@
           })
         })
       },
+      // 取店铺列表
       getShopList () {
         api.get('/api/shop').then(res => {
           this.shopList = res.data
         })
       },
+      // 是否是销售
       hasSales (id) {
         let res = false
         switch (id) {
@@ -377,6 +394,7 @@
         }
         return res
       },
+      // 编辑用户
       edit (user) {
         this.modalType = 'edit'
         this.form = user
@@ -385,6 +403,7 @@
         console.log(user)
         this.dialogFormVisible = true
       },
+      // 新增用户
       add () {
         this.modalType = 'add'
         this.form = {
@@ -399,11 +418,13 @@
         this.roleSelected = []
         this.dialogFormVisible = true
       },
+      // 去重函数
       unique (array) {
         let jsonArray = array.map(a => JSON.stringify(a))
         jsonArray = Array.from(new Set(jsonArray))
         return jsonArray.map(j => JSON.parse(j))
       },
+      // 取用户数据
       getUserData () {
         const pagination = {
           pageSize: this.pageSize,
@@ -418,20 +439,10 @@
           this.total = res.data.pagination.total
         })
       },
+      // 更新当前页面
       updatePageUsers (currentPage) {
         this.currentPage = currentPage
         this.getUserData()
-      },
-      getShopName (shopId) {
-        const scope = this.getShops().find(s => s.shopId === shopId)
-        return scope ? scope.shopName : ''
-      },
-      getShops () {
-        return [
-          { shopId: '1', shopName: '店铺A' },
-          { shopId: '2', shopName: '店铺B' },
-          { shopId: '3', shopName: '店铺C' }
-        ]
       }
     }
   }
