@@ -1,7 +1,9 @@
 <template>
   <div>
     <el-form ref="form" class="search-bar mini-class">
+      <!-- 通用搜索组件 -->
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
+      <!-- 搜索栏 -->
       <el-row>
         <el-col :span="6" >
             <el-form-item label="ASIN">
@@ -45,6 +47,7 @@
       </el-row>
     </el-form>
   <el-row>
+    <!-- 显示隐藏列 -->
     <el-popover
       ref="showHideColumns"
       trigger="hover">
@@ -76,6 +79,7 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="24">
+        <!-- 底部数据表格 -->
         <el-table v-if="gridData.length>0"
             ref="table"
             border
@@ -526,12 +530,14 @@
     },
     computed: {
       ...mapGetters(['userInfo']),
+      // 取传入状态
       getStatus () {
         if (this.$route.query.status) {
           return this.$route.query.status.split('_')
         }
         return []
       },
+      // 取店铺列表
       getShops () {
         if (Array.isArray(this.shopList) && this.shopList.length > 0) {
           return this.shopList.reduce((res, cur) => {
@@ -545,20 +551,24 @@
       }
     },
     methods: {
+      // 是否是销售经理
       isSalesManager (roles) {
         const finder = roles.findIndex(r => r.roleId === 6)
         return finder !== -1
       },
+      // 创建header
       createHeader () {
         this.dynamicHeaders = this.headersArray.filter(h => h.show)
         this.headers = this.headersArray.map(e => e.cn)
         this.checkedList = this.dynamicHeaders.map(e => e.cn)
       },
+      // 搜索框改变
       searchBarChange (filter) {
         this.filter = {...this.filter, ...filter}
         this.getPageWorkflows()
         this.getAllWorkflows()
       },
+      // 更新可见列
       updateVisibleColumns () {
         const checkList = this.checkedList.map(c => this.dictEn[c])
         this.headersArray.forEach(h => {
@@ -570,10 +580,12 @@
         })
         this.dynamicHeaders = this.headersArray.filter(h => h.show)
       },
+      // 取店铺名字
       getShopName (shopId) {
         const finder = this.shopList.find(s => s.shopId === shopId)
         return finder ? finder.shopName : ''
       },
+      // 删除前确认
       beforeRemove (file, fileList) {
         const reg = new RegExp(/ment\/.*/)
         const path = reg.exec(file.url)[0]
@@ -596,13 +608,12 @@
           return false
         }
       },
+      // 删除
       removeFile (suggestionId, file, fileList) {
         console.log(suggestionId, file, fileList)
         // api.delete('/suggestion/attachment/' + suggestionId)
       },
-      analysis (row) {
-  
-      },
+      // 文件下载
       downloadFile (file) {
         let eleLink = document.createElement('a')
         eleLink.download = file.name
@@ -614,15 +625,18 @@
         // 然后移除
         document.body.removeChild(eleLink)
       },
+      // 改变页面条数
       sizeChange (pageSize) {
         this.pageSize = pageSize
         this.getPageWorkflows()
       },
+      // 建议类型列表
       listSuggestTypes () {
         api.get(`/api/suggest_type`).then(res => {
           this.optimizationTypes = res.data
         })
       },
+      // 取一行
       GetRow (row, columns) {
         let obj = {}
 
@@ -638,6 +652,7 @@
 
         return obj
       },
+      // 导出csv
       ExportCsv (data, columns, fileName) {
         // console.log(json2csv)
         // const rows = data.map(t => this.GetRow(t, columns))
@@ -661,10 +676,12 @@
           console.error(err)
         }
       },
+      // 导出csv
       exportCsv (filename = '列表') {
         // const columns = this.$refs.table.$children.filter(t => t.prop != null)
         // this.ExportCsv(this.gridData, columns, filename)
       },
+      // 增加建议
       add () {
         this.modalType = 'add'
         this.dialogFormVisible = true
@@ -675,6 +692,7 @@
         this.form.suggestion = undefined
         this.form.title = undefined
       },
+      // 编辑建议
       edit (row) {
         this.modalType = 'edit'
         this.dialogFormVisible = true
@@ -688,6 +706,7 @@
         this.form.sn = row.sn
         this.form.title = row.title
       },
+      // 工作流更新
       doWorkflowUpdate (row) {
         this.wf.suggestionId = row.suggestionId
         this.wf.productId = row.productId
@@ -702,6 +721,7 @@
 
         this.dialogWorkflowVisible = true
       },
+      // 保存工作
       saveWork () {
         this.form.sn = undefined
         api.post(`/api/suggestion`, this.form).then(res => {
@@ -716,6 +736,7 @@
           this.errorHandler(err, {code: 404, message: '产品未找到'})
         })
       },
+      // 更新工作
       updateWork () {
         api.put(`/api/suggestion/${this.currentSugId}`, this.form).then(res => {
           Message({
@@ -729,28 +750,34 @@
           this.errorHandler(err)
         })
       },
+      // 改变页面
       currentChange (currentPage) {
         this.currentPage = currentPage
         this.getPageWorkflows()
       },
+      // 搜索工作流
       searchWorkflow () {
         this.getPageWorkflows()
       },
+      // 国家列表
       getNationList () {
         api.get('/api/country').then(res => {
           this.nationList = res.data.grid
           this.nationListBK = this.nationList
         })
       },
+      // 取国家ID
       getMarketplaceId (countryCode) {
         const finder = this.nationList.find(s => s.countryCode === countryCode)
         return finder ? finder.marketplaceId : ''
       },
+      // 取店铺列表
       getShopList () {
         api.get('/api/shop').then(res => {
           this.shopList = res.data
         })
       },
+      // 取工作流
       getPageWorkflows (hideWorkingDialog) {
         const params = {
           pagination: {
@@ -797,6 +824,7 @@
           })
         })
       },
+      // 取所有的工作流 为下载做准备
       getAllWorkflows (hideWorkingDialog) {
         const params = {
           pagination: {
@@ -839,6 +867,7 @@
         })
         this.$sendDownloadHistory('工作流')
       },
+      // 建议状态转换
       getActiveStep (name) {
         switch (name) {
           case 'issued': return 0
@@ -850,6 +879,7 @@
         }
         return 1
       },
+      // 建议状态转换
       getTagType (name) {
         switch (name) {
           case 'permitted': return 'info'
@@ -860,6 +890,7 @@
         }
         return 'warning'
       },
+      // 取所有的建议状态
       getAllSteps (name) {
         switch (name) {
           case 'rejected': return ['issued', 'rejected']
@@ -867,6 +898,7 @@
         }
         return ['issued', 'permitted', 'finished', 'summed']
       },
+      // 取操作人
       getNextOpers (name) {
         let userName
         if (this.userInfo.roles.findIndex(r => r.roleId === 6) >= 0) {
@@ -884,6 +916,7 @@
         }
         return opers
       },
+      // 取历史记录
       getSugHistory (row, expandedRows) {
         // const self = this
         // expandedRows.map((eRow) => {
@@ -907,6 +940,7 @@
         //   }
         // })
       },
+      // 取描述
       getDescription (row, step) {
         let description = ''
         row.history.forEach(h => {
@@ -916,6 +950,7 @@
         })
         return description === '' ? '(流程中)' : description
       },
+      // 执行建议
       processSuggest (row, nextStatus) {
         this.dialogWorkflowVisible = false
         const params = {
@@ -936,6 +971,7 @@
           this.errorHandler(err)
         })
       },
+      // 增加注释
       addComment (id, message, sn) {
         const params = {
           suggestionId: id,
@@ -956,17 +992,21 @@
           this.errorHandler(err)
         })
       },
+      // 取token
       getAuthHeaders () {
         let headers = {}
         headers[api.tokenKey] = api.getToken()
         return headers
       },
+      // 取上传地址
       getUploadUrl (suggestionId) {
         return api.baseURL + '/api/suggestion/attachment/' + suggestionId
       },
+      // 上传处理器
       handlerUploader (file, fileList) {
         console.log(api, file, fileList)
       },
+      // 错误处理
       errorHandler (err, specialCase) {
         if (specialCase && err.request.status === specialCase.code) {
           Message({
