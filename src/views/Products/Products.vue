@@ -1,8 +1,10 @@
 <template>
   <div>
     <el-form ref="form" class="mini-class">
+      <!-- 顶部通用搜索组件 -->
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
   <el-row>
+        <!-- 搜索项 -->
         <el-col :span="6">
           <el-form-item>
             <el-checkbox v-model="filter.dimension.shop" @change="useShopChange">按店铺</el-checkbox>
@@ -55,6 +57,7 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="24">
+        <!-- 数据表格 -->
         <el-table
           v-if="gridData.length > 0"
           :summary-method="getSummaries"
@@ -413,6 +416,7 @@ export default {
     this.listSuggestTypes()
   },
   methods: {
+    // 创建表格头部
     createHeader (headers) {
       this.dynamicHeaders = ['shopName', 'countryCode', 'ASIN', 'productName', 'totalCount']
       let sort = []
@@ -433,6 +437,7 @@ export default {
       const headersDownload = [...headersFixed, ...sort, 'totalCount']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
+    // 排序方式
     changeSortItem (val) {
       this.filter.sortParam = val.prop
       if (val.order === 'descending') {
@@ -442,6 +447,7 @@ export default {
       }
       this.getPageProducts()
     },
+    // 取合计数
     getSummaries (param) {
       const sums = ['合计', '', '', '']
       if (this.summaryData.length > 0) {
@@ -451,6 +457,7 @@ export default {
       }
       return sums
     },
+    // 按订单 按数量 切换
     useOrderQuantityChange () {
       console.log(this.useOrderQuantity, this.filter)
       this.filter.dimension.order = false
@@ -459,6 +466,7 @@ export default {
       console.log(this.useOrderQuantity, this.filter)
       this.getPageProducts()
     },
+    // 切换店铺
     useShopChange (event) {
       // this.filter.dimension = {shop: this.useShop}
       this.getPageProducts()
@@ -469,6 +477,7 @@ export default {
       }
       console.log(event)
     },
+    // 搜索条件变化
     searchBarChange (filter) {
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
@@ -482,17 +491,19 @@ export default {
       this.currentPage = 1
       this.getPageProducts()
     },
+    // 自定义时间范围改变
     periodCustomizeChange () {
       console.log(this.dr)
       this.filter.period.start = this.dr[0]
       this.filter.period.end = this.dr[1]
       this.getPageProducts()
     },
+    // 页面条目数改变
     sizeChange (e) {
       this.pageSize = e
       this.getPageProducts()
     },
-
+    // 时间范围改变
     periodChange () {
       if (this.periodSelect === 0) {
         return
@@ -511,15 +522,18 @@ export default {
       // }
       // this.getPageWorkflows()
     },
+    // 取店铺名称
     getShopName (shopId) {
       const finder = this.shopList.find(s => s.shopId === shopId)
       return finder ? finder.shopName : ''
     },
+    // 取所有建议类型
     listSuggestTypes () {
       api.get(`/api/suggest_type`).then(res => {
         this.optimizationTypes = res.data
       })
     },
+    // 保存建议
     saveWork () {
       let self = this
       self.form.sn = undefined
@@ -535,6 +549,7 @@ export default {
         self.errorHandler(err, {code: 404, message: '产品未找到'})
       })
     },
+    // 新增建议
     add (row) {
       console.log(row)
       const {ASIN, productName, shopId, shopName, marketplaceName} = row
@@ -550,6 +565,7 @@ export default {
       this.form.suggestion = undefined
       this.form.title = undefined
     },
+    // 发邮件跳转
     mailRules (row) {
       console.log(row)
       const {ASIN, productName, countryCode, shopName, shopId} = row
@@ -577,6 +593,7 @@ export default {
         })
       })
     },
+    // 保存邮件条件
     saveMailRules () {
       const shopId = this.shopId
       const countryCode = this.mailForm.countryCode
@@ -612,11 +629,13 @@ export default {
         })
       })
     },
+    // 是否收藏
     isNotLike (product) {
       return !this.likedProducts.find(p => {
         return product.ASIN === p.productId
       })
     },
+    // 搜索框变化
     searchProduct () {
       // let filter = {
       //   productId: this.filter.asinOrName,
@@ -624,6 +643,7 @@ export default {
       // }
       this.getPageProducts()
     },
+    // 取后台表格数据
     getPageProducts () {
       let pagination = {
         pageSize: this.pageSize,
@@ -653,6 +673,7 @@ export default {
       })
       this.showDownload = true
     },
+    // 取所有下载数据
     getDownload () {
       let pagination = {
         pageSize: 99999,
@@ -683,31 +704,37 @@ export default {
       this.$sendDownloadHistory('销量报表')
       this.showDownload = false
     },
+    // 改变下载的状态
     changeDownloadStatus () {
       this.showDownload = true
       this.download = []
     },
+    // 取店铺列表
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
       })
     },
+    // 取国家列表
     getNationList () {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
         this.nationListBK = this.nationList
       })
     },
+    // 当前页面改变
     currentChange (currentPage) {
       this.currentPage = currentPage
       this.getPageProducts()
     },
+    // 收藏商品
     listLikedProducts () {
       api.get(`/api/interested`).then(res => {
         console.log(res.data)
         this.likedProducts = res.data
       })
     },
+    // 收藏商品过滤
     showHideLiked () {
       // let filter = {
       //   productId: this.filter.asinOrName,
@@ -717,6 +744,7 @@ export default {
       this.filter.interestedOnly = this.interestedOnly
       this.getPageProducts()
     },
+    // 确认收藏商品
     likeProduct (product, like) {
       let productInfo = {
         productId: product.ASIN,
@@ -746,6 +774,7 @@ export default {
         })
       }
     },
+    // 错误处理器
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
         Message({
