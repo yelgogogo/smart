@@ -80,9 +80,11 @@ export default {
     }
   },
   methods: {
+    // 测试图片上传
     handleAvatarSuccess (res, file) {
       this.product.imgUrl = URL.createObjectURL(file.raw)
     },
+    // 图片上传前检查
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
@@ -95,16 +97,19 @@ export default {
       }
       return isJPG && isLt2M
     },
+    // 增加竞品
     addCompetitor () {
       this.competitor.shopId = this.product.shopId
       this.competitor.productId = this.product.asin
       this.showAddCpButton = false
     },
+    // 增加关键字
     addKeyword () {
       this.gKeyword.shopId = this.product.shopId
       this.gKeyword.productId = this.product.asin
       this.showAddKwButton = false
     },
+    // 查找关键字
     assignKeywords (data) {
       let self = this
       self.keywords = data.map(kw => {
@@ -115,28 +120,33 @@ export default {
       })
       console.log(self.keywords)
     },
+    // 清除竞品
     clearCompetitor () {
       this.competitor.competitorId = undefined
       this.competitor = Object.assign({}, this.competitor)
       this.showAddCpButton = true
     },
+    // 清除关键字
     clearGKeywork () {
       this.gKeyword.keyword = undefined
       this.gKeyword = Object.assign({}, this.gKeyword)
       this.showAddCpButton = true
     },
+    // 保存竞品
     saveCompetitor () {
       let self = this
       api.post(`/api/product/competitor`, self.competitor).then(res => {
         self.listCompetitor()
       })
     },
+    // 保存关键字
     saveKeyword () {
       let self = this
       api.post(`/api/product/keyword`, self.gKeyword).then(res => {
         self.listKeywords()
       })
     },
+    // 竞品列表
     listCompetitor () {
       let self = this
       api.get(`/api/product/competitor/${self.product.shopId}/${self.product.asin}`).then(res => {
@@ -145,6 +155,7 @@ export default {
         self.clearCompetitor()
       })
     },
+    // 关键字列表
     listKeywords () {
       let self = this
       api.get(`/api/product/keyword/${self.product.shopId}/${self.product.asin}`).then(res => {
@@ -152,6 +163,7 @@ export default {
         self.clearGKeywork()
       })
     },
+    // 删除竞品
     deleteCompetitor (id) {
       let self = this
       MessageBox.confirm('确定删除竞品?', '提示', {
@@ -179,6 +191,7 @@ export default {
       //   })
       // }
     },
+    // 删除关键字
     deleteKeyword (kw) {
       let self = this
       MessageBox.confirm('确定删除关键字?', '提示', {

@@ -2,6 +2,7 @@
   <div>
     <el-form ref="form">
       <el-row>
+        <!-- 筛选条件 -->
         <el-col :span="6" style="padding-right: 5px;">
           <el-form-item label="店铺">
             <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
@@ -167,6 +168,7 @@
       </el-form>
     <el-row :gutter="20">
       <el-col :span="24">
+        <!-- 数据表格 -->
         <el-table 
           border
           height="500"
@@ -202,6 +204,7 @@
         </el-table>
       </el-col>
     </el-row>
+    <!-- 反馈详情弹窗 -->
     <el-dialog title="反馈详情" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="ASIN" :label-width="formLabelWidth">
@@ -352,10 +355,12 @@ export default {
     currentChange () {
 
     },
+    // 显示隐藏列
     updateVisibleColumns () {
       this.showHideColumns(this.checkedList)
       // this.headers = this.checkedList
     },
+    // 显示隐藏列
     showHideColumns (newHeaders) {
       for (let dh in this.dynamicHeaders) {
         let found = newHeaders.find(nh => {
@@ -369,6 +374,7 @@ export default {
       }
       this.dynamicHeaders = { ...this.dynamicHeaders }
     },
+    // 创建表头
     createHeader () {
       for (let key in this.gridData[0]) {
         if (key !== 'review') {
@@ -390,6 +396,7 @@ export default {
       //   })
       // })
     },
+    // 更新表头
     updateLu () {
       let format = 'YYYY-MM-DD'
       let start = moment().subtract(this.periodSelect, 'days').format(format)
@@ -404,14 +411,17 @@ export default {
       // }
       // this.getPageWorkflows()
     },
+    // 更新时间
     updateDateRangeValue () {
       console.log(this.dr)
     },
+    // 建议类型列表
     listSuggestTypes () {
       api.get(`/api/suggest_type`).then(res => {
         this.optimizationTypes = res.data
       })
     },
+    // 保存建议
     saveWork () {
       let self = this
       self.form.sn = undefined
@@ -427,16 +437,19 @@ export default {
         self.errorHandler(err, {code: 404, message: '产品未找到'})
       })
     },
+    // 编辑
     edit (row) {
       console.log(row)
       this.form = row
       this.dialogFormVisible = true
     },
+    // 收藏
     isNotLike (product) {
       return !this.likedProducts.find(p => {
         return product.asin === p.productId
       })
     },
+    // 搜索
     searchProduct () {
       let filter = {
         productId: this.search_val,
@@ -444,6 +457,7 @@ export default {
       }
       this.getPageProducts(filter)
     },
+    // 取列表数据
     getPageProducts (filter) {
       let pagination = {
         pageSize: this.pageSize,
@@ -475,21 +489,25 @@ export default {
       //   })
       // })
     },
+    // 取店铺列表
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
       })
     },
+    // 改变当前页面
     updatePageProducts (currentPage) {
       this.currentPage = currentPage
       this.getPageProducts()
     },
+    // 已经关注列表
     listLikedProducts () {
       api.get(`/api/interested`).then(res => {
         console.log(res.data)
         this.likedProducts = res.data
       })
     },
+    // 未关注列表
     showHideLiked () {
       let filter = {
         productId: this.search_val,
@@ -498,6 +516,7 @@ export default {
       }
       this.getPageProducts(filter)
     },
+    // 关注
     likeProduct (product, like) {
       let productInfo = {
         productId: product.asin,
@@ -517,6 +536,7 @@ export default {
         })
       }
     },
+    // 错误处理器
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
         Message({

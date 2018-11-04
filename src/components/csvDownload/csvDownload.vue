@@ -17,6 +17,7 @@ export default {
     }
   },
   computed: {
+    // 文件下载
     downloadUrl () {
       if (this.data.length > 0) {
         const fields = this.fields

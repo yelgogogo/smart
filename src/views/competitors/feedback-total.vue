@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 搜索框 -->
     <el-form ref="form">
       <el-row>
         <el-col :span="6" style="padding-right: 5px;">
@@ -116,6 +117,7 @@
     </el-form>
     <el-row :gutter="20">
       <el-col :span="24">
+        <!-- 数据列表 -->
         <el-table 
           border
           height="500"
@@ -242,10 +244,12 @@ export default {
     currentChange () {
 
     },
+    // 显示隐藏列
     updateVisibleColumns () {
       this.showHideColumns(this.checkedList)
       // this.headers = this.checkedList
     },
+    // 显示隐藏列
     showHideColumns (newHeaders) {
       for (let dh in this.dynamicHeaders) {
         let found = newHeaders.find(nh => {
@@ -259,6 +263,7 @@ export default {
       }
       this.dynamicHeaders = { ...this.dynamicHeaders }
     },
+    // 创建表头
     createHeader () {
       for (let key in this.gridData[0]) {
         this.dynamicHeaders[key] = true
@@ -278,6 +283,7 @@ export default {
       //   })
       // })
     },
+    // 选择时间范围
     updateLu () {
       let format = 'YYYY-MM-DD'
       let start = moment().subtract(this.periodSelect, 'days').format(format)
@@ -292,14 +298,17 @@ export default {
       // }
       // this.getPageWorkflows()
     },
+    // 选择时间
     updateDateRangeValue () {
       console.log(this.dr)
     },
+    // 取建议类型
     listSuggestTypes () {
       api.get(`/api/suggest_type`).then(res => {
         this.optimizationTypes = res.data
       })
     },
+    // 保存
     saveWork () {
       let self = this
       self.form.sn = undefined
@@ -315,16 +324,19 @@ export default {
         self.errorHandler(err, {code: 404, message: '产品未找到'})
       })
     },
+    // 编辑
     edit (row) {
       console.log(row)
       this.form = row
       this.dialogFormVisible = true
     },
+    // 是否关注
     isNotLike (product) {
       return !this.likedProducts.find(p => {
         return product.asin === p.productId
       })
     },
+    // 搜索
     searchProduct () {
       let filter = {
         productId: this.search_val,
@@ -332,6 +344,7 @@ export default {
       }
       this.getPageProducts(filter)
     },
+    // 取列表数据
     getPageProducts (filter) {
       let pagination = {
         pageSize: this.pageSize,
@@ -363,21 +376,25 @@ export default {
       //   })
       // })
     },
+    // 取店铺列表
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
       })
     },
+    // 更新当前页面
     updatePageProducts (currentPage) {
       this.currentPage = currentPage
       this.getPageProducts()
     },
+    // 显示关注列表
     listLikedProducts () {
       api.get(`/api/interested`).then(res => {
         console.log(res.data)
         this.likedProducts = res.data
       })
     },
+    // 显示未关注
     showHideLiked () {
       let filter = {
         productId: this.search_val,
@@ -386,6 +403,7 @@ export default {
       }
       this.getPageProducts(filter)
     },
+    // 关注
     likeProduct (product, like) {
       let productInfo = {
         productId: product.asin,
@@ -405,6 +423,7 @@ export default {
         })
       }
     },
+    // 错误处理器
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
         Message({
