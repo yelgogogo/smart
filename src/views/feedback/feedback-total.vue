@@ -1,7 +1,9 @@
 <template>
   <div>
     <el-form ref="form" class="mini-class">
+      <!-- 通用搜索组件 -->
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
+        <!-- 其他搜索 -->
         <el-row>
           <el-col :span="6" style="padding-right: 5px;">
             <el-form-item label="星评">
@@ -31,6 +33,7 @@
           </el-col>
         </el-row>
         <el-row>
+          <!-- 显示隐藏列 -->
           <el-popover
             ref="showHideColumns"
             trigger="hover">
@@ -52,6 +55,7 @@
         <el-col :span="8" class="text-right">
           <!-- <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button> -->
           <el-button v-if="showDownload" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
+          <!-- 下载组件 -->
           <vue-csv-download
             v-else
             :data="download"
@@ -65,6 +69,7 @@
     </el-form>
     <el-row :gutter="20">
       <el-col :span="24">
+        <!-- 数据列表 -->
         <el-table 
           border
           :height="tableHeight" 
@@ -190,6 +195,7 @@ export default {
     }
   },
   computed: {
+    // 英文词典
     dictEn () {
       let dictEn = {}
       for (let prop in this.dictCn) {
@@ -208,6 +214,7 @@ export default {
     // this.getPageProducts()
   },
   methods: {
+    // 改变排序
     changeSortItem (val) {
       this.filter.sortParam = val.prop
       if (val.order === 'descending') {
@@ -217,12 +224,14 @@ export default {
       }
       this.getPageProducts()
     },
+    // 重置搜索条件
     resetSearch () {
       this.star = null
       this.product = null
       this.filter = { ...this.filter, star: undefined, productId: undefined }
       this.getPageProducts()
     },
+    // 星评过滤
     starChange (value) {
       if (value === 'All') {
         this.filter.star = undefined
@@ -231,6 +240,7 @@ export default {
       }
       this.getPageProducts()
     },
+    // 创建表头
     createHeader (headers) {
       this.dynamicHeaders = ['asin', 'countryCode', 'productName', 'totalQuantity', 'totalAverage', 'currentQuantity', 'currentAverage']
       let sort = []
@@ -249,6 +259,7 @@ export default {
       const headersDownload = [...headersFixed, ...sort]
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
+    // 搜索栏改变
     searchBarChange (filter) {
       if (filter.shopId) {
         const shop = this.shopList.find(s => s.shopId === filter.shopId)
@@ -263,21 +274,26 @@ export default {
       this.currentPage = 1
       this.getPageProducts()
     },
+    // 搜索
     searchGrid () {
       this.getPageProducts()
     },
+    // 页面大小改变
     sizeChange (e) {
       this.pageSize = e
       this.getPageProducts()
     },
+    // 当前页面改变
     currentChange (e) {
       this.currentPage = e
       this.getPageProducts()
     },
+    // 显示隐藏列
     updateVisibleColumns () {
       this.showHideColumns(this.checkedList)
       // this.headers = this.checkedList
     },
+    // 显示隐藏列
     showHideColumns (newHeaders) {
       for (let dh in this.dynamicHeaders) {
         let found = newHeaders.find(nh => {
@@ -291,16 +307,7 @@ export default {
       }
       this.dynamicHeaders = { ...this.dynamicHeaders }
     },
-    updateDateRangeValue () {
-      console.log(this.dr)
-    },
-    searchProduct () {
-      let filter = {
-        productId: this.search_val,
-        shopId: this.shopId
-      }
-      this.getPageProducts(filter)
-    },
+    // 取后台数据
     getPageProducts () {
       let pagination = {
         pageSize: this.pageSize,
@@ -331,6 +338,7 @@ export default {
       })
       this.showDownload = true
     },
+    // 取下载数据
     getDownload () {
       let pagination = {
         pageSize: 99999,
@@ -359,58 +367,30 @@ export default {
       this.$sendDownloadHistory('反馈统计')
       this.showDownload = false
     },
+    // 改变下载状态
     changeDownloadStatus () {
       this.showDownload = true
       this.download = []
     },
+    // 取国家列表
     getNationList () {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
         this.nationListBK = this.nationList
       })
     },
+    // 取店铺列表
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
       })
     },
+    // 改变当前页
     updatePageProducts (currentPage) {
       this.currentPage = currentPage
       this.getPageProducts()
     },
-    listLikedProducts () {
-      api.get(`/api/interested`).then(res => {
-        console.log(res.data)
-        this.likedProducts = res.data
-      })
-    },
-    showHideLiked () {
-      let filter = {
-        productId: this.search_val,
-        shopId: this.shopId,
-        interestedOnly: this.isShowLiked ? 1 : undefined
-      }
-      this.getPageProducts(filter)
-    },
-    likeProduct (product, like) {
-      let productInfo = {
-        productId: product.asin,
-        shopId: product.shopId
-      }
-      if (like === true) {
-        api.post(`/api/interested`, productInfo).then(res => {
-          if (res && res.status === 200) {
-            console.log(res)
-            this.listLikedProducts()
-          }
-        })
-      } else {
-        let interested = this.likedProducts.find(p => p.productId === product.asin)
-        api.delete(`/api/interested/${interested.interestedId}`).then(res => {
-          this.listLikedProducts()
-        })
-      }
-    },
+    // 错误处理器
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
         Message({
