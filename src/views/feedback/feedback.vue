@@ -1,7 +1,9 @@
 <template>
   <div>
     <el-form ref="form" class="mini-class">
+      <!-- 通用搜索栏组件 -->
       <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
+        <!-- 其他搜索栏 -->
         <el-row>
           <el-col :span="6" style="padding-right: 5px;">
             <el-form-item label="状态">
@@ -82,6 +84,7 @@
           </el-col>
         </el-row>
         <el-row>
+          <!-- 显示隐藏列 -->
           <el-popover
             ref="showHideColumns"
             trigger="hover">
@@ -90,6 +93,7 @@
             </el-checkbox-group>
           </el-popover>
           <el-col :span="16">
+            <!-- 分页器 -->
             <el-pagination
             @size-change="sizeChange"
             @current-change="currentChange"
@@ -102,6 +106,7 @@
         </el-col>
           <el-col :span="8" class="text-right">
             <el-button v-if="showDownload" size="mini" icon="el-icon-document" @click="getDownload">请求下载</el-button>
+            <!-- 下载组件 -->
             <vue-csv-download
               v-else
               :data="download"
@@ -115,6 +120,7 @@
       </el-form>
     <el-row :gutter="20">
       <el-col :span="24">
+        <!-- 数据列表 -->
         <el-table 
           border
           :height="tableHeight" 
@@ -138,6 +144,7 @@
               <div v-else>{{scope.row[headerName]}}</div>
             </template>
           </el-table-column>
+          <!-- 列表操作栏 -->
           <el-table-column
             header-align="center"
             align="center"
@@ -151,6 +158,7 @@
         </el-table>
       </el-col>
     </el-row>
+    <!-- 反馈详情弹窗 -->
     <el-dialog title="反馈详情" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="ASIN" :label-width="formLabelWidth">
@@ -312,6 +320,7 @@ export default {
   },
   computed: {
     ...mapGetters(['userInfo']),
+    // 英文词典
     dictEn () {
       let dictEn = {}
       for (let prop in this.dictCn) {
@@ -327,6 +336,7 @@ export default {
     console.log('this.dictEn', this.dictEn)
   },
   methods: {
+    // 改变排序
     changeSortItem (val) {
       // console.log(val.prop + ' ' + val.order)
       // console.log(val)
@@ -338,10 +348,12 @@ export default {
       }
       this.getPageProducts()
     },
+    // 重置搜索
     resetSearch () {
       this.filter = { ...this.filter, buyerId: undefined, orderId: undefined, productId: undefined }
       this.getPageProducts()
     },
+    // 星评过滤
     starChange (value) {
       if (value === 'All') {
         this.filter.star = undefined
@@ -350,16 +362,19 @@ export default {
       }
       this.getPageProducts()
     },
+    // 切换用户
     userChange (value) {
       this.filter.userId = value
       this.getPageProducts()
     },
+    // 创建表头
     createHeader () {
       this.dynamicHeaders = ['countryCode', 'asin', 'productName', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'shopName', 'author', 'title', 'operatorName', 'lastUpdateDate']
       this.headers = this.dynamicHeaders
       const headersDownload = ['shopName', 'asin', 'countryCode', 'reviewDate', 'status', 'deleteDate', 'star', 'buyerId', 'amazonOrderId', 'author', 'profileURL', 'title', 'text', 'detailURL', 'operatorName', 'lastUpdateDate']
       this.headersDownload = headersDownload.map(h => this.dictCn[h] ? this.dictCn[h] : h)
     },
+    // 状态过滤
     statusChange (e) {
       if (e === 'All') {
         this.filter.status = undefined
@@ -368,23 +383,27 @@ export default {
       }
       this.getPageProducts()
     },
+    // 国家列表
     getNationList () {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
         this.nationListBK = this.nationList
       })
     },
+    // 取反馈历史
     getReviewHistory (reviewId) {
       api.get(`/api/review/message/${reviewId}`).then(res => {
         this.reviewHistory = res.data.messages
       })
     },
+    // 搜索栏变化
     searchBarChange (filter) {
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
       this.currentPage = 1
       this.getPageProducts()
     },
+    // 重置
     searchGrid () {
       if (this.filter.orderId !== '') {
         this.filter.buyerId = ''
@@ -397,18 +416,22 @@ export default {
       }
       this.getPageProducts()
     },
+    // 页面大小变化
     sizeChange (e) {
       this.pageSize = e
       this.getPageProducts()
     },
+    // 当前页面变化
     currentChange (e) {
       this.currentPage = e
       this.getPageProducts()
     },
+    // 显示隐藏列
     updateVisibleColumns () {
       this.showHideColumns(this.checkedList)
       // this.headers = this.checkedList
     },
+    // 显示隐藏列
     showHideColumns (newHeaders) {
       for (let dh in this.dynamicHeaders) {
         let found = newHeaders.find(nh => {
@@ -422,6 +445,7 @@ export default {
       }
       this.dynamicHeaders = { ...this.dynamicHeaders }
     },
+    // 改变时间
     updateLu () {
       let format = 'YYYY-MM-DD'
       let start = moment().subtract(this.periodSelect, 'days').format(format)
@@ -436,9 +460,11 @@ export default {
       // }
       // this.getPageWorkflows()
     },
+    // 改变范围
     updateDateRangeValue () {
       console.log(this.dr)
     },
+    // 保存反馈
     saveFeedback () {
       let self = this
       // self.form.reviewId = this.userInfo.userId
@@ -459,20 +485,14 @@ export default {
         self.errorHandler(err, {code: 404, message: '产品未找到'})
       })
     },
+    // 编辑
     edit (row) {
       console.log(row)
       this.getReviewHistory(row.reviewId)
       this.form = row
       this.dialogFormVisible = true
     },
-    isNotLike (product) {
-      return !this.likedProducts.find(p => {
-        return product.asin === p.productId
-      })
-    },
-    searchProduct () {
-      this.getPageProducts()
-    },
+    // 取后台列表数据
     getPageProducts () {
       let pagination = {
         pageSize: this.pageSize,
@@ -499,6 +519,7 @@ export default {
       })
       this.showDownload = true
     },
+    // 取下载数据
     getDownload () {
       let pagination = {
         pageSize: 99999,
@@ -527,15 +548,18 @@ export default {
       this.$sendDownloadHistory('反馈详情')
       this.showDownload = false
     },
+    // 改变下载状态
     changeDownloadStatus () {
       this.showDownload = true
       this.download = []
     },
+    // 取店铺列表
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
       })
     },
+    // 取用户列表
     getUserList () {
       let pagination = {
         pageSize: 1,
@@ -551,10 +575,12 @@ export default {
         this.userList = res.data.grid
       })
     },
+    // 当前页面变化
     updatePageProducts (currentPage) {
       this.currentPage = currentPage
       this.getPageProducts()
     },
+    // 错误处理器
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
         Message({
