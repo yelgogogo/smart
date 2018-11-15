@@ -352,7 +352,11 @@ export default {
           this.download = res.data.grid.map(d => {
             let download = {}
             for (let prop in d) {
-              download[this.dictCn[prop]] = d[prop]
+              if (this.dictCn[prop]) {
+                download[this.dictCn[prop]] = d[prop]
+              } else {
+                download[prop] = d[prop]
+              }
             }
             return download
           })
