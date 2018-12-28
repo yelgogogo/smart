@@ -5,6 +5,7 @@ import Main from '@/views/Main'
 import Expand from '@/views/Expand/Expand'
 import Analysis from '@/views/Analysis/Analysis'
 import Products from '@/views/Products/Products'
+import ProductsMobile from '@/views/Products/ProductsMobile'
 import AddProduct from '@/views/Products/Add'
 import Setting from '@/views/Setting/Setting'
 import config from '@/views/config/config'
@@ -24,6 +25,11 @@ export default new Router({
       path: '/',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/products-m',
+      name: 'productsmobile',
+      component: ProductsMobile
     },
     {
       path: '/main',

@@ -50,12 +50,14 @@ import QRCode from 'qrcode'
 import service from '@/utils/service'
 import api from '@/utils/api'
 import { Message } from 'element-ui'
+const mobile = require('is-mobile')
 
 export default {
   data () {
     return {
       _code: undefined,
       timer: null,
+      isMobile: null,
       register: true,
       qrMode: true,
       inputMode: false,
@@ -65,6 +67,10 @@ export default {
         password: ''
       }
     }
+  },
+  created () {
+    this.isMobile = mobile()
+    this.inputMode = this.isMobile
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -110,7 +116,11 @@ export default {
           type: 'success'
         })
         // this.$router.push('/main/workflow?status=issued_reissued')
-        this.$router.push('/main/products')
+        if (this.isMobile) {
+          this.$router.push('/products-m')
+        } else {
+          this.$router.push('/main/products')
+        }
       }).catch(error => {
         this.$store.dispatch('setLoadingState', false)
         if (error.response) {
