@@ -165,7 +165,7 @@ export default {
     getWXCode () {
       const uid = this.guid()
       let self = this
-      let $path = window.encodeURI(`http://www.starstech.cc/login?shopID=${this.$route.query.shopID}_${uid}`)
+      let $path = window.encodeURI(`http://www.starstech.cc/login?shopID=1_${uid}`)
       let url = '/wepay/webAuthCodeUrl?path=' + $path
       service.get(url).then(res => {
         let wxUrl = res.data
